@@ -65,7 +65,7 @@
 2. Global Styles: Blue theme (#2563eb) set in styles.css.
 3. Assets: angular.json configured to use src/assets, and images (login.jpg, register.jpg) are set up.
 
-4. Pages Completed:
+4. Pages Completed :
 --> Home: Navbar + Hero section.
 --> Login: Split-screen design, centered, image fills height (object-fit: cover), label colors fixed (#374151).
 --> Register: Compact layout, fixed "ugly spacing", min-height enabled.
