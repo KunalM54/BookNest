@@ -1,0 +1,149 @@
+/* --- PAGE WRAPPER (Header + Content + Footer) --- */
+.auth-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f3f4f6;
+}
+
+/* --- CONTENT AREA (Centers the card) --- */
+.auth-content {
+  flex: 1; /* Takes all available space between header and footer */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+}
+
+/* --- CARD STYLES --- */
+.card-wrapper {
+  display: flex;
+  background-color: #ffffff;
+  width: 900px;
+  max-width: 100%;
+  /* Changed to min-height so it grows if needed for extra fields */
+  min-height: 550px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+/* Left Side: Form */
+.form-side {
+  flex: 1;
+  /* Reduced padding slightly to fit more content */
+  padding: 30px 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.form-side h2 {
+  font-size: 1.8rem;
+  color: #1f2937;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+.input-group {
+  margin-bottom: 15px; /* Tighter spacing for register (more fields) */
+}
+
+.input-group label {
+  display: block;
+  font-size: 0.9rem;
+  color: #374151;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 11px; /* Slightly smaller padding to save space */
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.3s;
+}
+
+.input-group input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Button */
+.submit-btn {
+  width: 100%;
+  padding: 14px;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+  margin-top: 10px;
+}
+
+.submit-btn:hover {
+  background-color: #1d4ed8;
+}
+
+/* Footer Link inside card */
+.card-footer {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.card-footer a {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* --- RIGHT SIDE: IMAGE --- */
+.image-side {
+  flex: 1;
+  background-color: #f0f7ff;
+  overflow: hidden;
+  display: flex;
+  padding: 0; /* No padding so image fills completely */
+}
+
+.image-side img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Fills the box, cropping edges if needed */
+  display: block;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+  .card-wrapper {
+    flex-direction: column;
+    height: auto;
+    min-height: auto;
+  }
+  
+  .image-side {
+    display: none; /* Hide image on mobile */
+  }
+  
+  .form-side {
+    padding: 30px 25px;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-side {
+    padding: 25px 20px;
+  }
+  
+  .form-side h2 {
+    font-size: 1.5rem;
+  }
+}

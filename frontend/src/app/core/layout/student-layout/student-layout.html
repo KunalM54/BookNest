@@ -1,0 +1,81 @@
+<div class="layout-container">
+  
+  <!-- STUDENT SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo-container">
+        <span class="material-icons logo-icon">local_library</span>
+        <div class="logo-text">
+          <h2>BookNest</h2>
+          <span class="student-badge">STUDENT</span>
+        </div>
+      </div>
+    </div>
+
+    <ul class="nav-links">
+      <li>
+        <a routerLink="/student/dashboard" routerLinkActive="active-link">
+          <span class="material-icons">dashboard</span>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      
+      <li class="menu-header">LIBRARY</li>
+      <li>
+        <a routerLink="/student/browse-books" routerLinkActive="active-link">
+          <span class="material-icons">search</span>
+          <span>Browse Books</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/student/my-books" routerLinkActive="active-link">
+          <span class="material-icons">menu_book</span>
+          <span>My Books</span>
+          <span class="badge-count">2</span> <!-- Active books count -->
+        </a>
+      </li>
+
+      <li class="menu-header">ACCOUNT</li>
+      <li>
+        <a routerLink="/student/history" routerLinkActive="active-link">
+          <span class="material-icons">history</span>
+          <span>History</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/student/profile" routerLinkActive="active-link">
+          <span class="material-icons">person</span>
+          <span>Profile</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <button (click)="logout()" routerLink="/login" class="logout-btn">
+        <span class="material-icons">logout</span>
+        <span>Logout</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    
+    <!-- TOPBAR (Aligned Right) -->
+    <header class="topbar">
+      <div class="user-profile">
+        <div class="user-info">
+          <span class="name">John Doe</span>
+          <span class="role">Computer Science</span>
+        </div>
+        <img src="https://ui-avatars.com/api/?name=John+Doe&background=2563eb&color=fff" alt="User">
+      </div>
+    </header>
+
+    <!-- PAGE CONTENT -->
+    <div class="content-area">
+      <router-outlet></router-outlet>
+    </div>
+
+  </main>
+</div>

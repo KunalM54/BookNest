@@ -1,0 +1,93 @@
+<div class="dashboard-container">
+  
+  <!-- 1. WELCOME BANNER -->
+  <div class="welcome-banner">
+    <div class="banner-text">
+      <h2>Admin Dashboard</h2>
+      <p>Manage books, users, and library operations efficiently.</p>
+    </div>
+    <div class="banner-img">
+      <!-- Using simple logo icon as requested -->
+      <span class="material-icons logo-icon">local_library</span>
+    </div>
+  </div>
+
+  <!-- 2. STATS GRID -->
+  <div class="stats-grid">
+    <div class="stat-card" *ngFor="let stat of stats" [ngClass]="stat.color">
+      <div class="stat-icon-bg">
+        <span class="material-icons">{{ stat.icon }}</span>
+      </div>
+      <div class="stat-info">
+        <h3>{{ stat.value }}</h3>
+        <p>{{ stat.title }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-split">
+    
+    <!-- 3. RECENT REQUESTS TABLE -->
+    <div class="section-card table-section">
+      <div class="section-header">
+        <h3>Recent Borrow Requests</h3>
+        <button class="view-all-btn" routerLink="/admin/borrow-requests">View All</button>
+      </div>
+      
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Book Title</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let req of requests">
+            <td>
+              <div class="student-info">
+                <span class="material-icons avatar-icon">account_circle</span>
+                {{ req.student }}
+              </div>
+            </td>
+            <td>{{ req.book }}</td>
+            <td>{{ req.date }}</td>
+            <td class="action-buttons">
+              <button class="btn-icon approve" (click)="approveRequest(req.id)" title="Approve">
+                <span class="material-icons">check</span>
+              </button>
+              <button class="btn-icon reject" (click)="rejectRequest(req.id)" title="Reject">
+                <span class="material-icons">close</span>
+              </button>
+            </td>
+          </tr>
+          <!-- Empty State -->
+          <tr *ngIf="requests.length === 0">
+            <td colspan="4" class="empty-state">No pending requests 🎉</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 4. QUICK ACTIONS -->
+    <div class="section-card actions-section">
+      <h3>Quick Actions</h3>
+      <div class="action-grid">
+        <button class="action-btn primary" routerLink="/admin/add-book">
+          <span class="material-icons">add</span>
+          Add New Book
+        </button>
+        <button class="action-btn secondary" routerLink="/admin/manage-students">
+          <span class="material-icons">person_add</span>
+          Add Student
+        </button>
+        <button class="action-btn outline" routerLink="/admin/reports">
+          <span class="material-icons">download</span>
+          Download Report
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

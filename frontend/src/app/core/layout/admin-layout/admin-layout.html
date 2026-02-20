@@ -1,0 +1,86 @@
+<div class="layout-container">
+  
+  <!-- ADMIN SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo-container">
+        <span class="material-icons logo-icon">local_library</span>
+        <div class="logo-text">
+          <h2>BookNest</h2>
+          <span class="admin-badge">ADMIN</span>
+        </div>
+      </div>
+    </div>
+
+    <ul class="nav-links">
+      <li>
+        <a routerLink="/admin/dashboard" routerLinkActive="active-link">
+          <span class="material-icons">dashboard</span>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <li class="menu-header">MANAGEMENT</li>
+      <li>
+        <a routerLink="/admin/manage-books" routerLinkActive="active-link">
+          <span class="material-icons">library_books</span>
+          <span>All Books</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/admin/manage-students" routerLinkActive="active-link">
+          <span class="material-icons">people</span>
+          <span>Students</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/admin/borrow-requests" routerLinkActive="active-link">
+          <span class="material-icons">assignment_turned_in</span>
+          <span>Borrow Requests</span>
+          <span class="badge-count">3</span>
+        </a>
+      </li>
+      
+      <li class="menu-header">SYSTEM</li>
+      <li>
+        <a routerLink="/admin/reports" routerLinkActive="active-link">
+          <span class="material-icons">analytics</span>
+          <span>Reports</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/admin/settings" routerLinkActive="active-link">
+          <span class="material-icons">settings</span>
+          <span>Settings</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <button (click)="logout()" routerLink="/login" class="logout-btn">
+        <span class="material-icons">logout</span>
+        <span>Logout</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    
+    <!-- TOPBAR (Updated: Removed h2, alignment fixed via CSS) -->
+    <header class="topbar">
+      <div class="user-profile">
+        <div class="user-info">
+          <span class="name">Administrator</span>
+          <span class="role">Super User</span>
+        </div>
+        <img src="https://ui-avatars.com/api/?name=Admin+User&background=2563eb&color=fff" alt="Admin">
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <div class="content-area">
+      <router-outlet></router-outlet>
+    </div>
+
+  </main>
+</div>

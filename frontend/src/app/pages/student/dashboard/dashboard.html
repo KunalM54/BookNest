@@ -1,0 +1,85 @@
+<div class="dashboard-container">
+  
+  <!-- WELCOME BANNER -->
+  <div class="welcome-banner">
+    <div class="banner-text">
+      <h2>Welcome back, John! 👋</h2>
+      <p>You have <strong>1 book</strong> due this week. Happy reading!</p>
+    </div>
+    <div class="banner-img">
+      <span class="material-icons logo-icon">import_contacts</span>
+    </div>
+  </div>
+
+  <!-- STATS GRID -->
+  <div class="stats-grid">
+    <div class="stat-card" *ngFor="let stat of stats" [ngClass]="stat.color">
+      <div class="stat-icon-bg">
+        <span class="material-icons">{{ stat.icon }}</span>
+      </div>
+      <div class="stat-info">
+        <h3>{{ stat.value }}</h3>
+        <p>{{ stat.title }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-split">
+    
+    <!-- CURRENT BOOKS TABLE -->
+    <div class="section-card table-section">
+      <div class="section-header">
+        <h3>Currently Borrowed</h3>
+        <button class="view-all-btn" routerLink="/student/my-books">View All</button>
+      </div>
+      
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>Book Title</th>
+            <th>Author</th>
+            <th>Due Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let book of currentBooks">
+            <td>
+              <div class="book-info">
+                <span class="material-icons book-icon">book</span>
+                {{ book.title }}
+              </div>
+            </td>
+            <td>{{ book.author }}</td>
+            <td>{{ book.due }}</td>
+            <td>
+              <span class="status-badge" [class.danger]="book.status === 'Due Soon'" [class.success]="book.status === 'Safe'">
+                {{ book.status }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- QUICK ACTIONS -->
+    <div class="section-card actions-section">
+      <h3>Quick Actions</h3>
+      <div class="action-grid">
+        <button class="action-btn primary" routerLink="/student/browse-books">
+          <span class="material-icons">search</span>
+          Browse Library
+        </button>
+        <button class="action-btn secondary" routerLink="/student/profile">
+          <span class="material-icons">manage_accounts</span>
+          Edit Profile
+        </button>
+        <button class="action-btn outline" routerLink="/student/notices">
+          <span class="material-icons">campaign</span>
+          Check Notices
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
