@@ -1,1 +1,74 @@
-<p>reports works!</p>
+<div class="page-container">
+  <div class="page-header">
+    <h1 class="page-title">System Reports</h1>
+    <button class="btn-primary" (click)="downloadReport()">
+      <span>📥</span> Download PDF
+    </button>
+  </div>
+
+  <!-- 1. Key Metrics Cards -->
+  <div class="stats-grid">
+    <div class="card stat-card">
+      <div class="stat-icon blue-bg">📚</div>
+      <div class="stat-info">
+        <h3>Total Books</h3>
+        <p>1,240</p>
+      </div>
+    </div>
+    <div class="card stat-card">
+      <div class="stat-icon green-bg">✅</div>
+      <div class="stat-info">
+        <h3>Books Issued</h3>
+        <p>85</p>
+      </div>
+    </div>
+    <div class="card stat-card">
+      <div class="stat-icon red-bg">⚠️</div>
+      <div class="stat-info">
+        <h3>Overdue Books</h3>
+        <p>12</p>
+      </div>
+    </div>
+    <div class="card stat-card">
+      <div class="stat-icon yellow-bg">👥</div>
+      <div class="stat-info">
+        <h3>Active Students</h3>
+        <p>340</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="report-split-layout">
+    
+    <!-- 2. Most Popular Categories (Visual Bars) -->
+    <div class="card chart-card">
+      <h3>Most Popular Categories</h3>
+      <div class="bar-chart">
+        <div class="bar-group" *ngFor="let cat of categoryStats">
+          <div class="bar-label">
+            <span>{{cat.name}}</span>
+            <span>{{cat.count}}%</span>
+          </div>
+          <div class="progress-bg">
+            <div class="progress-fill" [style.width.%]="cat.count"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Recent Activity Log -->
+    <div class="card activity-card">
+      <h3>Recent Activity</h3>
+      <ul class="activity-list">
+        <li *ngFor="let act of activities">
+          <span class="activity-dot"></span>
+          <div class="activity-details">
+            <strong>{{act.user}}</strong> {{act.action}} <strong>{{act.book}}</strong>
+            <small>{{act.time}}</small>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+</div>

@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-profile',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './profile.html',
-  styleUrl: './profile.css',
+  styleUrls: ['./profile.css']
 })
-export class Profile {
-
-}
+export class ProfileComponent {}

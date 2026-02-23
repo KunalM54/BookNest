@@ -19,44 +19,58 @@
           <span>Dashboard</span>
         </a>
       </li>
+      
       <li class="menu-header">MANAGEMENT</li>
+      
       <li>
-        <a routerLink="/admin/manage-books" routerLinkActive="active-link">
+        <a routerLink="/admin/books" routerLinkActive="active-link">
           <span class="material-icons">library_books</span>
-          <span>All Books</span>
+          <span>Manage Books</span>
         </a>
       </li>
+      
       <li>
-        <a routerLink="/admin/manage-students" routerLinkActive="active-link">
+        <a routerLink="/admin/students" routerLinkActive="active-link">
           <span class="material-icons">people</span>
-          <span>Students</span>
+          <span>Manage Students</span>
         </a>
       </li>
+      
       <li>
-        <a routerLink="/admin/borrow-requests" routerLinkActive="active-link">
+        <a routerLink="/admin/requests" routerLinkActive="active-link">
           <span class="material-icons">assignment_turned_in</span>
           <span>Borrow Requests</span>
-          <span class="badge-count">3</span>
+          <!-- Dynamic count badge example -->
+          <span class="badge-count">3</span> 
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/admin/notices" routerLinkActive="active-link">
+          <span class="material-icons">campaign</span>
+          <span>Notices</span>
         </a>
       </li>
       
       <li class="menu-header">SYSTEM</li>
+      
       <li>
         <a routerLink="/admin/reports" routerLinkActive="active-link">
           <span class="material-icons">analytics</span>
           <span>Reports</span>
         </a>
       </li>
+      
       <li>
-        <a routerLink="/admin/settings" routerLinkActive="active-link">
-          <span class="material-icons">settings</span>
-          <span>Settings</span>
+        <a routerLink="/admin/profile" routerLinkActive="active-link">
+          <span class="material-icons">person</span>
+          <span>Profile</span>
         </a>
       </li>
     </ul>
 
     <div class="sidebar-footer">
-      <button (click)="logout()" routerLink="/login" class="logout-btn">
+      <button routerLink="/login" class="logout-btn">
         <span class="material-icons">logout</span>
         <span>Logout</span>
       </button>
@@ -66,8 +80,11 @@
   <!-- MAIN CONTENT -->
   <main class="main-content">
     
-    <!-- TOPBAR (Updated: Removed h2, alignment fixed via CSS) -->
+    <!-- TOPBAR -->
     <header class="topbar">
+      <!-- You can add a breadcrumb or page title here dynamically if needed -->
+      <div class="spacer"></div> 
+
       <div class="user-profile">
         <div class="user-info">
           <span class="name">Administrator</span>
@@ -77,7 +94,7 @@
       </div>
     </header>
 
-    <!-- Page Content -->
+    <!-- PAGE CONTENT (Where dashboard, books, students etc. will appear) -->
     <div class="content-area">
       <router-outlet></router-outlet>
     </div>

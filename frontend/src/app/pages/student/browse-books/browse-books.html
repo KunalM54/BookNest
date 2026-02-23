@@ -1,1 +1,43 @@
-<p>browse-books works!</p>
+<div class="page-container">
+  <div class="page-header">
+    <h1 class="page-title">Browse Library</h1>
+  </div>
+
+  <!-- Search & Filter -->
+  <div class="card search-section">
+    <div class="search-wrapper">
+      <span class="search-icon">🔍</span>
+      <input type="text" [(ngModel)]="searchTerm" placeholder="Search by title, author, or ISBN..." class="search-input-lg">
+    </div>
+    <div class="categories">
+      <button class="cat-pill active">All</button>
+      <button class="cat-pill">Science</button>
+      <button class="cat-pill">Fiction</button>
+      <button class="cat-pill">History</button>
+      <button class="cat-pill">Technology</button>
+    </div>
+  </div>
+
+  <!-- Books Grid -->
+  <div class="books-grid">
+    <div class="book-card" *ngFor="let book of books">
+      <div class="book-cover">
+        <!-- Placeholder for book image -->
+        <span>📖</span>
+      </div>
+      <div class="book-info">
+        <h3 class="book-title">{{book.title}}</h3>
+        <p class="book-author">by {{book.author}}</p>
+        <div class="book-meta">
+          <span class="category-badge">{{book.category}}</span>
+          <span [class]="book.available ? 'text-green' : 'text-red'">
+            {{book.available ? 'Available' : 'Out of Stock'}}
+          </span>
+        </div>
+        <button class="btn-primary full-width" [disabled]="!book.available" (click)="requestBook(book)">
+          {{book.available ? 'Request Book' : 'Unavailable'}}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

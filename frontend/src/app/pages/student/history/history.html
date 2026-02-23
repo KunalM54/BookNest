@@ -1,1 +1,26 @@
-<p>history works!</p>
+<div class="page-container">
+  <div class="page-header">
+    <h1 class="page-title">Borrowing History</h1>
+  </div>
+
+  <div class="card table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Book Title</th>
+          <th>Borrowed On</th>
+          <th>Returned On</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let record of history">
+          <td class="fw-bold">{{record.title}}</td>
+          <td>{{record.borrowDate}}</td>
+          <td>{{record.returnDate}}</td>
+          <td><span class="status-badge status-blue">Returned</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -45,8 +45,8 @@
 
 .student-badge {
   font-size: 0.7rem;
-  background-color: #d1fae5; /* Greenish background for Student */
-  color: #059669; /* Green text */
+  background-color: #fef3c7; /* Yellow background */
+  color: #d97706;           /* Yellow/Orange text */
   padding: 2px 6px;
   border-radius: 4px;
   font-weight: 600;

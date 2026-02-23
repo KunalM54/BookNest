@@ -1,1 +1,37 @@
-<p>my-books works!</p>
+<div class="page-container">
+  <div class="page-header">
+    <h1 class="page-title">My Books ({{ borrowedBooks.length }})</h1>
+  </div>
+
+  <div class="card table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Book Title</th>
+          <th>Author</th>
+          <th>Borrowed Date</th>
+          <th>Due Date</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let book of borrowedBooks">
+          <td class="fw-bold">{{book.title}}</td>
+          <td>{{book.author}}</td>
+          <td>{{book.borrowDate}}</td>
+          <td>{{book.dueDate}}</td>
+          <td>
+            <span class="status-badge" 
+              [ngClass]="book.isOverdue ? 'status-red' : 'status-green'">
+              {{book.isOverdue ? 'Overdue' : 'Active'}}
+            </span>
+          </td>
+          <td>
+             <button class="action-btn" title="Return Book">↩️ Return</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

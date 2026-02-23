@@ -1,1 +1,52 @@
-<p>manage-books works!</p>
+<div class="page-container">
+  <div class="page-header">
+    <h1 class="page-title">Manage Books</h1>
+    <button class="btn-primary">+ Add New Book</button>
+  </div>
+
+  <!-- Search Filter -->
+  <div class="card search-card">
+    <input type="text" placeholder="Search by title, author, or ISBN..." class="search-input">
+  </div>
+
+  <br>
+
+  <!-- Books Table -->
+  <div class="card table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Cover</th>
+          <th>Title</th>
+          <th>Author</th>
+          <th>Category</th>
+          <th>Copies</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let book of books">
+          <td><div class="book-cover-placeholder"></div></td>
+          <td>
+            <div class="fw-bold">{{book.title}}</div>
+            <small class="text-muted">ISBN: {{book.isbn}}</small>
+          </td>
+          <td>{{book.author}}</td>
+          <td>{{book.category}}</td>
+          <td>{{book.availableCopies}} / {{book.totalCopies}}</td>
+          <td>
+            <span class="status-badge" 
+              [ngClass]="book.availableCopies > 0 ? 'status-green' : 'status-red'">
+              {{book.availableCopies > 0 ? 'Available' : 'Out of Stock'}}
+            </span>
+          </td>
+          <td>
+            <button class="action-btn" title="Edit">✏️</button>
+            <button class="action-btn" title="Delete" style="color:red;">🗑️</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

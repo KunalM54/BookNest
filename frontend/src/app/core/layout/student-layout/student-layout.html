@@ -13,45 +13,53 @@
     </div>
 
     <ul class="nav-links">
+      <!-- 1. Dashboard -->
       <li>
         <a routerLink="/student/dashboard" routerLinkActive="active-link">
           <span class="material-icons">dashboard</span>
           <span>Dashboard</span>
         </a>
       </li>
-      
+
       <li class="menu-header">LIBRARY</li>
+
+      <!-- 2. Browse Books (THE FIX) -->
       <li>
-        <a routerLink="/student/browse-books" routerLinkActive="active-link">
+        <a routerLink="/student/browse" routerLinkActive="active-link">
           <span class="material-icons">search</span>
           <span>Browse Books</span>
         </a>
       </li>
+
+      <!-- 3. My Books -->
       <li>
         <a routerLink="/student/my-books" routerLinkActive="active-link">
           <span class="material-icons">menu_book</span>
           <span>My Books</span>
-          <span class="badge-count">2</span> <!-- Active books count -->
         </a>
       </li>
 
-      <li class="menu-header">ACCOUNT</li>
+      <!-- 4. History -->
       <li>
         <a routerLink="/student/history" routerLinkActive="active-link">
           <span class="material-icons">history</span>
           <span>History</span>
         </a>
       </li>
+      
+      <li class="menu-header">ACCOUNT</li>
+      
+      <!-- 5. Profile -->
       <li>
         <a routerLink="/student/profile" routerLinkActive="active-link">
           <span class="material-icons">person</span>
-          <span>Profile</span>
+          <span>My Profile</span>
         </a>
       </li>
     </ul>
 
     <div class="sidebar-footer">
-      <button (click)="logout()" routerLink="/login" class="logout-btn">
+      <button routerLink="/login" class="logout-btn">
         <span class="material-icons">logout</span>
         <span>Logout</span>
       </button>
@@ -61,14 +69,16 @@
   <!-- MAIN CONTENT -->
   <main class="main-content">
     
-    <!-- TOPBAR (Aligned Right) -->
+    <!-- TOPBAR -->
     <header class="topbar">
+      <div class="spacer"></div> 
       <div class="user-profile">
         <div class="user-info">
-          <span class="name">John Doe</span>
-          <span class="role">Computer Science</span>
+          <span class="name">Student User</span>
+          <span class="role">ID: S10239</span>
         </div>
-        <img src="https://ui-avatars.com/api/?name=John+Doe&background=2563eb&color=fff" alt="User">
+        <!-- Yellow Avatar for Student -->
+        <img src="https://ui-avatars.com/api/?name=Student+User&background=f59e0b&color=fff" alt="Student">
       </div>
     </header>
 

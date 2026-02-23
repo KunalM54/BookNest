@@ -1,1 +1,41 @@
-<p>borrow-requests works!</p>
+<div class="page-container">
+  <div class="page-header">
+    <h1 class="page-title">Borrow Requests</h1>
+  </div>
+
+  <div class="card table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Student</th>
+          <th>Book Title</th>
+          <th>Request Date</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let req of requests">
+          <td>
+            <div class="user-info">
+              <div class="avatar">{{req.studentName.charAt(0)}}</div>
+              <div>
+                <div class="fw-bold">{{req.studentName}}</div>
+                <small class="text-muted">{{req.studentId}}</small>
+              </div>
+            </div>
+          </td>
+          <td>{{req.bookTitle}}</td>
+          <td>{{req.date}}</td>
+          <td>
+            <span class="status-badge status-yellow">Pending</span>
+          </td>
+          <td>
+            <button class="btn-icon accept" (click)="approve(req.id)">✓</button>
+            <button class="btn-icon reject" (click)="reject(req.id)">✕</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

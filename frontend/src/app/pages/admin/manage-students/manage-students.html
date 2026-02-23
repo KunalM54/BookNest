@@ -1,1 +1,41 @@
-<p>manage-students works!</p>
+<div class="page-container">
+  <div class="page-header">
+    <h1 class="page-title">Manage Students</h1>
+    <div class="search-box">
+        <input type="text" placeholder="Search students..." class="search-input">
+    </div>
+  </div>
+
+  <div class="card table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Books Borrowed</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let student of students">
+          <td>
+             <div class="fw-bold">{{student.name}}</div>
+          </td>
+          <td>{{student.email}}</td>
+          <td>{{student.borrowedCount}}</td>
+          <td>
+            <span class="status-badge" [ngClass]="student.active ? 'status-green' : 'status-red'">
+              {{student.active ? 'Active' : 'Blocked'}}
+            </span>
+          </td>
+          <td>
+            <button class="action-btn" title="View Details">👁️</button>
+            <button *ngIf="student.active" class="action-btn text-red" title="Block User">🚫</button>
+            <button *ngIf="!student.active" class="action-btn text-green" title="Activate User">✅</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

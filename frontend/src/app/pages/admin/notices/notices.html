@@ -1,1 +1,74 @@
-<p>notices works!</p>
+<div class="page-container">
+  <div class="page-header">
+    <h1 class="page-title">Library Notices</h1>
+  </div>
+
+  <div class="notice-layout">
+    
+    <!-- 1. TOP SECTION: FORM -->
+    <div class="card form-card">
+      <div class="card-header">
+        <h3>{{ isEditing ? 'Edit Notice' : 'Create New Notice' }}</h3>
+      </div>
+      
+      <form (ngSubmit)="onSubmit()">
+        <div class="form-row">
+          <!-- Title Input -->
+          <div class="form-group">
+            <label>Notice Title</label>
+            <input type="text" [(ngModel)]="noticeTitle" name="title" placeholder="e.g. Holiday Closing" class="form-control" required>
+          </div>
+        </div>
+
+        <!-- Message Input -->
+        <div class="form-group">
+          <label>Message Details</label>
+          <textarea rows="3" [(ngModel)]="noticeMessage" name="message" placeholder="Type the notice details here..." class="form-control" required></textarea>
+        </div>
+        
+        <!-- Buttons -->
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">
+            {{ isEditing ? 'Update Notice' : 'Publish Notice' }}
+          </button>
+          
+          <button *ngIf="isEditing" type="button" (click)="cancelEdit()" class="btn-secondary">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- 2. BOTTOM SECTION: LIST -->
+    <div class="card list-card">
+      <h3>Recent Notices History</h3>
+      
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Message</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let notice of notices">
+              <td class="fw-bold text-primary">{{notice.title}}</td>
+              <td>
+                <p class="truncate-text" title="{{notice.message}}">{{notice.message}}</p>
+              </td>
+              <td style="white-space: nowrap;">{{notice.date}}</td>
+              <td>
+                <button (click)="onEdit(notice)" class="action-btn" title="Edit">✏️</button>
+                <button (click)="onDelete(notice.id)" class="action-btn" title="Delete" style="color: #ef4444;">🗑️</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>

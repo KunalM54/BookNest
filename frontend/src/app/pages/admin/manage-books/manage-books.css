@@ -1,0 +1,142 @@
+/* --- 1. Page Layout --- */
+.page-container {
+  width: 100%;
+  padding-bottom: 2rem;
+}
+
+/* Header Section (Title + Button) */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+/* --- 2. Cards (White Boxes) --- */
+.card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* --- 3. Search Bar --- */
+.search-card {
+  padding: 1rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  outline: none;
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
+}
+
+.search-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* --- 4. Buttons --- */
+.btn-primary {
+  background-color: #2563eb;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: #1d4ed8;
+}
+
+.action-btn {
+  background: white;
+  border: 1px solid #e5e7eb;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-right: 8px;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.action-btn:hover {
+  background-color: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+/* --- 5. Table Styles --- */
+.table-container {
+  overflow-x: auto;
+  padding: 0; /* Remove padding from card for edge-to-edge table */
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+thead th {
+  background-color: #f9fafb;
+  color: #6b7280;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+tbody td {
+  padding: 16px;
+  border-bottom: 1px solid #e5e7eb;
+  color: #374151;
+  vertical-align: middle;
+}
+
+tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+/* Book Cover Placeholder */
+.book-cover-placeholder {
+  width: 40px;
+  height: 55px;
+  background-color: #e5e7eb;
+  border-radius: 4px;
+  display: block;
+}
+
+/* Text Utilities */
+.fw-bold { font-weight: 600; color: #111827; }
+.text-muted { color: #6b7280; font-size: 0.8rem; display: block; margin-top: 2px; }
+
+/* Status Badges */
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 99px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.status-green { background-color: #dcfce7; color: #166534; }
+.status-red { background-color: #fee2e2; color: #991b1b; }
