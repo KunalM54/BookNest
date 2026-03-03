@@ -16,6 +16,7 @@ export class Register {
   
   registerData = {
     fullName: '',
+    sID : '',
     email: '',
     password: '',
     confirmPassword: ''
