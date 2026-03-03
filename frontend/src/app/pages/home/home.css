@@ -148,17 +148,19 @@
   padding: 30px;
   border-radius: 12px;
   transition: 0.3s;
+  background-color: #f0f1f3;
 }
 
 .feature-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  
 }
 
 .icon-bg {
   width: 70px;
   height: 70px;
-  background-color: #eff6ff;
+  background-color: #d9e2f3;
   border-radius: 50%;
   display: flex;
   align-items: center;
