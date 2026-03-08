@@ -1,19 +1,61 @@
 <div class="page-container">
+
   <div class="page-header">
-    <h1 class="page-title">Manage Books</h1>
-    <button class="btn-primary">+ Add New Book</button>
+
+    <h1 class="page-title">
+      <span class="material-icons page-icon">library_books</span>
+      Manage Books
+    </h1>
+
+    <button class="btn-primary">
+      <span class="material-icons">add</span>
+      Add New Book
+    </button>
+
   </div>
 
-  <!-- Search Filter -->
+
+  <!-- SEARCH -->
+
   <div class="card search-card">
-    <input type="text" placeholder="Search by title, author, or ISBN..." class="search-input">
+
+    <div class="search-wrapper">
+
+      <span class="material-icons search-icon">search</span>
+
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        placeholder="Search by title, author, or ISBN..."
+        class="search-input">
+
+    </div>
+
+    <!-- CATEGORY FILTER -->
+
+    <div class="categories">
+
+      <button
+        *ngFor="let cat of categories"
+        class="cat-pill"
+        [class.active]="selectedCategory === cat"
+        (click)="setCategory(cat)">
+
+        {{cat}}
+
+      </button>
+
+    </div>
+
   </div>
 
-  <br>
 
-  <!-- Books Table -->
+  <!-- BOOK TABLE -->
+
   <div class="card table-container">
+
     <table>
+
       <thead>
         <tr>
           <th>Cover</th>
@@ -25,28 +67,88 @@
           <th>Actions</th>
         </tr>
       </thead>
+
       <tbody>
-        <tr *ngFor="let book of books">
-          <td><div class="book-cover-placeholder"></div></td>
+
+        <tr *ngFor="let book of filteredBooks">
+
           <td>
+            <div class="book-cover-placeholder"></div>
+          </td>
+
+          <td>
+
             <div class="fw-bold">{{book.title}}</div>
-            <small class="text-muted">ISBN: {{book.isbn}}</small>
+
+            <small class="text-muted">
+              ISBN: {{book.isbn}}
+            </small>
+
           </td>
+
           <td>{{book.author}}</td>
+
           <td>{{book.category}}</td>
+
           <td>{{book.availableCopies}} / {{book.totalCopies}}</td>
+
           <td>
-            <span class="status-badge" 
+
+            <span
+              class="status-badge"
               [ngClass]="book.availableCopies > 0 ? 'status-green' : 'status-red'">
+
               {{book.availableCopies > 0 ? 'Available' : 'Out of Stock'}}
+
             </span>
+
           </td>
+
           <td>
-            <button class="action-btn" title="Edit">✏️</button>
-            <button class="action-btn" title="Delete" style="color:red;">🗑️</button>
+
+            <button
+              class="action-btn edit"
+              (click)="editBook(book)"
+              title="Edit">
+
+              <span class="material-icons">edit</span>
+
+            </button>
+
+            <button
+              class="action-btn delete"
+              (click)="deleteBook(book.isbn)"
+              title="Delete">
+
+              <span class="material-icons">delete</span>
+
+            </button>
+
           </td>
+
         </tr>
+
+
+        <!-- EMPTY STATE -->
+
+        <tr *ngIf="filteredBooks.length === 0">
+
+          <td colspan="7" class="empty-state">
+
+            <span class="material-icons empty-icon">
+              menu_book
+            </span>
+
+            No books found
+
+          </td>
+
+        </tr>
+
       </tbody>
+
     </table>
+
   </div>
+
 </div>

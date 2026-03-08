@@ -1,5 +1,5 @@
 <div class="dashboard-container">
-  
+
   <!-- 1. WELCOME BANNER -->
   <div class="welcome-banner">
     <div class="banner-text">
@@ -26,20 +26,21 @@
   </div>
 
   <div class="content-split">
-    
+
     <!-- 3. RECENT REQUESTS TABLE -->
     <div class="section-card table-section">
       <div class="section-header">
         <h3>Recent Borrow Requests</h3>
         <button class="view-all-btn" routerLink="/admin/borrow-requests">View All</button>
       </div>
-      
+
       <table class="custom-table">
         <thead>
           <tr>
             <th>Student</th>
             <th>Book Title</th>
             <th>Date</th>
+            <th>Status</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -53,18 +54,62 @@
             </td>
             <td>{{ req.book }}</td>
             <td>{{ req.date }}</td>
+
+            <td>
+              <span class="status-badge pending" *ngIf="req.status === 'Pending'">
+                Pending
+              </span>
+
+              <span class="status-badge success" *ngIf="req.status === 'Approved'">
+                Approved
+              </span>
+
+              <span class="status-badge danger" *ngIf="req.status === 'Rejected'">
+                Rejected
+              </span>
+            </td>
+
             <td class="action-buttons">
-              <button class="btn-icon approve" (click)="approveRequest(req.id)" title="Approve">
-                <span class="material-icons">check</span>
-              </button>
-              <button class="btn-icon reject" (click)="rejectRequest(req.id)" title="Reject">
-                <span class="material-icons">close</span>
-              </button>
+
+              <!-- PENDING ACTIONS -->
+
+              <ng-container *ngIf="req.status === 'Pending'">
+
+                <button class="btn-icon approve" (click)="approveRequest(req.id)" title="Approve">
+
+                  <span class="material-icons">check</span>
+
+                </button>
+
+                <button class="btn-icon reject" (click)="rejectRequest(req.id)" title="Reject">
+
+                  <span class="material-icons">close</span>
+
+                </button>
+
+              </ng-container>
+
+
+              <!-- CLOSE BUTTON AFTER ACTION -->
+
+              <ng-container *ngIf="req.status !== 'Pending'">
+
+                <button class="btn-icon remove" (click)="removeRequest(req.id)" title="Remove">
+
+                  <span class="material-icons">delete</span>
+
+                </button>
+
+              </ng-container>
+
             </td>
           </tr>
           <!-- Empty State -->
           <tr *ngIf="requests.length === 0">
-            <td colspan="4" class="empty-state">No pending requests 🎉</td>
+            <td colspan="4" class="empty-state">
+              <span class="material-icons empty-icon">check_circle</span>
+              No pending requests
+            </td>
           </tr>
         </tbody>
       </table>

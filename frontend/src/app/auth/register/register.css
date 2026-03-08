@@ -6,9 +6,47 @@
   background-color: #f3f4f6;
 }
 
+/*Loading while student is getting register*/
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.loader {
+  width: 45px;
+  height: 45px;
+  border: 5px solid #e5e7eb;
+  border-top: 5px solid #2563eb;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/*Error message of whole page Form*/
+.error-message {
+  color: #dc2626;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
 /* --- CONTENT AREA (Centers the card) --- */
 .auth-content {
-  flex: 1; /* Takes all available space between header and footer */
+  flex: 1;
+  /* Takes all available space between header and footer */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -18,13 +56,11 @@
 /* --- CARD STYLES --- */
 .card-wrapper {
   display: flex;
-  background-color: #ffffff;
+  background: #fff;
   width: 900px;
   max-width: 100%;
-  /* Changed to min-height so it grows if needed for extra fields */
-  min-height: 550px;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  border-radius: 14px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, .08);
   overflow: hidden;
 }
 
@@ -39,56 +75,85 @@
 }
 
 .form-side h2 {
-  font-size: 1.8rem;
-  color: #1f2937;
-  margin-bottom: 20px;
+  font-size: 2rem;
   font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 25px;
 }
 
 .input-group {
-  margin-bottom: 25px; /* Tighter spacing for register (more fields) */
+  margin-bottom: 22px;
 }
 
 .input-group label {
   display: block;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 600;
   color: #374151;
   margin-bottom: 6px;
-  font-weight: 600;
 }
 
 .input-group input {
   width: 100%;
-  padding: 11px; /* Slightly smaller padding to save space */
+  padding: 12px 14px;
   border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  font-size: 1rem;
-  outline: none;
-  transition: all 0.3s;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: all .2s ease;
 }
 
 .input-group input:focus {
   border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.password-field {
+  position: relative;
+}
+
+.password-field input {
+  padding-right: 40px;
+}
+
+.eye-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+}
+
+.material-icons {
+  font-size: 18px;
+}
+
+.eye-btn:hover {
+  color: #2563eb;
 }
 
 /* Button */
 .submit-btn {
   width: 100%;
   padding: 14px;
-  background-color: #2563eb;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
   color: white;
   border: none;
-  border-radius: 6px;
-  font-size: 1rem;
+  border-radius: 8px;
   font-weight: 600;
+  font-size: 1rem;
   cursor: pointer;
-  transition: background 0.3s;
-  margin-top: 10px;
+  transition: all .2s ease;
 }
 
 .submit-btn:hover {
-  background-color: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(37, 99, 235, .25);
 }
 
 /* Footer Link inside card */
@@ -111,13 +176,15 @@
   background-color: #f0f7ff;
   overflow: hidden;
   display: flex;
-  padding: 0; /* No padding so image fills completely */
+  padding: 0;
+  /* No padding so image fills completely */
 }
 
 .image-side img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Fills the box, cropping edges if needed */
+  object-fit: cover;
+  /* Fills the box, cropping edges if needed */
   display: block;
 }
 
@@ -128,11 +195,12 @@
     height: auto;
     min-height: auto;
   }
-  
+
   .image-side {
-    display: none; /* Hide image on mobile */
+    display: none;
+    /* Hide image on mobile */
   }
-  
+
   .form-side {
     padding: 30px 25px;
   }
@@ -142,7 +210,7 @@
   .form-side {
     padding: 25px 20px;
   }
-  
+
   .form-side h2 {
     font-size: 1.5rem;
   }

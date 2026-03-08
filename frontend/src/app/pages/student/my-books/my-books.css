@@ -1,0 +1,115 @@
+/* Table container */
+.table-container{
+overflow-x:auto;
+}
+
+/* Table */
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+thead{
+background:#f9fafb;
+}
+
+th{
+text-align:left;
+padding:12px;
+font-size:0.85rem;
+color:#6b7280;
+border-bottom:1px solid #e5e7eb;
+}
+
+td{
+padding:14px 12px;
+border-bottom:1px solid #f3f4f6;
+font-size:0.95rem;
+color:#374151;
+}
+
+/* Book cell */
+
+.book-info{
+display:flex;
+align-items:center;
+gap:8px;
+font-weight:500;
+}
+
+.book-icon{
+font-size:18px;
+color:#9ca3af;
+}
+
+/* Status badge */
+
+.status-badge{
+display:inline-flex;
+align-items:center;
+gap:5px;
+padding:4px 10px;
+border-radius:20px;
+font-size:0.75rem;
+font-weight:600;
+}
+
+.status-green{
+background:#d1fae5;
+color:#059669;
+}
+
+.status-red{
+background:#fee2e2;
+color:#dc2626;
+}
+
+.status-icon{
+font-size:16px;
+}
+
+/* Return button */
+
+.return-btn{
+display:flex;
+align-items:center;
+gap:6px;
+border:none;
+background:#2563eb;
+color:white;
+padding:6px 10px;
+border-radius:6px;
+cursor:pointer;
+font-size:0.85rem;
+}
+
+.return-btn:hover{
+background:#1d4ed8;
+}
+
+/* Empty state */
+
+.empty-table{
+text-align:center;
+padding:30px;
+color:#9ca3af;
+}
+
+.empty-icon{
+font-size:36px;
+display:block;
+margin-bottom:5px;
+}
+
+/* Page icon */
+
+.page-title{
+display:flex;
+align-items:center;
+gap:8px;
+}
+
+.page-icon{
+color:#2563eb;
+}

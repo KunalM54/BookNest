@@ -6,24 +6,39 @@
   <!-- Search & Filter -->
   <div class="card search-section">
     <div class="search-wrapper">
-      <span class="search-icon">🔍</span>
-      <input type="text" [(ngModel)]="searchTerm" placeholder="Search by title, author, or ISBN..." class="search-input-lg">
+      <span class="material-icons search-icon">search</span>
+      <input type="text" [(ngModel)]="searchTerm" placeholder="Search by title, author, or ISBN..."
+        class="search-input-lg">
     </div>
     <div class="categories">
-      <button class="cat-pill active">All</button>
-      <button class="cat-pill">Science</button>
-      <button class="cat-pill">Fiction</button>
-      <button class="cat-pill">History</button>
-      <button class="cat-pill">Technology</button>
+      <div class="categories">
+
+        <button class="cat-pill" [class.active]="selectedCategory === 'All'" (click)="setCategory('All')">
+          All
+        </button>
+
+        <button class="cat-pill" [class.active]="selectedCategory === 'Tech'" (click)="setCategory('Tech')">
+          Technology
+        </button>
+
+        <button class="cat-pill" [class.active]="selectedCategory === 'Fiction'" (click)="setCategory('Fiction')">
+          Fiction
+        </button>
+
+        <button class="cat-pill" [class.active]="selectedCategory === 'Education'" (click)="setCategory('Education')">
+          Education
+        </button>
+
+      </div>
     </div>
   </div>
 
   <!-- Books Grid -->
   <div class="books-grid">
-    <div class="book-card" *ngFor="let book of books">
+    <div class="book-card" *ngFor="let book of filteredBooks">
       <div class="book-cover">
         <!-- Placeholder for book image -->
-        <span>📖</span>
+        <span class="material-icons book-placeholder">menu_book</span>
       </div>
       <div class="book-info">
         <h3 class="book-title">{{book.title}}</h3>
@@ -39,5 +54,10 @@
         </button>
       </div>
     </div>
+  </div>
+
+  <div *ngIf="filteredBooks.length === 0" class="empty-books">
+    <span class="material-icons">menu_book</span>
+    <p>No books found</p>
   </div>
 </div>

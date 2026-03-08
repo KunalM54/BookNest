@@ -9,17 +9,34 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./reports.css']
 })
 export class ReportsComponent {
-  
-  // Fake Data for Chart
+
+  totalBooks = 1240;
+  booksIssued = 85;
+  overdueBooks = 12;
+  activeStudents = 340;
+
+  getBarColor(value: number) {
+
+    if (value <= 30) {
+      return '#93c5fd'; // light
+    }
+
+    if (value <= 60) {
+      return '#3b82f6'; // medium
+    }
+
+    return '#1d4ed8'; // dark
+
+  }
+
   categoryStats = [
     { name: 'Computer Science', count: 45 },
     { name: 'Fiction', count: 25 },
     { name: 'History', count: 15 },
-    { name: 'Science', count: 10 },
+    { name: 'Science', count: 70 },
     { name: 'Others', count: 5 }
   ];
 
-  // Fake Activity Log
   activities = [
     { user: 'John Doe', action: 'borrowed', book: 'Clean Code', time: '2 mins ago' },
     { user: 'Jane Smith', action: 'returned', book: 'The Great Gatsby', time: '1 hour ago' },
@@ -28,6 +45,10 @@ export class ReportsComponent {
   ];
 
   downloadReport() {
-    alert('Downloading PDF Report...');
+    console.log("Generating report...");
+    setTimeout(() => {
+      console.log("Report downloaded");
+    }, 1000);
   }
+
 }

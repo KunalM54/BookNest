@@ -5,11 +5,22 @@ import { CommonModule } from '@angular/common';
   selector: 'app-history',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './history.html'
+  templateUrl: './history.html',
+  styleUrls: ['./history.css']
 })
 export class HistoryComponent {
+
   history = [
-    { title: 'Harry Potter', borrowDate: 'Jan 10, 2023', returnDate: 'Jan 20, 2023' },
-    { title: 'Calculus I', borrowDate: 'Feb 15, 2023', returnDate: 'Mar 01, 2023' },
+    {
+      title: 'Harry Potter',
+      borrowDate: 'Jan 10, 2023',
+      returnDate: 'Jan 20, 2023'
+    },
+    {
+      title: 'Calculus I',
+      borrowDate: 'Feb 15, 2023',
+      returnDate: 'Mar 01, 2023'
+    }
   ];
+
 }

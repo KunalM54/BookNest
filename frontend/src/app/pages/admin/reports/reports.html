@@ -2,35 +2,45 @@
   <div class="page-header">
     <h1 class="page-title">System Reports</h1>
     <button class="btn-primary" (click)="downloadReport()">
-      <span>📥</span> Download PDF
+      <span class="material-icons">download</span>
+      Download PDF
     </button>
   </div>
 
   <!-- 1. Key Metrics Cards -->
   <div class="stats-grid">
     <div class="card stat-card">
-      <div class="stat-icon blue-bg">📚</div>
+      <div class="stat-icon blue-bg">
+        <span class="material-icons">menu_book</span>
+      </div>
       <div class="stat-info">
         <h3>Total Books</h3>
         <p>1,240</p>
       </div>
     </div>
     <div class="card stat-card">
-      <div class="stat-icon green-bg">✅</div>
+      <div class="stat-icon green-bg">
+        <span class="material-icons">check_circle</span>
+      </div>
       <div class="stat-info">
         <h3>Books Issued</h3>
         <p>85</p>
       </div>
     </div>
     <div class="card stat-card">
-      <div class="stat-icon red-bg">⚠️</div>
+      <div class="stat-icon red-bg">
+        <span class="material-icons">warning</span>
+      </div>
+
       <div class="stat-info">
         <h3>Overdue Books</h3>
         <p>12</p>
       </div>
     </div>
     <div class="card stat-card">
-      <div class="stat-icon yellow-bg">👥</div>
+      <div class="stat-icon yellow-bg">
+        <span class="material-icons">group</span>
+      </div>
       <div class="stat-info">
         <h3>Active Students</h3>
         <p>340</p>
@@ -39,7 +49,7 @@
   </div>
 
   <div class="report-split-layout">
-    
+
     <!-- 2. Most Popular Categories (Visual Bars) -->
     <div class="card chart-card">
       <h3>Most Popular Categories</h3>
@@ -50,7 +60,8 @@
             <span>{{cat.count}}%</span>
           </div>
           <div class="progress-bg">
-            <div class="progress-fill" [style.width.%]="cat.count"></div>
+            <div class="progress-fill" [style.width.%]="cat.count" [style.background]="getBarColor(cat.count)">
+            </div>
           </div>
         </div>
       </div>

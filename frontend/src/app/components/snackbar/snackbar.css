@@ -1,0 +1,31 @@
+.snackbar{
+position:fixed;
+bottom:30px;
+left:50%;
+transform:translateX(-50%);
+background:#111827;
+color:white;
+padding:12px 20px;
+border-radius:8px;
+display:flex;
+align-items:center;
+gap:10px;
+box-shadow:0 6px 20px rgba(0,0,0,0.2);
+animation:slideUp .3s ease;
+z-index:9999;
+}
+
+.snackbar span{
+color:#22c55e;
+}
+
+@keyframes slideUp{
+from{
+opacity:0;
+transform:translate(-50%,20px);
+}
+to{
+opacity:1;
+transform:translate(-50%,0);
+}
+}

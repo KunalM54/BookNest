@@ -4,6 +4,7 @@ import { Routes } from '@angular/router';
 import { HomeComponent } from './pages/home/home';
 import { LoginComponent } from './auth/login/login';
 import { Register } from './auth/register/register';
+import { ForgotPassword } from './auth/forgot-password/forgot-password';
 
 // Layouts
 import { StudentLayoutComponent } from './core/layout/student-layout/student-layout';
@@ -15,6 +16,10 @@ import { BrowseBooksComponent } from './pages/student/browse-books/browse-books'
 import { MyBooksComponent } from './pages/student/my-books/my-books';
 import { HistoryComponent } from './pages/student/history/history';
 import { ProfileComponent as StudentProfile } from './pages/student/profile/profile'; // Alias used
+import { NoticesStudent } from './pages/student/notices/notices';
+import { RequestsStudent } from './pages/student/requests/requests';
+import { ChangePasswordStudent } from './pages/student/change-password/change-password';
+
 
 // ================= ADMIN PAGES =================
 import { DashboardComponent as AdminDashboard } from './pages/admin/dashboard/dashboard';
@@ -31,6 +36,7 @@ export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: Register },
+  { path: 'forgot-password', component: ForgotPassword },
 
   // STUDENT ROUTING
   {
@@ -42,7 +48,10 @@ export const routes: Routes = [
       { path: 'browse', component: BrowseBooksComponent },
       { path: 'my-books', component: MyBooksComponent },
       { path: 'history', component: HistoryComponent },
-      { path: 'profile', component: StudentProfile }
+      { path: 'profile', component: StudentProfile },
+      { path: 'change-password', component: ChangePasswordStudent },
+      { path: 'notices', component: NoticesStudent },
+      { path: 'requests', component: RequestsStudent }
     ]
   },
 

@@ -1,10 +1,17 @@
 <nav class="navbar">
   <div class="logo" routerLink="/">
-    <span class="material-icons">local_library</span> 
+    <span class="material-icons">local_library</span>
     <span>BookNest</span>
   </div>
   <div class="nav-links">
-    <a routerLink="/login" class="btn-text">Login</a>
-    <a routerLink="/register" class="btn-primary">Get Started</a>
+
+    <a *ngIf="currentRoute !== '/login'" routerLink="/login" routerLinkActive="active-link" class="btn-text">
+      Login
+    </a>
+
+    <a *ngIf="currentRoute !== '/register'" routerLink="/register" class="btn-primary">
+      Get Started
+    </a>
+
   </div>
 </nav>

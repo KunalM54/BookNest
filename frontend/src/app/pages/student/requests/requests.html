@@ -1,1 +1,76 @@
-<p>requests works!</p>
+<div class="page-container">
+
+  <div class="page-header">
+    <h1 class="page-title">
+      <span class="material-icons page-icon">assignment</span>
+      My Book Requests
+    </h1>
+  </div>
+
+  <div class="card table-container">
+
+    <table>
+
+      <thead>
+        <tr>
+          <th>Book</th>
+          <th>Request Date</th>
+          <th>Status</th>
+          <th>Admin Action</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <tr *ngFor="let req of requests">
+
+          <td class="book-info">
+            <span class="material-icons book-icon">menu_book</span>
+            {{req.book}}
+          </td>
+
+          <td>{{req.requestDate}}</td>
+
+          <td>
+
+            <span
+              class="status-badge"
+              [ngClass]="{
+                'status-orange': req.status === 'Pending',
+                'status-green': req.status === 'Approved',
+                'status-red': req.status === 'Rejected'
+              }">
+
+              {{req.status}}
+
+            </span>
+
+          </td>
+
+          <td>{{req.actionDate}}</td>
+
+        </tr>
+
+        <!-- EMPTY STATE -->
+
+        <tr *ngIf="requests.length === 0">
+
+          <td colspan="4" class="empty-table">
+
+            <span class="material-icons empty-icon">
+              assignment
+            </span>
+
+            <p>No requests submitted</p>
+
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>

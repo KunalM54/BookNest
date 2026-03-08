@@ -10,7 +10,7 @@ describe('ChangePassword', () => {
     await TestBed.configureTestingModule({
       imports: [ChangePassword]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(ChangePassword);
     component = fixture.componentInstance;

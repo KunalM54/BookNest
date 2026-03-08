@@ -1,37 +1,86 @@
 <div class="page-container">
+
   <div class="page-header">
-    <h1 class="page-title">My Books ({{ borrowedBooks.length }})</h1>
+    <h1 class="page-title">
+      <span class="material-icons page-icon">menu_book</span>
+      My Books ({{ borrowedBooks.length }})
+    </h1>
   </div>
 
   <div class="card table-container">
+
     <table>
+
       <thead>
         <tr>
-          <th>Book Title</th>
+          <th>Book</th>
           <th>Author</th>
-          <th>Borrowed Date</th>
+          <th>Borrowed</th>
           <th>Due Date</th>
           <th>Status</th>
           <th>Action</th>
         </tr>
       </thead>
+
       <tbody>
+
         <tr *ngFor="let book of borrowedBooks">
-          <td class="fw-bold">{{book.title}}</td>
+
+          <td class="book-info">
+            <span class="material-icons book-icon">menu_book</span>
+            {{book.title}}
+          </td>
+
           <td>{{book.author}}</td>
+
           <td>{{book.borrowDate}}</td>
+
           <td>{{book.dueDate}}</td>
+
           <td>
-            <span class="status-badge" 
+            <span class="status-badge"
               [ngClass]="book.isOverdue ? 'status-red' : 'status-green'">
+
+              <span class="material-icons status-icon">
+                {{ book.isOverdue ? 'error' : 'check_circle' }}
+              </span>
+
               {{book.isOverdue ? 'Overdue' : 'Active'}}
+
             </span>
           </td>
+
           <td>
-             <button class="action-btn" title="Return Book">↩️ Return</button>
+
+            <button
+            class="return-btn"
+            (click)="returnBook(book)">
+
+            <span class="material-icons">keyboard_return</span>
+
+            Return
+
+            </button>
+
+          </td>
+
+        </tr>
+
+        <!-- Empty State -->
+        <tr *ngIf="borrowedBooks.length === 0">
+          <td colspan="6" class="empty-table">
+
+            <span class="material-icons empty-icon">menu_book</span>
+
+            <p>No borrowed books</p>
+
           </td>
         </tr>
+
       </tbody>
+
     </table>
+
   </div>
+
 </div>

@@ -1,0 +1,85 @@
+/* TABLE CONTAINER */
+
+.table-container{
+overflow-x:auto;
+}
+
+/* TABLE */
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+thead{
+background:#f9fafb;
+}
+
+th{
+text-align:left;
+padding:12px;
+font-size:0.85rem;
+color:#6b7280;
+border-bottom:1px solid #e5e7eb;
+}
+
+td{
+padding:14px 12px;
+border-bottom:1px solid #f3f4f6;
+font-size:0.95rem;
+color:#374151;
+}
+
+/* BOOK CELL */
+
+.book-info{
+display:flex;
+align-items:center;
+gap:8px;
+font-weight:500;
+}
+
+.book-icon{
+font-size:18px;
+color:#9ca3af;
+}
+
+/* STATUS BADGE */
+
+.status-badge{
+padding:4px 10px;
+border-radius:20px;
+font-size:0.75rem;
+font-weight:600;
+}
+
+/* COLORS */
+
+.status-orange{
+background:#fef3c7;
+color:#d97706;
+}
+
+.status-green{
+background:#d1fae5;
+color:#059669;
+}
+
+.status-red{
+background:#fee2e2;
+color:#dc2626;
+}
+
+/* EMPTY STATE */
+
+.empty-table{
+text-align:center;
+padding:30px;
+color:#9ca3af;
+}
+
+.empty-icon{
+font-size:36px;
+display:block;
+margin-bottom:5px;
+}

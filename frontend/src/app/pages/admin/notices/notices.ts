@@ -10,20 +10,53 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./notices.css']
 })
 export class NoticesComponent {
-  
+
   // Variables to handle form data
   noticeTitle: string = '';
   noticeMessage: string = '';
-  
+
   // Track editing state
   isEditing: boolean = false;
   currentNoticeId: number | null = null;
 
   // Mock Data
   notices = [
-    { id: 1, title: 'Library Maintenance', date: 'Oct 25, 2023', message: 'The library server will be down for maintenance on Sunday.' },
-    { id: 2, title: 'New Books Arrival', date: 'Oct 20, 2023', message: 'We have added 50 new books to the Science section.' }
+    {
+      id: 1,
+      title: 'Library Maintenance',
+      date: 'Oct 25, 2023',
+      time: '10:30 AM',
+      message: 'The library server will be down for maintenance on Sunday.'
+    },
+    {
+      id: 2,
+      title: 'New Books Arrival',
+      date: 'Oct 20, 2023',
+      time: '03:45 PM',
+      message: 'We have added 50 new books to the Science section.'
+    }
   ];
+
+  confirmDeleteId: number | null = null;
+
+  openDeleteDialog(id: number) {
+    this.confirmDeleteId = id;
+  }
+
+  closeDeleteDialog() {
+    this.confirmDeleteId = null;
+  }
+
+  deleteNotice() {
+
+    if (this.confirmDeleteId === null) return;
+
+    this.notices = this.notices.filter(
+      n => n.id !== this.confirmDeleteId
+    );
+
+    this.confirmDeleteId = null;
+  }
 
   // 1. Handle Submit (Create OR Update)
   onSubmit() {
@@ -41,12 +74,25 @@ export class NoticesComponent {
       this.currentNoticeId = null;
     } else {
       // CREATE NEW NOTICE
+      // CREATE NEW NOTICE
+      const now = new Date();
+
       const newNotice = {
-        id: Date.now(), // Generate unique ID
+        id: Date.now(),
         title: this.noticeTitle,
         message: this.noticeMessage,
-        date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        date: now.toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric'
+        }),
+        time: now.toLocaleTimeString('en-US', {
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true
+        })
       };
+
       this.notices.unshift(newNotice); // Add to top of list
     }
 
@@ -65,7 +111,7 @@ export class NoticesComponent {
 
   // 3. Delete Notice
   onDelete(id: number) {
-    if(confirm('Are you sure you want to delete this notice?')) {
+    if (confirm('Are you sure you want to delete this notice?')) {
       this.notices = this.notices.filter(n => n.id !== id);
     }
   }

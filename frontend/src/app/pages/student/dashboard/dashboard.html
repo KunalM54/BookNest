@@ -1,10 +1,13 @@
 <div class="dashboard-container">
-  
+
   <!-- WELCOME BANNER -->
   <div class="welcome-banner">
     <div class="banner-text">
-      <h2>Welcome back, John! 👋</h2>
-      <p>You have <strong>1 book</strong> due this week. Happy reading!</p>
+      <h2 class="welcome-title">
+        <span class="material-icons welcome-icon">waving_hand</span>
+        Welcome back, {{ studentName }}!
+      </h2>
+      <p>You have <strong>{{ dueSoonCount }}</strong> book due this week. Happy reading!</p>
     </div>
     <div class="banner-img">
       <span class="material-icons logo-icon">import_contacts</span>
@@ -25,14 +28,14 @@
   </div>
 
   <div class="content-split">
-    
+
     <!-- CURRENT BOOKS TABLE -->
     <div class="section-card table-section">
       <div class="section-header">
         <h3>Currently Borrowed</h3>
         <button class="view-all-btn" routerLink="/student/my-books">View All</button>
       </div>
-      
+
       <table class="custom-table">
         <thead>
           <tr>
@@ -43,6 +46,8 @@
           </tr>
         </thead>
         <tbody>
+
+          <!-- BOOK ROWS -->
           <tr *ngFor="let book of currentBooks">
             <td>
               <div class="book-info">
@@ -53,11 +58,20 @@
             <td>{{ book.author }}</td>
             <td>{{ book.due }}</td>
             <td>
-              <span class="status-badge" [class.danger]="book.status === 'Due Soon'" [class.success]="book.status === 'Safe'">
+              <span class="status-badge" [class.danger]="book.status === 'Due Soon'"
+                [class.success]="book.status === 'Safe'">
                 {{ book.status }}
               </span>
             </td>
           </tr>
+
+          <!-- EMPTY STATE -->
+          <tr *ngIf="currentBooks.length === 0">
+            <td colspan="4" class="empty-table">
+              No books currently borrowed
+            </td>
+          </tr>
+
         </tbody>
       </table>
     </div>
@@ -66,7 +80,7 @@
     <div class="section-card actions-section">
       <h3>Quick Actions</h3>
       <div class="action-grid">
-        <button class="action-btn primary" routerLink="/student/browse-books">
+        <button class="action-btn primary" routerLink="/student/browse">
           <span class="material-icons">search</span>
           Browse Library
         </button>

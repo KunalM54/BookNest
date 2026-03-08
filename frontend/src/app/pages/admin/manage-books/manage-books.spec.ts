@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ManageBooks } from './manage-books';
+import { ManageBooksComponent } from './manage-books';
 
 describe('ManageBooks', () => {
-  let component: ManageBooks;
-  let fixture: ComponentFixture<ManageBooks>;
+  let component: ManageBooksComponent;
+  let fixture: ComponentFixture<ManageBooksComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ManageBooks]
+      imports: [ManageBooksComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ManageBooks);
+    fixture = TestBed.createComponent(ManageBooksComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

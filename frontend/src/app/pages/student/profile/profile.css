@@ -1,135 +1,242 @@
-/* --- LAYOUT GRID --- */
-.profile-grid {
-  display: grid;
-  grid-template-columns: 320px 1fr; /* Left card fixed width, Right card flexible */
-  gap: 2rem;
-  align-items: start;
+/* ===============================
+   PROFILE PAGE LAYOUT
+================================ */
+
+.profile-grid{
+display:grid;
+grid-template-columns:320px 1fr;
+gap:24px;
+align-items:start;
 }
 
-/* --- LEFT CARD (Identity) --- */
-.profile-card {
-  text-align: center;
-  padding: 2.5rem 1.5rem;
+/* ===============================
+   LEFT PROFILE CARD
+================================ */
+
+.profile-card{
+padding:32px 24px;
+text-align:center;
 }
 
-.avatar-large {
-  width: 110px;
-  height: 110px;
-  background-color: #2563eb;
-  color: white;
-  border-radius: 50%;
-  font-size: 2.5rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 1.5rem auto;
-  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+/* Avatar */
+
+.avatar-large{
+width:100px;
+height:100px;
+background:#2563eb;
+color:white;
+border-radius:50%;
+font-size:34px;
+font-weight:600;
+display:flex;
+align-items:center;
+justify-content:center;
+margin:0 auto 18px auto;
+box-shadow:0 6px 14px rgba(37,99,235,0.25);
 }
 
-.profile-card h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #1f2937;
-  margin-bottom: 0.5rem;
+/* Name */
+
+.profile-card h2{
+font-size:1.6rem;
+font-weight:700;
+color:#1f2937;
+margin-bottom:6px;
 }
 
-/* Stats Row */
-.stats-row {
-  display: flex;
-  justify-content: center;
-  gap: 3rem;
-  margin-top: 2rem;
-  border-top: 1px solid #e5e7eb;
-  padding-top: 1.5rem;
+/* Course text */
+
+.text-muted{
+color:#6b7280;
+font-size:0.95rem;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:6px;
 }
 
-.stats-row div {
-  display: flex;
-  flex-direction: column;
+/* ===============================
+   STATS (READ / BORROW)
+================================ */
+
+.stats-row{
+display:flex;
+justify-content:center;
+gap:40px;
+margin-top:22px;
+border-top:1px solid #e5e7eb;
+padding-top:18px;
 }
 
-.stats-row strong { font-size: 1.4rem; color: #1f2937; }
-.stats-row span { font-size: 0.9rem; color: #6b7280; }
-
-
-/* --- RIGHT CARD (Form Details) --- */
-.details-card {
-  padding: 2rem;
+.stat-box{
+display:flex;
+flex-direction:column;
+align-items:center;
 }
 
-.details-card h3 {
-  font-size: 1.25rem;
-  color: #1f2937;
-  margin-bottom: 1.5rem;
-  font-weight: 700;
+.stat-box strong{
+font-size:1.4rem;
+color:#1f2937;
 }
 
-/* Form Layout */
-.form-group-row {
-  display: flex;
-  gap: 1.5rem; /* Space between side-by-side inputs */
-  margin-bottom: 1.5rem;
+.stat-box span{
+font-size:0.85rem;
+color:#6b7280;
 }
 
-.form-group {
-  flex: 1; /* Makes inputs take equal width */
-  display: flex;
-  flex-direction: column;
+/* ===============================
+   ACTION BUTTONS
+================================ */
+
+.profile-actions{
+margin-top:24px;
+display:flex;
+flex-direction:column;
+gap:12px;
 }
 
-.form-group label {
-  display: block;
-  margin-bottom: 0.6rem;
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: #374151;
+.action-btn{
+display:flex;
+align-items:center;
+gap:10px;
+padding:12px;
+border-radius:8px;
+border:none;
+cursor:pointer;
+font-size:0.9rem;
+font-weight:500;
+transition:0.2s;
 }
 
-/* --- THE FIX: INPUT STYLING --- */
-.form-control {
-  width: 100%;
-  padding: 12px 16px;       /* Adds comfortable padding inside */
-  border: 1px solid #d1d5db;
-  border-radius: 8px;       /* Rounded corners */
-  font-size: 0.95rem;
-  color: #1f2937;
-  background-color: #fff;
-  transition: all 0.2s ease;
-  outline: none;
-  height: 48px;             /* Fixed height for consistency */
+.action-btn.secondary{
+background:#eff6ff;
+color:#2563eb;
 }
 
-/* Input Focus State */
-.form-control:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+.action-btn.secondary:hover{
+background:#dbeafe;
 }
 
-/* Readonly Input Style (Grayed out) */
-.form-control[readonly] {
-  background-color: #f9fafb;
-  color: #6b7280;
-  cursor: not-allowed;
+.action-btn.outline{
+border:1px solid #e5e7eb;
+background:white;
+color:#374151;
 }
 
-/* Update Button */
-.btn-primary {
-  margin-top: 1rem;
-  padding: 12px 24px;
-  font-size: 1rem;
+.action-btn.outline:hover{
+border-color:#9ca3af;
 }
 
-/* --- RESPONSIVE --- */
-@media (max-width: 900px) {
-  .profile-grid {
-    grid-template-columns: 1fr; /* Stack cards vertically */
-  }
+/* ===============================
+   RIGHT FORM CARD
+================================ */
+
+.details-card{
+padding:30px;
 }
 
-@media (max-width: 600px) {
-  .form-group-row {
-    flex-direction: column; /* Stack inputs vertically on mobile */
-    gap: 1rem;
-  }
+/* Section Title */
+
+.details-card h3{
+display:flex;
+align-items:center;
+gap:8px;
+font-size:1.2rem;
+font-weight:700;
+color:#1f2937;
+margin-bottom:22px;
+}
+
+/* ===============================
+   FORM GROUP
+================================ */
+
+.form-group{
+display:flex;
+flex-direction:column;
+margin-bottom:18px;
+}
+
+.form-group label{
+font-size:0.9rem;
+font-weight:600;
+margin-bottom:6px;
+color:#374151;
+}
+
+/* Input Field */
+
+.form-control{
+width:100%;
+padding:12px 14px;
+border:1px solid #e5e7eb;
+border-radius:6px;
+font-size:0.95rem;
+outline:none;
+transition:0.2s;
+}
+
+.form-control:focus{
+border-color:#2563eb;
+box-shadow:0 0 0 3px rgba(37,99,235,0.1);
+}
+
+/* Readonly input */
+
+.form-control[readonly]{
+background:#f9fafb;
+color:#6b7280;
+cursor:not-allowed;
+}
+
+/* ===============================
+   UPDATE BUTTON
+================================ */
+
+.full-width{
+width:100%;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:8px;
+margin-top:12px;
+padding:14px;
+font-size:0.95rem;
+}
+
+/* ===============================
+   ICON STYLES
+================================ */
+
+.page-icon{
+color:#2563eb;
+margin-right:6px;
+}
+
+.section-icon{
+color:#2563eb;
+}
+
+.small-icon{
+font-size:16px;
+}
+
+/* ===============================
+   RESPONSIVE
+================================ */
+
+@media(max-width:900px){
+
+.profile-grid{
+grid-template-columns:1fr;
+}
+
+.profile-card{
+order:1;
+}
+
+.details-card{
+order:2;
+}
+
 }

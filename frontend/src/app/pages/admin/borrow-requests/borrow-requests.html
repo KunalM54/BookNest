@@ -1,10 +1,16 @@
 <div class="page-container">
+
   <div class="page-header">
-    <h1 class="page-title">Borrow Requests</h1>
+    <h1 class="page-title">
+      <span class="material-icons page-icon">assignment</span>
+      Borrow Requests
+    </h1>
   </div>
 
   <div class="card table-container">
-    <table>
+
+    <table class="custom-table">
+
       <thead>
         <tr>
           <th>Student</th>
@@ -14,28 +20,118 @@
           <th>Actions</th>
         </tr>
       </thead>
+
       <tbody>
+
         <tr *ngFor="let req of requests">
+
+          <!-- STUDENT -->
+
           <td>
             <div class="user-info">
-              <div class="avatar">{{req.studentName.charAt(0)}}</div>
+
+              <div class="avatar">
+                {{req.studentName.charAt(0)}}
+              </div>
+
               <div>
                 <div class="fw-bold">{{req.studentName}}</div>
                 <small class="text-muted">{{req.studentId}}</small>
               </div>
+
             </div>
           </td>
-          <td>{{req.bookTitle}}</td>
+
+          <!-- BOOK -->
+
+          <td>
+            <div class="book-info">
+              <span class="material-icons book-icon">menu_book</span>
+              {{req.bookTitle}}
+            </div>
+          </td>
+
+          <!-- DATE -->
+
           <td>{{req.date}}</td>
+
+          <!-- STATUS -->
+
           <td>
-            <span class="status-badge status-yellow">Pending</span>
+
+            <span class="status-badge pending" *ngIf="req.status === 'Pending'">
+              Pending
+            </span>
+
+            <span class="status-badge success" *ngIf="req.status === 'Approved'">
+              Approved
+            </span>
+
+            <span class="status-badge danger" *ngIf="req.status === 'Rejected'">
+              Rejected
+            </span>
+
           </td>
-          <td>
-            <button class="btn-icon accept" (click)="approve(req.id)">✓</button>
-            <button class="btn-icon reject" (click)="reject(req.id)">✕</button>
+
+          <!-- ACTIONS -->
+
+          <td class="action-buttons">
+
+            <ng-container *ngIf="req.status === 'Pending'">
+
+              <button class="btn-icon approve"
+                (click)="approve(req.id)"
+                title="Approve">
+
+                <span class="material-icons">check</span>
+
+              </button>
+
+              <button class="btn-icon reject"
+                (click)="reject(req.id)"
+                title="Reject">
+
+                <span class="material-icons">close</span>
+
+              </button>
+
+            </ng-container>
+
+
+            <ng-container *ngIf="req.status !== 'Pending'">
+
+              <button class="btn-icon remove"
+                (click)="remove(req.id)"
+                title="Remove">
+
+                <span class="material-icons">delete</span>
+
+              </button>
+
+            </ng-container>
+
           </td>
+
         </tr>
+
+        <!-- EMPTY STATE -->
+
+        <tr *ngIf="requests.length === 0">
+
+          <td colspan="5" class="empty-state">
+
+            <span class="material-icons empty-icon">check_circle</span>
+
+            No borrow requests
+
+          </td>
+
+        </tr>
+
       </tbody>
+
     </table>
+
   </div>
+
 </div>

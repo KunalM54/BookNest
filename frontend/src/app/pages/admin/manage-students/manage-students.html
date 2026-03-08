@@ -1,41 +1,181 @@
 <div class="page-container">
+
+  <!-- HEADER -->
+
   <div class="page-header">
-    <h1 class="page-title">Manage Students</h1>
-    <div class="search-box">
-        <input type="text" placeholder="Search students..." class="search-input">
-    </div>
+
+    <h1 class="page-title">
+      <span class="material-icons page-icon">group</span>
+      Manage Students
+    </h1>
+
+    <button class="btn-primary">
+      <span class="material-icons">person_add</span>
+      Add Student
+    </button>
+
   </div>
 
+
+  <!--Filtr the Students-->
+  <div class="card filter-card">
+
+    <div class="filters">
+
+      <div class="filter-group">
+        <label>Sort Name</label>
+        <select (change)="sortByName($event)">
+          <option value="">Default</option>
+          <option value="asc">Name A → Z</option>
+          <option value="desc">Name Z → A</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Borrow Count</label>
+        <select (change)="sortByBorrow($event)">
+          <option value="">Default</option>
+          <option value="asc">Lowest Borrowed</option>
+          <option value="desc">Highest Borrowed</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Status</label>
+        <select (change)="filterStatus($event)">
+          <option value="all">All Students</option>
+          <option value="active">Active</option>
+          <option value="blocked">Blocked</option>
+        </select>
+      </div>
+
+    </div>
+
+  </div>
+
+  
+  <!-- SEARCH -->
+
+  <div class="card search-card">
+
+    <div class="search-wrapper">
+
+      <span class="material-icons search-icon">search</span>
+
+      <input type="text" [(ngModel)]="searchTerm" placeholder="Search students..." class="search-input">
+
+    </div>
+
+  </div>
+
+
+  <!-- TABLE -->
+
   <div class="card table-container">
+
     <table>
+
       <thead>
         <tr>
-          <th>Name</th>
+          <th>Student</th>
           <th>Email</th>
           <th>Books Borrowed</th>
           <th>Status</th>
-          <th>Action</th>
+          <th>Actions</th>
         </tr>
       </thead>
+
       <tbody>
-        <tr *ngFor="let student of students">
+
+        <tr *ngFor="let student of filteredStudents">
+
+          <!-- NAME -->
+
           <td>
-             <div class="fw-bold">{{student.name}}</div>
+
+            <div class="student-info">
+
+              <div class="avatar">
+                {{student.name.charAt(0)}}
+              </div>
+
+              <div>
+                <div class="fw-bold">{{student.name}}</div>
+              </div>
+
+            </div>
+
           </td>
+
+          <!-- EMAIL -->
+
           <td>{{student.email}}</td>
+
+          <!-- BORROW COUNT -->
+
           <td>{{student.borrowedCount}}</td>
+
+          <!-- STATUS -->
+
           <td>
+
             <span class="status-badge" [ngClass]="student.active ? 'status-green' : 'status-red'">
+
               {{student.active ? 'Active' : 'Blocked'}}
+
             </span>
+
           </td>
+
+          <!-- ACTIONS -->
+
           <td>
-            <button class="action-btn" title="View Details">👁️</button>
-            <button *ngIf="student.active" class="action-btn text-red" title="Block User">🚫</button>
-            <button *ngIf="!student.active" class="action-btn text-green" title="Activate User">✅</button>
+
+            <button class="action-btn view" (click)="viewStudent(student)" title="View Details">
+
+              <span class="material-icons">visibility</span>
+
+            </button>
+
+            <button *ngIf="student.active" class="action-btn block" (click)="blockStudent(student)"
+              title="Block Student">
+
+              <span class="material-icons">block</span>
+
+            </button>
+
+            <button *ngIf="!student.active" class="action-btn activate" (click)="activateStudent(student)"
+              title="Activate Student">
+
+              <span class="material-icons">check_circle</span>
+
+            </button>
+
           </td>
+
         </tr>
+
+
+        <!-- EMPTY -->
+
+        <tr *ngIf="filteredStudents.length === 0">
+
+          <td colspan="5" class="empty-state">
+
+            <span class="material-icons empty-icon">
+              group_off
+            </span>
+
+            No students found
+
+          </td>
+
+        </tr>
+
       </tbody>
+
     </table>
+
   </div>
+
 </div>

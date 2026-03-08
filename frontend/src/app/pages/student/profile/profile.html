@@ -1,61 +1,113 @@
 <div class="page-container">
+
   <div class="page-header">
-    <h1 class="page-title">My Profile</h1>
+    <h1 class="page-title">
+      <span class="material-icons page-icon">person</span>
+      My Profile
+    </h1>
   </div>
 
   <div class="profile-grid">
-    
-    <!-- Left: Profile Card -->
+
+    <!-- LEFT PROFILE CARD -->
+
     <div class="card profile-card center-text">
-      <div class="avatar-large">JD</div>
-      <h2>John Doe</h2>
-      <p class="text-muted">Computer Science • Year 3</p>
+
+      <div class="avatar-large">
+        {{ initials }}
+      </div>
+
+      <h2>{{student.name}}</h2>
+
+      <p class="text-muted">
+        <span class="material-icons small-icon">school</span>
+        Computer Science • Year 3
+      </p>
+
       <div class="stats-row">
-        <div>
-          <strong>14</strong>
+
+        <div class="stat-box">
+          <strong>{{student.read}}</strong>
           <span>Read</span>
         </div>
-        <div>
-          <strong>2</strong>
+
+        <div class="stat-box">
+          <strong>{{student.borrowed}}</strong>
           <span>Borrowed</span>
         </div>
+
       </div>
+
+      <!-- Quick Actions -->
+
+      <div class="profile-actions">
+
+        <button class="action-btn secondary" routerLink="/student/change-password">
+          <span class="material-icons">lock</span>
+          Change Password
+        </button>
+
+        <button class="action-btn outline" routerLink="/student/notices">
+          <span class="material-icons">campaign</span>
+          Notices
+        </button>
+
+        <button class="action-btn outline" routerLink="/student/requests">
+          <span class="material-icons">assignment</span>
+          My Requests
+        </button>
+      </div>
+
     </div>
 
-    <!-- Right: Details Form -->
+
+    <!-- RIGHT DETAILS CARD -->
+
     <div class="card details-card">
-      <h3>Personal Details</h3>
+
+      <h3>
+        <span class="material-icons section-icon">badge</span>
+        Personal Details
+      </h3>
+
       <form>
-        <div class="form-group-row">
-          <div class="form-group">
-            <label>Full Name</label>
-            <input type="text" value="John Doe" class="form-control" readonly>
-          </div>
-          <div class="form-group">
-            <label>Student ID</label>
-            <input type="text" value="S10239" class="form-control" readonly>
-          </div>
+
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" [value]="student.name" class="form-control" readonly>
         </div>
-        
-        <div class="form-group-row">
-          <div class="form-group">
-            <label>Email Address</label>
-            <input type="email" value="john.doe@example.com" class="form-control" readonly>
-          </div>
-          <div class="form-group">
-            <label>Phone Number</label>
-            <input type="text" value="+1 234 567 890" class="form-control">
-          </div>
+
+        <div class="form-group">
+          <label>Student ID</label>
+          <input type="text" [value]="student.id" class="form-control" readonly>
+        </div>
+
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" [value]="student.email" class="form-control" readonly>
+        </div>
+
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="text" [(ngModel)]="student.phone" name="phone" class="form-control">
         </div>
 
         <div class="form-group">
           <label>Department</label>
-          <input type="text" value="Computer Science & Engineering" class="form-control" readonly>
+          <input type="text" [value]="student.department" class="form-control" readonly>
         </div>
 
-        <button class="btn-primary" style="margin-top: 1rem;">Update Profile</button>
+        <button type="button" class="btn-primary full-width" (click)="updateProfile()">
+
+          <span class="material-icons">save</span>
+          Update Profile
+
+        </button>
+
       </form>
+
     </div>
 
   </div>
+
 </div>

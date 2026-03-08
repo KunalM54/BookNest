@@ -10,7 +10,7 @@ import { RouterLink } from '@angular/router';
   styleUrls: ['./dashboard.css']
 })
 export class DashboardComponent {
-  
+
   // 1. Stats Data
   stats = [
     { title: 'Total Books', value: '1,240', icon: 'library_books', color: 'blue' },
@@ -27,13 +27,33 @@ export class DashboardComponent {
   ];
 
   // Action Methods (Placeholder)
-  approveRequest(id: number) {
-    console.log(`Approved request ${id}`);
-    this.requests = this.requests.filter(r => r.id !== id); // Remove from list for UI effect
+ approveRequest(id: number) {
+
+  const req = this.requests.find(r => r.id === id);
+
+  if (req) {
+    req.status = "Approved";
   }
 
-  rejectRequest(id: number) {
-    console.log(`Rejected request ${id}`);
-    this.requests = this.requests.filter(r => r.id !== id);
+}
+
+rejectRequest(id: number) {
+
+  const req = this.requests.find(r => r.id === id);
+
+  if (req) {
+    req.status = "Rejected";
+  }
+
+}
+
+removeRequest(id: number) {
+
+  this.requests = this.requests.filter(r => r.id !== id);
+
+}
+
+  get pendingRequests() {
+    return this.requests.filter(r => r.status === 'Pending').length;
   }
 }
