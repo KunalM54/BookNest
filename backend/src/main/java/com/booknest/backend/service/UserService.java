@@ -1,9 +1,11 @@
 package com.booknest.backend.service;
 
 import com.booknest.backend.dto.AuthResponse;
+import com.booknest.backend.dto.LoginRequest;
 import com.booknest.backend.dto.RegisterRequest;
 import com.booknest.backend.model.User;
 import com.booknest.backend.repository.UserRepository;
+import com.booknest.backend.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,7 +17,14 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    // Admin credentials (hardcoded for demo)
+    private static final String ADMIN_EMAIL = "admin@booknest.com";
+    private static final String ADMIN_PASSWORD = "admin123";
 
     public AuthResponse register(RegisterRequest request) {
         // Validate input
@@ -61,6 +70,41 @@ public class UserService {
         userRepository.save(user);
 
         return new AuthResponse("Registration successful", true);
+    }
+
+    public AuthResponse login(LoginRequest request) {
+        // Validate input
+        if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
+            return new AuthResponse("Email is required", false);
+        }
+
+        if (request.getPassword() == null || request.getPassword().trim().isEmpty()) {
+            return new AuthResponse("Password is required", false);
+        }
+
+        // Check for admin login
+        if (request.getEmail().equals(ADMIN_EMAIL) && request.getPassword().equals(ADMIN_PASSWORD)) {
+            String token = jwtUtil.generateToken(ADMIN_EMAIL, "ADMIN");
+            return new AuthResponse("Login successful", true, token, "Administrator", ADMIN_EMAIL, "ADMIN");
+        }
+
+        // Check if user exists
+        var userOpt = userRepository.findByEmail(request.getEmail());
+        if (userOpt.isEmpty()) {
+            return new AuthResponse("Invalid email or password", false);
+        }
+        
+        User user = userOpt.get();
+
+        // Verify password
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            return new AuthResponse("Invalid email or password", false);
+        }
+
+        // Generate token
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
+
+        return new AuthResponse("Login successful", true, token, user.getFullName(), user.getEmail(), user.getRole().name());
     }
 }
 

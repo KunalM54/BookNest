@@ -24,7 +24,9 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .httpBasic(basic -> basic.disable())
-            .formLogin(form -> form.disable());
+            .formLogin(form -> form.disable())
+            .securityContext(context -> context.disable())
+            .anonymous(anonymous -> anonymous.disable());
         
         return http.build();
     }

@@ -5,7 +5,56 @@ import { Injectable } from '@angular/core';
 })
 export class AuthService {
 
+  constructor() { }
+
+  // Save token to localStorage
+  saveToken(token: string): void {
+    localStorage.setItem('token', token);
+  }
+
+  // Get token from localStorage
+  getToken(): string | null {
+    return localStorage.getItem('token');
+  }
+
+  // Save user info to localStorage
+  saveUser(user: { fullName: string; email: string; role: string }): void {
+    localStorage.setItem('user', JSON.stringify(user));
+  }
+
+  // Get user info from localStorage
+  getUser(): { fullName: string; email: string; role: string } | null {
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      return JSON.parse(userStr);
+    }
+    return null;
+  }
+
+  // Check if user is logged in
   isLoggedIn(): boolean {
     return !!localStorage.getItem('token');
+  }
+
+  // Get user role
+  getUserRole(): string | null {
+    const user = this.getUser();
+    return user ? user.role : null;
+  }
+
+  // Check if user is admin
+  isAdmin(): boolean {
+    return this.getUserRole() === 'ADMIN';
+  }
+
+  // Check if user is student
+  isStudent(): boolean {
+    return this.getUserRole() === 'STUDENT';
+  }
+
+  // Logout - clear all storage
+  logout(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
   }
 }
