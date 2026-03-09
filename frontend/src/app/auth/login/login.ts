@@ -2,14 +2,13 @@ import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms'; // Required for ngModel
 import { CommonModule } from '@angular/common';
-import { LottieComponent } from 'ngx-lottie';
 import { NavbarComponent } from '../../components/navbar/navbar';
 import { FooterComponent } from '../../components/footer/footer';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, CommonModule, RouterLink, NavbarComponent, FooterComponent, LottieComponent],
+  imports: [FormsModule, CommonModule, RouterLink, NavbarComponent, FooterComponent],
   templateUrl: './login.html',
   styleUrls: ['./login.css']
 })

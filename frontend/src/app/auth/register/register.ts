@@ -2,14 +2,15 @@ import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { LottieComponent } from 'ngx-lottie';
+import { HttpClientModule } from '@angular/common/http';
 import { NavbarComponent } from '../../components/navbar/navbar';
 import { FooterComponent } from '../../components/footer/footer';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [FormsModule, CommonModule, RouterLink, NavbarComponent, FooterComponent, LottieComponent],
+  imports: [FormsModule, CommonModule, RouterLink, NavbarComponent, FooterComponent, HttpClientModule],
   templateUrl: './register.html',
   styleUrls: ['./register.css']
 })
@@ -29,7 +30,7 @@ export class Register {
   isLoading = false;
   errorMessage = '';
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private http: HttpClient) { }
 
   togglePassword() {
     this.showPassword = !this.showPassword;
@@ -65,15 +66,23 @@ export class Register {
 
     this.isLoading = true;
 
-    setTimeout(() => {
-
-      console.log('Register Data:', this.registerData);
-
-      this.isLoading = false;
-
-      this.router.navigate(['/login']);
-
-    }, 1500);
+    // Call backend API
+    this.http.post<any>('http://localhost:8080/api/auth/register', this.registerData)
+      .subscribe({
+        next: (response) => {
+          this.isLoading = false;
+          if (response.success) {
+            // Registration successful, redirect to login
+            this.router.navigate(['/login']);
+          } else {
+            this.errorMessage = response.message || "Registration failed.";
+          }
+        },
+        error: (error) => {
+          this.isLoading = false;
+          this.errorMessage = error.error?.message || "An error occurred during registration.";
+        }
+      });
 
   }
 
