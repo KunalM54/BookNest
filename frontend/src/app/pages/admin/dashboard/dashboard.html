@@ -14,13 +14,40 @@
 
   <!-- 2. STATS GRID -->
   <div class="stats-grid">
-    <div class="stat-card" *ngFor="let stat of stats" [ngClass]="stat.color">
+    <div class="stat-card blue">
       <div class="stat-icon-bg">
-        <span class="material-icons">{{ stat.icon }}</span>
+        <span class="material-icons">library_books</span>
       </div>
       <div class="stat-info">
-        <h3>{{ stat.value }}</h3>
-        <p>{{ stat.title }}</p>
+        <h3>{{ stats.totalBooks }}</h3>
+        <p>Total Books</p>
+      </div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-icon-bg">
+        <span class="material-icons">group</span>
+      </div>
+      <div class="stat-info">
+        <h3>{{ stats.activeMembers }}</h3>
+        <p>Active Members</p>
+      </div>
+    </div>
+    <div class="stat-card orange">
+      <div class="stat-icon-bg">
+        <span class="material-icons">menu_book</span>
+      </div>
+      <div class="stat-info">
+        <h3>{{ stats.booksIssued }}</h3>
+        <p>Books Issued</p>
+      </div>
+    </div>
+    <div class="stat-card red">
+      <div class="stat-icon-bg">
+        <span class="material-icons">warning</span>
+      </div>
+      <div class="stat-info">
+        <h3>{{ stats.overdueBooks }}</h3>
+        <p>Overdue Books</p>
       </div>
     </div>
   </div>
@@ -49,22 +76,22 @@
             <td>
               <div class="student-info">
                 <span class="material-icons avatar-icon">account_circle</span>
-                {{ req.student }}
+                {{ req.studentName }}
               </div>
             </td>
-            <td>{{ req.book }}</td>
-            <td>{{ req.date }}</td>
+            <td>{{ req.bookTitle }}</td>
+            <td>{{ req.requestDate }}</td>
 
             <td>
-              <span class="status-badge pending" *ngIf="req.status === 'Pending'">
+              <span class="status-badge pending" *ngIf="req.status === 'PENDING'">
                 Pending
               </span>
 
-              <span class="status-badge success" *ngIf="req.status === 'Approved'">
+              <span class="status-badge success" *ngIf="req.status === 'APPROVED'">
                 Approved
               </span>
 
-              <span class="status-badge danger" *ngIf="req.status === 'Rejected'">
+              <span class="status-badge danger" *ngIf="req.status === 'REJECTED'">
                 Rejected
               </span>
             </td>
@@ -73,7 +100,7 @@
 
               <!-- PENDING ACTIONS -->
 
-              <ng-container *ngIf="req.status === 'Pending'">
+              <ng-container *ngIf="req.status === 'PENDING'">
 
                 <button class="btn-icon approve" (click)="approveRequest(req.id)" title="Approve">
 
@@ -92,7 +119,7 @@
 
               <!-- CLOSE BUTTON AFTER ACTION -->
 
-              <ng-container *ngIf="req.status !== 'Pending'">
+              <ng-container *ngIf="req.status !== 'PENDING'">
 
                 <button class="btn-icon remove" (click)="removeRequest(req.id)" title="Remove">
 

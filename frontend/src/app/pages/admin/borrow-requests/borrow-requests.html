@@ -36,7 +36,7 @@
 
               <div>
                 <div class="fw-bold">{{req.studentName}}</div>
-                <small class="text-muted">{{req.studentId}}</small>
+                <small class="text-muted">{{req.studentIdNumber}}</small>
               </div>
 
             </div>
@@ -53,21 +53,21 @@
 
           <!-- DATE -->
 
-          <td>{{req.date}}</td>
+          <td>{{req.requestDate}}</td>
 
           <!-- STATUS -->
 
           <td>
 
-            <span class="status-badge pending" *ngIf="req.status === 'Pending'">
+            <span class="status-badge pending" *ngIf="req.status === 'PENDING'">
               Pending
             </span>
 
-            <span class="status-badge success" *ngIf="req.status === 'Approved'">
+            <span class="status-badge success" *ngIf="req.status === 'APPROVED'">
               Approved
             </span>
 
-            <span class="status-badge danger" *ngIf="req.status === 'Rejected'">
+            <span class="status-badge danger" *ngIf="req.status === 'REJECTED'">
               Rejected
             </span>
 
@@ -77,7 +77,7 @@
 
           <td class="action-buttons">
 
-            <ng-container *ngIf="req.status === 'Pending'">
+            <ng-container *ngIf="req.status === 'PENDING'">
 
               <button class="btn-icon approve"
                 (click)="approve(req.id)"
@@ -98,7 +98,7 @@
             </ng-container>
 
 
-            <ng-container *ngIf="req.status !== 'Pending'">
+            <ng-container *ngIf="req.status !== 'PENDING'">
 
               <button class="btn-icon remove"
                 (click)="remove(req.id)"

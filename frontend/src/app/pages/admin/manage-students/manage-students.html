@@ -1,27 +1,16 @@
 <div class="page-container">
 
   <!-- HEADER -->
-
   <div class="page-header">
-
     <h1 class="page-title">
       <span class="material-icons page-icon">group</span>
       Manage Students
     </h1>
-
-    <button class="btn-primary">
-      <span class="material-icons">person_add</span>
-      Add Student
-    </button>
-
   </div>
-
 
   <!--Filtr the Students-->
   <div class="card filter-card">
-
     <div class="filters">
-
       <div class="filter-group">
         <label>Sort Name</label>
         <select (change)="sortByName($event)">
@@ -30,7 +19,6 @@
           <option value="desc">Name Z → A</option>
         </select>
       </div>
-
       <div class="filter-group">
         <label>Borrow Count</label>
         <select (change)="sortByBorrow($event)">
@@ -39,7 +27,6 @@
           <option value="desc">Highest Borrowed</option>
         </select>
       </div>
-
       <div class="filter-group">
         <label>Status</label>
         <select (change)="filterStatus($event)">
@@ -48,134 +35,69 @@
           <option value="blocked">Blocked</option>
         </select>
       </div>
-
     </div>
-
   </div>
 
-  
   <!-- SEARCH -->
-
   <div class="card search-card">
-
     <div class="search-wrapper">
-
       <span class="material-icons search-icon">search</span>
-
       <input type="text" [(ngModel)]="searchTerm" placeholder="Search students..." class="search-input">
-
     </div>
-
   </div>
-
 
   <!-- TABLE -->
-
   <div class="card table-container">
-
     <table>
-
       <thead>
         <tr>
           <th>Student</th>
           <th>Email</th>
+          <th>Student ID</th>
           <th>Books Borrowed</th>
           <th>Status</th>
           <th>Actions</th>
         </tr>
       </thead>
-
       <tbody>
-
         <tr *ngFor="let student of filteredStudents">
-
-          <!-- NAME -->
-
           <td>
-
             <div class="student-info">
-
-              <div class="avatar">
-                {{student.name.charAt(0)}}
-              </div>
-
+              <div class="avatar">{{student.fullName.charAt(0)}}</div>
               <div>
-                <div class="fw-bold">{{student.name}}</div>
+                <div class="fw-bold">{{student.fullName}}</div>
               </div>
-
             </div>
-
           </td>
-
-          <!-- EMAIL -->
-
           <td>{{student.email}}</td>
-
-          <!-- BORROW COUNT -->
-
+          <td>{{student.studentId}}</td>
           <td>{{student.borrowedCount}}</td>
-
-          <!-- STATUS -->
-
           <td>
-
             <span class="status-badge" [ngClass]="student.active ? 'status-green' : 'status-red'">
-
               {{student.active ? 'Active' : 'Blocked'}}
-
             </span>
-
           </td>
-
-          <!-- ACTIONS -->
-
           <td>
-
             <button class="action-btn view" (click)="viewStudent(student)" title="View Details">
-
               <span class="material-icons">visibility</span>
-
             </button>
-
-            <button *ngIf="student.active" class="action-btn block" (click)="blockStudent(student)"
-              title="Block Student">
-
+            <button *ngIf="student.active" class="action-btn block" (click)="blockStudent(student)" title="Block Student">
               <span class="material-icons">block</span>
-
             </button>
-
-            <button *ngIf="!student.active" class="action-btn activate" (click)="activateStudent(student)"
-              title="Activate Student">
-
+            <button *ngIf="!student.active" class="action-btn activate" (click)="activateStudent(student)" title="Activate Student">
               <span class="material-icons">check_circle</span>
-
             </button>
-
           </td>
-
         </tr>
-
-
-        <!-- EMPTY -->
-
         <tr *ngIf="filteredStudents.length === 0">
-
-          <td colspan="5" class="empty-state">
-
-            <span class="material-icons empty-icon">
-              group_off
-            </span>
-
+          <td colspan="6" class="empty-state">
+            <span class="material-icons empty-icon">group_off</span>
             No students found
-
           </td>
-
         </tr>
-
       </tbody>
-
     </table>
-
   </div>
 
 </div>
+

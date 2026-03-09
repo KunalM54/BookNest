@@ -7,16 +7,14 @@
       Manage Books
     </h1>
 
-    <button class="btn-primary">
+    <button class="btn-primary" (click)="openAddModal()">
       <span class="material-icons">add</span>
       Add New Book
     </button>
 
   </div>
 
-
   <!-- SEARCH -->
-
   <div class="card search-card">
 
     <div class="search-wrapper">
@@ -26,13 +24,13 @@
       <input
         type="text"
         [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearchChange()"
         placeholder="Search by title, author, or ISBN..."
         class="search-input">
 
     </div>
 
     <!-- CATEGORY FILTER -->
-
     <div class="categories">
 
       <button
@@ -47,11 +45,17 @@
 
     </div>
 
+  <!-- Error Message -->
+  <div class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
   </div>
 
+  <!-- Loading -->
+  <div class="loading" *ngIf="isLoading">
+    Loading...
+  </div>
 
   <!-- BOOK TABLE -->
-
   <div class="card table-container">
 
     <table>
@@ -77,13 +81,10 @@
           </td>
 
           <td>
-
             <div class="fw-bold">{{book.title}}</div>
-
             <small class="text-muted">
               ISBN: {{book.isbn}}
             </small>
-
           </td>
 
           <td>{{book.author}}</td>
@@ -93,45 +94,33 @@
           <td>{{book.availableCopies}} / {{book.totalCopies}}</td>
 
           <td>
-
             <span
               class="status-badge"
               [ngClass]="book.availableCopies > 0 ? 'status-green' : 'status-red'">
-
               {{book.availableCopies > 0 ? 'Available' : 'Out of Stock'}}
-
             </span>
-
           </td>
 
           <td>
-
             <button
               class="action-btn edit"
-              (click)="editBook(book)"
+              (click)="openEditModal(book)"
               title="Edit">
-
               <span class="material-icons">edit</span>
-
             </button>
 
             <button
               class="action-btn delete"
-              (click)="deleteBook(book.isbn)"
+              (click)="deleteBook(book.id)"
               title="Delete">
-
               <span class="material-icons">delete</span>
-
             </button>
-
           </td>
 
         </tr>
 
-
         <!-- EMPTY STATE -->
-
-        <tr *ngIf="filteredBooks.length === 0">
+        <tr *ngIf="filteredBooks.length === 0 && !isLoading">
 
           <td colspan="7" class="empty-state">
 
@@ -151,4 +140,105 @@
 
   </div>
 
-</div>
+<!-- ADD/EDIT MODAL -->
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    
+    <div class="modal-header">
+      <h2>{{ isEditMode ? 'Edit Book' : 'Add New Book' }}</h2>
+      <button class="close-btn" (click)="closeModal()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Title -->
+      <div class="form-group">
+        <label for="title">Title *</label>
+        <input 
+          type="text" 
+          id="title" 
+          [(ngModel)]="bookForm.title" 
+          name="title" 
+          required
+          class="form-control">
+      </div>
+
+      <!-- ISBN -->
+      <div class="form-group">
+        <label for="isbn">ISBN *</label>
+        <input 
+          type="text" 
+          id="isbn" 
+          [(ngModel)]="bookForm.isbn" 
+          name="isbn" 
+          [disabled]="isEditMode"
+          required
+          class="form-control">
+      </div>
+
+      <!-- Author -->
+      <div class="form-group">
+        <label for="author">Author *</label>
+        <input 
+          type="text" 
+          id="author" 
+          [(ngModel)]="bookForm.author" 
+          name="author" 
+          required
+          class="form-control">
+      </div>
+
+      <!-- Category -->
+      <div class="form-group">
+        <label for="category">Category *</label>
+        <select 
+          id="category" 
+          [(ngModel)]="bookForm.category" 
+          name="category" 
+          required
+          class="form-control">
+          <option value="">Select Category</option>
+          <option value="Technology">Technology</option>
+          <option value="Academic">Academic</option>
+          <option value="Science">Science</option>
+          <option value="Literature">Literature</option>
+          <option value="History">History</option>
+        </select>
+      </div>
+
+      <!-- Copies Row -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="totalCopies">Total Copies</label>
+          <input 
+            type="number" 
+            id="totalCopies" 
+            [(ngModel)]="bookForm.totalCopies" 
+            name="totalCopies" 
+            min="1"
+            class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label for="availableCopies">Available Copies</label>
+          <input 
+            type="number" 
+            id="availableCopies" 
+            [(ngModel)]="bookForm.availableCopies" 
+            name="availableCopies" 
+            min="0"
+            class="form-control">
+        </div>
+
+      <!-- Actions -->
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" (click)="closeModal()">
+          Cancel
+        </button>
+        <button type="button" class="btn-primary" (click)="saveBook()" [disabled]="isLoading">
+          {{ isEditMode ? 'Update' : 'Add' }} Book
+        </button>
+      </div>
+
+  </div>

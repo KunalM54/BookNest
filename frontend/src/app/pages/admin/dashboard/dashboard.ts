@@ -1,6 +1,29 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+
+interface BorrowRequest {
+  id: number;
+  studentId: number;
+  studentName: string;
+  studentIdNumber: string;
+  studentEmail: string;
+  bookId: number;
+  bookTitle: string;
+  bookIsbn: string;
+  requestDate: string;
+  dueDate: string | null;
+  returnDate: string | null;
+  status: string;
+}
+
+interface DashboardStats {
+  totalBooks: number;
+  activeMembers: number;
+  booksIssued: number;
+  overdueBooks: number;
+}
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -9,51 +32,89 @@ import { RouterLink } from '@angular/router';
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
 
-  // 1. Stats Data
-  stats = [
-    { title: 'Total Books', value: '1,240', icon: 'library_books', color: 'blue' },
-    { title: 'Active Members', value: '350', icon: 'group', color: 'green' },
-    { title: 'Books Issued', value: '128', icon: 'menu_book', color: 'orange' },
-    { title: 'Overdue Books', value: '12', icon: 'warning', color: 'red' }
-  ];
+  stats: DashboardStats = {
+    totalBooks: 0,
+    activeMembers: 0,
+    booksIssued: 0,
+    overdueBooks: 0
+  };
+  
+  requests: BorrowRequest[] = [];
 
-  // 2. Recent Borrow Requests (Mock Data)
-  requests = [
-    { id: 101, student: 'John Doe', book: 'Clean Code', date: 'Oct 24, 2023', status: 'Pending' },
-    { id: 102, student: 'Jane Smith', book: 'Data Structures', date: 'Oct 23, 2023', status: 'Pending' },
-    { id: 103, student: 'Mike Ross', book: 'The Pragmatic Programmer', date: 'Oct 22, 2023', status: 'Pending' }
-  ];
+  private apiUrl = 'http://localhost:8080/api/borrow';
 
-  // Action Methods (Placeholder)
- approveRequest(id: number) {
+  constructor(private http: HttpClient) { }
 
-  const req = this.requests.find(r => r.id === id);
-
-  if (req) {
-    req.status = "Approved";
+  ngOnInit() {
+    this.loadStats();
+    this.loadRecentRequests();
   }
 
-}
-
-rejectRequest(id: number) {
-
-  const req = this.requests.find(r => r.id === id);
-
-  if (req) {
-    req.status = "Rejected";
+  loadStats() {
+    this.http.get<DashboardStats>(`${this.apiUrl}/stats`).subscribe({
+      next: (data: DashboardStats) => {
+        this.stats = data;
+      },
+      error: (error: any) => {
+        console.error('Error loading stats:', error);
+      }
+    });
   }
 
-}
+  loadRecentRequests() {
+    this.http.get<BorrowRequest[]>(`${this.apiUrl}/recent?limit=5`).subscribe({
+      next: (data: BorrowRequest[]) => {
+        this.requests = data;
+      },
+      error: (error: any) => {
+        console.error('Error loading requests:', error);
+      }
+    });
+  }
 
-removeRequest(id: number) {
+  approveRequest(id: number) {
+    this.http.put<any>(`${this.apiUrl}/approve/${id}`, {}).subscribe({
+      next: (response: any) => {
+        if (response.success) {
+          this.loadRecentRequests();
+        }
+      },
+      error: (error: any) => {
+        console.error('Error approving request:', error);
+      }
+    });
+  }
 
-  this.requests = this.requests.filter(r => r.id !== id);
+  rejectRequest(id: number) {
+    this.http.put<any>(`${this.apiUrl}/reject/${id}`, {}).subscribe({
+      next: (response: any) => {
+        if (response.success) {
+          this.loadRecentRequests();
+        }
+      },
+      error: (error: any) => {
+        console.error('Error rejecting request:', error);
+      }
+    });
+  }
 
-}
+  removeRequest(id: number) {
+    this.http.delete<any>(`${this.apiUrl}/remove/${id}`).subscribe({
+      next: (response: any) => {
+        if (response.success) {
+          this.loadRecentRequests();
+        }
+      },
+      error: (error: any) => {
+        console.error('Error removing request:', error);
+      }
+    });
+  }
 
   get pendingRequests() {
-    return this.requests.filter(r => r.status === 'Pending').length;
+    return this.requests.filter(r => r.status === 'PENDING').length;
   }
 }
+

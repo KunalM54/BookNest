@@ -6,37 +6,31 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "users")
+@Table(name = "books")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class Book {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private String fullName;
-
-    @Column(name = "student_id", unique = true, nullable = false)
-    private String studentId;
+    private String title;
 
     @Column(unique = true, nullable = false)
-    private String email;
+    private String isbn;
 
     @Column(nullable = false)
-    private String password;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Role role;
+    private String author;
 
     @Column(nullable = false)
-    private boolean active = true;
+    private String category;
 
-    public enum Role {
-        STUDENT,
-        ADMIN
-    }
+    @Column(name = "total_copies", nullable = false)
+    private Integer totalCopies;
+
+    @Column(name = "available_copies", nullable = false)
+    private Integer availableCopies;
 }

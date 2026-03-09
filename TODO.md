@@ -1,11 +1,14 @@
-# Login Functionality Implementation
+# TODO - Backend Implementation
 
-## Tasks:
-- [x] 1. Create LoginRequest DTO in backend
-- [x] 2. Add login() method to UserService with JWT token generation
-- [x] 3. Add /login endpoint to AuthController
-- [x] 4. Update auth.ts service for token/user management
-- [x] 5. Update login.ts to call backend API and redirect based on role
+## Borrow Requests & Dashboard Backend
 
-## Status: Completed ✓
+### Completed:
+- [x] Remove Add Student button from manage-students page
+- [x] Create Borrow model/entity
+- [x] Create BorrowRepository
+- [x] Create BorrowService
+- [x] Create BorrowController
+- [x] Update frontend Borrow service to call backend
+- [x] Update borrow-requests frontend component
+- [x] Update dashboard frontend component
 
