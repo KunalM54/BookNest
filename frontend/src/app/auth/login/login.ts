@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { FormsModule } from '@angular/forms'; // Required for ngModel
+import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms'; // Required for ngModel
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NavbarComponent } from '../../components/navbar/navbar';
@@ -11,46 +11,62 @@ import { AuthService } from '../../services/auth';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, CommonModule, RouterLink, NavbarComponent, FooterComponent, HttpClientModule],
+  imports: [FormsModule, ReactiveFormsModule, CommonModule, RouterLink, NavbarComponent, FooterComponent, HttpClientModule],
   templateUrl: './login.html',
   styleUrls: ['./login.css']
 })
 export class LoginComponent {
 
-  credentials = {
-    email: '',
-    password: '',
-    rememberMe: false
-  };
-
-  constructor(private router: Router, private http: HttpClient, private authService: AuthService) { }
+  loginForm = new FormGroup({
+    email: new FormControl('', [Validators.required, Validators.email]),
+    password: new FormControl('', [Validators.required, Validators.minLength(6)])
+  });
 
   showPassword = false;
   isLoading = false;
   errorMessage = '';
+  submitted = false;
+  rememberMe = false;
+
+  constructor(private router: Router, private http: HttpClient, private authService: AuthService) { }
+
+  get email() {
+    return this.loginForm.get('email');
+  }
+
+  get password() {
+    return this.loginForm.get('password');
+  }
 
   onLogin() {
+    this.submitted = true;
+    this.errorMessage = '';
 
-    if (this.credentials.email.trim() === '' || this.credentials.password.trim() === '') {
-      this.errorMessage = "Email and password are required.";
+    if (this.loginForm.invalid) {
       return;
     }
 
+    const credentials = {
+      email: this.loginForm.value.email || '',
+      password: this.loginForm.value.password || '',
+      rememberMe: this.rememberMe
+    };
+
     this.isLoading = true;
-    this.errorMessage = '';
 
     // Call backend API
-    this.http.post<any>('http://localhost:8080/api/auth/login', this.credentials)
+    this.http.post<any>('http://localhost:8080/api/auth/login', credentials)
       .subscribe({
         next: (response) => {
           this.isLoading = false;
           if (response.success) {
-            // Save token and user info
+// Save token and user info
             this.authService.saveToken(response.token);
             this.authService.saveUser({
               fullName: response.fullName,
               email: response.email,
-              role: response.role
+              role: response.role,
+              userId: response.userId
             });
 
             // Redirect based on role

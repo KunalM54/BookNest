@@ -11,13 +11,13 @@
           {{ errorMessage }}
         </p>
 
-        <form (ngSubmit)="onLogin()">
+        <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
           <div class="input-group">
             <label for="email">Email</label>
-            <input type="email" id="email" name="email" [(ngModel)]="credentials.email" placeholder="Type your email"
-              required email #email="ngModel">
-            <p class="error-message" *ngIf="email.invalid && email.touched">
-              Please enter a valid email address.
+            <input type="email" id="email" formControlName="email" placeholder="Type your email">
+            <p class="error-message" *ngIf="email?.invalid && (email?.touched || submitted)">
+              <span *ngIf="email?.hasError('required')">Email is required.</span>
+              <span *ngIf="email?.hasError('email') && !email?.hasError('required')">Please enter a valid email address.</span>
             </p>
           </div>
 
@@ -25,9 +25,8 @@
             <label for="password">Password</label>
 
             <div class="password-field">
-              <input [type]="showPassword ? 'text' : 'password'" id="password" name="password"
-                [(ngModel)]="credentials.password" placeholder="Type your password" required minlength="6"
-                #password="ngModel">
+              <input [type]="showPassword ? 'text' : 'password'" id="password" formControlName="password"
+                placeholder="Type your password">
 
               <button type="button" class="eye-btn" (click)="togglePassword()">
 
@@ -42,14 +41,15 @@
               </button>
             </div>
 
-            <p class="error-message" *ngIf="password.invalid && password.touched">
-              Password must be at least 6 characters.
+            <p class="error-message" *ngIf="password?.invalid && (password?.touched || submitted)">
+              <span *ngIf="password?.hasError('required')">Password is required.</span>
+              <span *ngIf="password?.hasError('minlength') && !password?.hasError('required')">Password must be at least 6 characters.</span>
             </p>
           </div>
 
           <div class="form-actions">
             <div class="checkbox-wrapper">
-              <input type="checkbox" id="remember" name="remember" [(ngModel)]="credentials.rememberMe">
+              <input type="checkbox" id="remember" name="remember" [(ngModel)]="rememberMe" [ngModelOptions]="{standalone: true}">
               <label for="remember">Remember me</label>
             </div>
             <a routerLink="/forgot-password" class="forgot-link">
@@ -57,7 +57,7 @@
             </a>
           </div>
 
-          <button type="submit" class="submit-btn" [disabled]="isLoading">
+          <button type="submit" class="submit-btn" [disabled]="isLoading || loginForm.invalid">
             Log in
           </button>
         </form>

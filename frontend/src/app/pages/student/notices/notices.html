@@ -19,9 +19,9 @@
 
           <span
             class="material-icons notice-icon"
-            [class.important]="notice.important">
+            [class.important]="notice.isImportant">
 
-            {{ notice.important ? 'priority_high' : 'info' }}
+            {{ notice.isImportant ? 'priority_high' : 'info' }}
 
           </span>
 
@@ -30,7 +30,7 @@
         </div>
 
         <span class="notice-date">
-          {{notice.date}}
+          {{ formatDate(notice.createdAt) }}
         </span>
 
       </div>

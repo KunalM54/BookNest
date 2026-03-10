@@ -17,13 +17,13 @@ public interface BorrowRepository extends JpaRepository<Borrow, Long> {
 
     List<Borrow> findByStatusOrderByRequestDateDesc(Borrow.BorrowStatus status);
 
-    @Query("SELECT COUNT(b) FROM Borrow b WHERE b.status = 'APPROVED'")
+    @Query("SELECT COUNT(b) FROM Borrow b WHERE b.status = com.booknest.backend.model.Borrow.BorrowStatus.APPROVED")
     Long countApprovedBorrows();
 
-    @Query("SELECT COUNT(b) FROM Borrow b WHERE b.status = 'RETURNED'")
+    @Query("SELECT COUNT(b) FROM Borrow b WHERE b.status = com.booknest.backend.model.Borrow.BorrowStatus.RETURNED")
     Long countReturnedBorrows();
 
-    @Query("SELECT COUNT(b) FROM Borrow b WHERE b.status = 'OVERDUE'")
+    @Query("SELECT COUNT(b) FROM Borrow b WHERE b.status = com.booknest.backend.model.Borrow.BorrowStatus.OVERDUE")
     Long countOverdueBorrows();
 
     @Query("SELECT COUNT(b) FROM Borrow b WHERE b.student = :student")

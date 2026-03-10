@@ -85,7 +85,22 @@ public class UserService {
         // Check for admin login
         if (request.getEmail().equals(ADMIN_EMAIL) && request.getPassword().equals(ADMIN_PASSWORD)) {
             String token = jwtUtil.generateToken(ADMIN_EMAIL, "ADMIN");
-            return new AuthResponse("Login successful", true, token, "Administrator", ADMIN_EMAIL, "ADMIN");
+            
+            // Get or create admin user in database to get ID
+            User adminUser = userRepository.findByEmail(ADMIN_EMAIL).orElse(null);
+            if (adminUser == null) {
+                // Create admin user in database
+                adminUser = new User();
+                adminUser.setFullName("Administrator");
+                adminUser.setStudentId("ADMIN001");
+                adminUser.setEmail(ADMIN_EMAIL);
+                adminUser.setPassword(passwordEncoder.encode(ADMIN_PASSWORD));
+                adminUser.setRole(User.Role.ADMIN);
+                adminUser.setActive(true);
+                adminUser = userRepository.save(adminUser);
+            }
+            Long adminId = adminUser.getId();
+            return new AuthResponse("Login successful", true, token, adminId, "Administrator", ADMIN_EMAIL, "ADMIN");
         }
 
         // Check if user exists
@@ -104,7 +119,27 @@ public class UserService {
         // Generate token
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
 
-        return new AuthResponse("Login successful", true, token, user.getFullName(), user.getEmail(), user.getRole().name());
+        return new AuthResponse("Login successful", true, token, user.getId(), user.getFullName(), user.getEmail(), user.getRole().name());
+    }
+
+    // Helper method to encode password
+    public static String encodePassword(String password) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        return encoder.encode(password);
+    }
+
+    // Helper method to verify password
+    public boolean verifyPassword(User user, String rawPassword) {
+        if (user.getPassword() == null) {
+            return false;
+        }
+        return passwordEncoder.matches(rawPassword, user.getPassword());
+    }
+
+    // Get encoded admin password for verification
+    public static String getAdminEncodedPassword(String rawPassword) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        return encoder.encode(rawPassword);
     }
 }
 

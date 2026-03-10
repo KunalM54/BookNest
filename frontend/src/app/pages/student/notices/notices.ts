@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NoticeService } from '../../../services/notice';
 
 @Component({
   selector: 'app-notices',
@@ -8,27 +9,39 @@ import { CommonModule } from '@angular/common';
   templateUrl: './notices.html',
   styleUrls: ['./notices.css']
 })
-export class NoticesStudent {
+export class NoticesStudent implements OnInit {
 
-  notices = [
-    {
-      title: "Library Closed on Sunday",
-      message: "The library will remain closed this Sunday due to maintenance work.",
-      date: "12 Mar 2026",
-      important: true
-    },
-    {
-      title: "New Books Added",
-      message: "Over 50 new books have been added to the Technology and Fiction sections.",
-      date: "10 Mar 2026",
-      important: false
-    },
-    {
-      title: "Borrow Limit Updated",
-      message: "Students can now borrow up to 3 books at a time.",
-      date: "05 Mar 2026",
-      important: false
-    }
-  ];
+  notices: any[] = [];
+  isLoading: boolean = false;
 
+  constructor(private noticeService: NoticeService) {}
+
+  ngOnInit() {
+    this.loadNotices();
+  }
+
+  // Format date from ISO string
+  formatDate(dateString: string): string {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  }
+
+  loadNotices() {
+    this.isLoading = true;
+    this.noticeService.getAllNotices().subscribe({
+      next: (data) => {
+        this.notices = data;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error loading notices:', err);
+        this.isLoading = false;
+      }
+    });
+  }
 }

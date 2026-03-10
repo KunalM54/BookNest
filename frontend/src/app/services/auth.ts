@@ -18,17 +18,26 @@ export class AuthService {
   }
 
   // Save user info to localStorage
-  saveUser(user: { fullName: string; email: string; role: string }): void {
+  saveUser(user: { fullName: string; email: string; role: string; userId?: number }): void {
     localStorage.setItem('user', JSON.stringify(user));
+    if (user.userId) {
+      localStorage.setItem('userId', user.userId.toString());
+    }
   }
 
   // Get user info from localStorage
-  getUser(): { fullName: string; email: string; role: string } | null {
+  getUser(): { fullName: string; email: string; role: string; userId?: number } | null {
     const userStr = localStorage.getItem('user');
     if (userStr) {
       return JSON.parse(userStr);
     }
     return null;
+  }
+
+  // Get user ID from localStorage
+  getUserId(): number | null {
+    const userId = localStorage.getItem('userId');
+    return userId ? parseInt(userId) : null;
   }
 
   // Check if user is logged in
@@ -56,5 +65,6 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('userId');
   }
 }

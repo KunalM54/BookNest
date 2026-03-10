@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "users")
 @Data
@@ -28,12 +30,21 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @Column
+    private String phone;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
 
     @Column(nullable = false)
     private boolean active = true;
+
+    @Column(name = "joined_date")
+    private LocalDate joinedDate;
+
+
+
 
     public enum Role {
         STUDENT,
