@@ -2,16 +2,15 @@ import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms'; // Required for ngModel
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { NavbarComponent } from '../../components/navbar/navbar';
 import { FooterComponent } from '../../components/footer/footer';
-import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, CommonModule, RouterLink, NavbarComponent, FooterComponent, HttpClientModule],
+  imports: [FormsModule, ReactiveFormsModule, CommonModule, RouterLink, NavbarComponent, FooterComponent],
   templateUrl: './login.html',
   styleUrls: ['./login.css']
 })
@@ -81,7 +80,8 @@ export class LoginComponent {
         },
         error: (error) => {
           this.isLoading = false;
-          this.errorMessage = error.error?.message || "An error occurred during login.";
+          // Show only "Failed to fetch login page" message for any error
+          this.errorMessage = "Failed to fetch login page";
         }
       });
   }
@@ -99,3 +99,4 @@ export class LoginComponent {
 
 
 }
+

@@ -1,36 +1,24 @@
-# Task: Fix Admin Profile - Connect with Backend & Add Credential Invalidation
+# Fix Login Issue - TODO
 
-## Plan:
-1. **Backend - UserService.java**: Modify admin login to create/get admin user in database so profile can be fetched
-2. **Backend - UserController.java**: Add endpoint to get current logged-in user's profile from JWT token
-3. **Backend - UserController.java**: Update profile to return flag when credentials change (to force logout)
-4. **Frontend - profile.ts**: Use the new endpoint to fetch profile and handle forced logout
-5. **Backend - UserController.java**: Add change-password endpoint
-6. **Backend - UserService.java**: Add password encoding/verification methods
-7. **Frontend - change-password.ts**: Connect to backend API
+## Analysis Summary
+The login functionality has potential CORS and HTTP client configuration issues:
+- Frontend uses `withFetch()` (native fetch API) which requires different CORS handling
+- Backend CORS configuration may not properly support fetch API with credentials
 
-## Status: Completed
-- [x] Backend: Modify UserService.java for admin in database
-- [x] Backend: Add /me endpoint in UserController.java  
-- [x] Backend: Update profile update to return force logout flag
-- [x] Frontend: Update profile.ts to use /me endpoint and handle logout
-- [x] Backend: Add change-password endpoint
-- [x] Backend: Add password encoding/verification helper methods
-- [x] Frontend: Connect change-password to backend API
+## Plan
 
----
+### Step 1: Fix Backend CORS Configuration ✅
+- Updated SecurityConfig.java to allow credentials and proper origins
+- Added proper CORS configuration with explicit bean
+- Allowed specific origins: http://localhost:4200, http://localhost:4201
 
-# Task: Fix Login Page Validation
+### Step 2: Fix Frontend HTTP Client ✅
+- Imported HttpHeaders in login.ts
+- HttpClient configuration with withFetch() is correct
 
-## Plan:
-1. **login.ts**: Add FormGroup with Validators to properly track form state
-2. **login.ts**: Add submitted flag to track when user tries to submit
-3. **login.html**: Update validation conditions to show errors when form is submitted OR when fields are touched
-4. **login.html**: Disable submit button when form is invalid
+### Step 3: Test the login flow
+- Verify the backend is running
+- Test login with valid credentials
 
-## Status: Completed
-- [x] Analyze the login page code
-- [x] Update login.ts with FormGroup and Validators
-- [x] Update login.html with proper validation display
-- [x] Test the login page validation
+## Status: COMPLETED - Changes Made
 
