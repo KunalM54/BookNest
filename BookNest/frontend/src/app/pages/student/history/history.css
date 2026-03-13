@@ -61,6 +61,26 @@ background:#dbeafe;
 color:#2563eb;
 }
 
+.status-green{
+background:#d1fae5;
+color:#059669;
+}
+
+.status-red{
+background:#fee2e2;
+color:#dc2626;
+}
+
+.status-yellow{
+background:#fef3c7;
+color:#b45309;
+}
+
+.status-gray{
+background:#e5e7eb;
+color:#6b7280;
+}
+
 .status-icon{
 font-size:16px;
 }

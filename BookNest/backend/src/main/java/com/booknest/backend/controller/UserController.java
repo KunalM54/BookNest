@@ -1,6 +1,8 @@
 package com.booknest.backend.controller;
 
+import com.booknest.backend.dto.StudentDTO;
 import com.booknest.backend.model.User;
+import com.booknest.backend.repository.BorrowRepository;
 import com.booknest.backend.repository.UserRepository;
 import com.booknest.backend.service.UserService;
 import com.booknest.backend.util.JwtUtil;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/users")
@@ -22,14 +25,27 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
     @Autowired
+    private BorrowRepository borrowRepository;
+    @Autowired
     private JwtUtil jwtUtil;
 
     @GetMapping
-    public ResponseEntity<List<User>> getAllStudents() {
+    public ResponseEntity<List<StudentDTO>> getAllStudents() {
         List<User> students = userRepository.findAll();
         // Filter out admin users, only return students
         students.removeIf(user -> user.getRole() == User.Role.ADMIN);
-        return ResponseEntity.ok(students);
+        List<StudentDTO> result = students.stream()
+                .map(user -> new StudentDTO(
+                        user.getId(),
+                        user.getFullName(),
+                        user.getStudentId(),
+                        user.getEmail(),
+                        user.getRole().name(),
+                        user.isActive(),
+                        borrowRepository.countByStudent(user)
+                ))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(result);
     }
 
     // Get current logged-in user's profile from JWT token
@@ -47,7 +63,18 @@ public class UserController {
                     .map(user -> {
                         // Don't return password
                         user.setPassword(null);
-                        return ResponseEntity.ok(user);
+                        Map<String, Object> result = new HashMap<>();
+                        result.put("id", user.getId());
+                        result.put("fullName", user.getFullName());
+                        result.put("studentId", user.getStudentId());
+                        result.put("email", user.getEmail());
+                        result.put("phone", user.getPhone());
+                        result.put("department", user.getDepartment());
+                        result.put("role", user.getRole().name());
+                        result.put("active", user.isActive());
+                        result.put("borrowedCount", borrowRepository.countActiveByStudent(user));
+                        result.put("readCount", borrowRepository.countReturnedByStudent(user));
+                        return ResponseEntity.ok(result);
                     })
                     .orElse(ResponseEntity.notFound().build());
         } catch (Exception e) {
@@ -91,6 +118,9 @@ public class UserController {
                     }
                     if (updates.containsKey("phone") && updates.get("phone") != null) {
                         user.setPhone(updates.get("phone"));
+                    }
+                    if (updates.containsKey("department") && updates.get("department") != null) {
+                        user.setDepartment(updates.get("department"));
                     }
                     
                     User updatedUser = userRepository.save(user);

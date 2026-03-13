@@ -1,6 +1,16 @@
 <div class="auth-page">
   <app-navbar></app-navbar>
 
+  <div class="loading-overlay" *ngIf="isLoading">
+    <div class="loading-card">
+      <div class="loader"></div>
+      <div class="loading-text">
+        <h4>Signing you in</h4>
+        <p>Please wait a moment...</p>
+      </div>
+    </div>
+  </div>
+
   <div class="auth-content">
     <div class="card-wrapper">
       <!-- Left Side: Form -->

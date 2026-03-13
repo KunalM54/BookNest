@@ -27,10 +27,7 @@ export class ManageStudentsComponent implements OnInit {
     this.isLoading = true;
     this.userService.getAllStudents().subscribe({
       next: (data: Student[]) => {
-        this.students = data.map((student: Student) => ({
-          ...student,
-          borrowedCount: 0
-        }));
+        this.students = data;
         this.isLoading = false;
       },
       error: (error: any) => {

@@ -1,8 +1,8 @@
 
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../../services/auth';
+import { BorrowRequest, BorrowService } from '../../../services/borrow';
 
 @Component({
   selector: 'app-requests',
@@ -17,7 +17,7 @@ export class RequestsComponent implements OnInit {
   isLoading = false;
 
   constructor(
-    private http: HttpClient,
+    private borrowService: BorrowService,
     private authService: AuthService
   ) {}
 
@@ -28,9 +28,15 @@ export class RequestsComponent implements OnInit {
   loadRequests() {
     this.isLoading = true;
     const userId = this.authService.getUserId();
-    this.http.get<any[]>(`http://localhost:8080/api/borrow/requests?userId=${userId}`).subscribe({
-      next: (data) => {
-        this.requests = data;
+    this.borrowService.getMyRequestsHistory(userId || 0).subscribe({
+      next: (data: BorrowRequest[]) => {
+        this.requests = (data || []).map((req: BorrowRequest) => ({
+          id: req.id,
+          bookTitle: req.bookTitle || 'Unknown',
+          requestDate: req.requestDate || '-',
+          status: (req.status || 'PENDING').toUpperCase(),
+          actionDate: req.actionDate || '-'
+        }));
         this.isLoading = false;
       },
       error: (err) => {

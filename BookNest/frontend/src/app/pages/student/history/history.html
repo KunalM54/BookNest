@@ -29,19 +29,33 @@
             {{record.title}}
           </td>
 
-          <td>{{record.borrowDate}}</td>
+          <td>{{record.borrowDate || '-'}}</td>
 
-          <td>{{record.returnDate}}</td>
+          <td>{{record.returnDate || '-'}}</td>
 
           <td>
 
-            <span class="status-badge status-blue">
+            <span
+              class="status-badge"
+              [ngClass]="
+                record.status === 'RETURNED' ? 'status-green' :
+                record.status === 'APPROVED' ? 'status-blue' :
+                record.status === 'OVERDUE' ? 'status-red' :
+                record.status === 'REJECTED' ? 'status-gray' :
+                'status-yellow'
+              ">
 
               <span class="material-icons status-icon">
-                check_circle
+                {{
+                  record.status === 'RETURNED' ? 'check_circle' :
+                  record.status === 'APPROVED' ? 'schedule' :
+                  record.status === 'OVERDUE' ? 'error' :
+                  record.status === 'REJECTED' ? 'cancel' :
+                  'hourglass_empty'
+                }}
               </span>
 
-              Returned
+              {{record.status}}
 
             </span>
 

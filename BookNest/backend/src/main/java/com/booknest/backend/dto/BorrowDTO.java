@@ -17,10 +17,12 @@ public class BorrowDTO {
     private String studentEmail;
     private Long bookId;
     private String bookTitle;
+    private String bookAuthor;
     private String bookIsbn;
     private LocalDate requestDate;
     private LocalDate dueDate;
     private LocalDate returnDate;
+    private LocalDate actionDate;
     private String status;
 }
 

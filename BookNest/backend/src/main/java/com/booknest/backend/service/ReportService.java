@@ -68,7 +68,13 @@ public class ReportService {
         }
         
         // Sort by count descending
-        categoryStats.sort((a, b) -> Integer.compare((Integer) b.get("count"), (Integer) a.get("count")));
+        categoryStats.sort((a, b) -> {
+            Number bCount = (Number) b.get("count");
+            Number aCount = (Number) a.get("count");
+            int bVal = bCount == null ? 0 : bCount.intValue();
+            int aVal = aCount == null ? 0 : aCount.intValue();
+            return Integer.compare(bVal, aVal);
+        });
         
         return categoryStats;
     }

@@ -54,6 +54,9 @@
     <div class="card chart-card">
       <h3>Most Popular Categories</h3>
       <div class="bar-chart">
+        <div class="empty-state" *ngIf="categoryStats.length === 0">
+          No category data available
+        </div>
         <div class="bar-group" *ngFor="let cat of categoryStats">
           <div class="bar-label">
             <span>{{cat.name}}</span>

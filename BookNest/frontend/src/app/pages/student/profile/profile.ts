@@ -27,6 +27,20 @@ export class ProfileComponent implements OnInit {
   isLoading: boolean = false;
   successMessage: string = '';
   errorMessage: string = '';
+  departments: string[] = [
+    'Computer Science',
+    'Information Technology',
+    'Software Engineering',
+    'Electrical Engineering',
+    'Mechanical Engineering',
+    'Civil Engineering',
+    'Business Administration',
+    'Commerce',
+    'Economics',
+    'Mathematics',
+    'Physics',
+    'Chemistry'
+  ];
 
   private apiUrl = 'http://localhost:8080/api';
 
@@ -58,6 +72,9 @@ export class ProfileComponent implements OnInit {
         this.email = data.email;
         this.phone = data.phone || '';
         this.department = data.department || 'N/A';
+        if (!this.departments.includes(this.department)) {
+          this.department = 'Computer Science';
+        }
         this.borrowed = data.borrowedCount || 0;
         this.read = data.readCount || 0;
         this.isLoading = false;
@@ -82,46 +99,80 @@ export class ProfileComponent implements OnInit {
     this.isLoading = true;
     this.successMessage = '';
     this.errorMessage = '';
+    const loadingStart = Date.now();
 
     const fullName = `${this.firstName} ${this.lastName}`.trim();
+    const normalizedPhone = this.sanitizePhone(this.phone);
+    const normalizedEmail = (this.email || '').trim().toLowerCase();
+
+    if (normalizedPhone && normalizedPhone.length !== 10) {
+      this.isLoading = false;
+      this.errorMessage = 'Phone number must be exactly 10 digits.';
+      return;
+    }
     
     const updates = {
       fullName,
-      email: this.email,
-      phone: this.phone,
+      email: normalizedEmail,
+      phone: normalizedPhone,
       department: this.department
     };
 
     this.http.put<any>(`${this.apiUrl}/users/${this.studentId}`, updates).subscribe({
       next: (response) => {
-        if (response.success) {
-          this.successMessage = 'Profile updated successfully!';
-          const token = this.authService.getToken();
-          if (token) {
-            this.authService.setSession({
-              token,
-              fullName,
-              email: this.email,
-              role: 'STUDENT',
-              userId: this.studentId
-            });
+        const elapsed = Date.now() - loadingStart;
+        const delay = Math.max(0, 2000 - elapsed);
+        setTimeout(() => {
+          if (response.success) {
+            this.successMessage = 'Profile updated successfully!';
+            const token = this.authService.getToken();
+            if (response.forceLogout) {
+              this.snackbar.show('Email changed. Please log in again.');
+              this.authService.logout();
+              this.router.navigate(['/login']);
+              this.isLoading = false;
+              return;
+            }
+            if (token) {
+              this.authService.setSession({
+                token,
+                fullName,
+                email: normalizedEmail,
+                role: 'STUDENT',
+                userId: this.studentId
+              });
+            }
+            this.snackbar.show('Profile updated!');
+          } else {
+            this.errorMessage = response.message || 'Failed to update profile';
           }
-          this.snackbar.show('Profile updated!');
-        } else {
-          this.errorMessage = response.message || 'Failed to update profile';
-        }
-        this.isLoading = false;
+          this.isLoading = false;
+          this.phone = normalizedPhone;
+          this.email = normalizedEmail;
+        }, delay);
       },
       error: (err) => {
-        console.error('Error updating profile:', err);
-        this.errorMessage = 'Failed to update profile. Please try again.';
-        this.isLoading = false;
+        const elapsed = Date.now() - loadingStart;
+        const delay = Math.max(0, 2000 - elapsed);
+        setTimeout(() => {
+          console.error('Error updating profile:', err);
+          this.errorMessage = 'Failed to update profile. Please try again.';
+          this.isLoading = false;
+        }, delay);
       }
     });
   }
 
   get initials() {
     return `${this.firstName.charAt(0)}${this.lastName.charAt(0)}`;
+  }
+
+  onPhoneInput(value: string) {
+    this.phone = this.sanitizePhone(value);
+  }
+
+  private sanitizePhone(value: string): string {
+    return (value || '').replace(/\D/g, '').slice(0, 10);
   }
 
 }

@@ -29,6 +29,7 @@ export class AuthService {
   setSession(session: AuthSession): void {
     const normalizedSession = this.normalizeSession(session);
     const storage = this.tabStorage;
+    const sharedStorage = this.sharedStorage;
 
     if (!normalizedSession.token) {
       this.logout();
@@ -37,15 +38,16 @@ export class AuthService {
 
     this.sessionState.set(normalizedSession);
     storage?.setItem(this.sessionStorageKey, JSON.stringify(normalizedSession));
+    sharedStorage?.setItem(this.sessionStorageKey, JSON.stringify(normalizedSession));
     this.clearLegacyAuthData();
   }
 
   getToken(): string | null {
-    return this.sessionState()?.token ?? null;
+    return this.ensureSession()?.token ?? null;
   }
 
   getUser(): AuthUser | null {
-    const session = this.sessionState();
+    const session = this.ensureSession();
 
     if (!session) {
       return null;
@@ -60,7 +62,7 @@ export class AuthService {
   }
 
   getUserId(): number | null {
-    return this.sessionState()?.userId ?? null;
+    return this.ensureSession()?.userId ?? null;
   }
 
   isLoggedIn(): boolean {
@@ -68,20 +70,44 @@ export class AuthService {
   }
 
   getUserRole(): string | null {
-    return this.sessionState()?.role ?? null;
+    const session = this.ensureSession();
+    if (!session) {
+      return null;
+    }
+
+    if (session.role) {
+      return session.role;
+    }
+
+    const tokenRole = this.extractRoleFromToken(session.token);
+    if (!tokenRole) {
+      return null;
+    }
+
+    const updatedSession = { ...session, role: tokenRole };
+    this.sessionState.set(updatedSession);
+    this.tabStorage?.setItem(this.sessionStorageKey, JSON.stringify(updatedSession));
+    this.sharedStorage?.setItem(this.sessionStorageKey, JSON.stringify(updatedSession));
+    return tokenRole;
   }
 
   isAdmin(): boolean {
-    return this.getUserRole() === 'ADMIN';
+    const role = (this.getUserRole() || '').toUpperCase();
+    if (role === 'ADMIN') {
+      return true;
+    }
+    const email = (this.ensureSession()?.email || '').toLowerCase();
+    return email === 'admin@booknest.com';
   }
 
   isStudent(): boolean {
-    return this.getUserRole() === 'STUDENT';
+    return (this.getUserRole() || '').toUpperCase() === 'STUDENT';
   }
 
   logout(): void {
     this.sessionState.set(null);
     this.tabStorage?.removeItem(this.sessionStorageKey);
+    this.sharedStorage?.removeItem(this.sessionStorageKey);
     this.clearLegacyAuthData();
   }
 
@@ -152,8 +178,6 @@ export class AuthService {
       storage?.removeItem('user');
       storage?.removeItem('userId');
     }
-
-    this.sharedStorage?.removeItem(this.sessionStorageKey);
   }
 
   private normalizeSession(session: Partial<AuthSession>): AuthSession {
@@ -173,5 +197,40 @@ export class AuthService {
 
     const parsedUserId = Number.parseInt(userId, 10);
     return Number.isNaN(parsedUserId) ? undefined : parsedUserId;
+  }
+
+  private ensureSession(): AuthSession | null {
+    const existing = this.sessionState();
+    if (existing?.token) {
+      return existing;
+    }
+
+    const restored = this.restoreSession();
+    if (restored?.token) {
+      this.sessionState.set(restored);
+      return restored;
+    }
+
+    return null;
+  }
+
+  private extractRoleFromToken(token: string): string | null {
+    if (!token) {
+      return null;
+    }
+
+    const parts = token.split('.');
+    if (parts.length < 2) {
+      return null;
+    }
+
+    try {
+      const payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      const decoded = atob(payload.padEnd(payload.length + (4 - (payload.length % 4)) % 4, '='));
+      const data = JSON.parse(decoded);
+      return typeof data.role === 'string' ? data.role : null;
+    } catch {
+      return null;
+    }
   }
 }

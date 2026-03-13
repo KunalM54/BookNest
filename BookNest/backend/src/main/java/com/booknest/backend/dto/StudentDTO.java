@@ -1,0 +1,18 @@
+package com.booknest.backend.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class StudentDTO {
+    private Long id;
+    private String fullName;
+    private String studentId;
+    private String email;
+    private String role;
+    private boolean active;
+    private Long borrowedCount;
+}

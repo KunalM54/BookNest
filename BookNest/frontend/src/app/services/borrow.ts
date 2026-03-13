@@ -10,10 +10,12 @@ export interface BorrowRequest {
   studentEmail: string;
   bookId: number;
   bookTitle: string;
+  bookAuthor?: string;
   bookIsbn: string;
   requestDate: string;
   dueDate: string | null;
   returnDate: string | null;
+  actionDate?: string | null;
   status: string;
 }
 
@@ -99,6 +101,12 @@ export class BorrowService {
 
   getMyRequests(userId: number): Observable<BorrowRequest[]> {
     return this.http.get<BorrowRequest[]>(`${this.apiUrl}/my-requests`, {
+      params: { userId: userId.toString() }
+    });
+  }
+
+  getMyRequestsHistory(userId: number): Observable<BorrowRequest[]> {
+    return this.http.get<BorrowRequest[]>(`${this.apiUrl}/my-requests/history`, {
       params: { userId: userId.toString() }
     });
   }

@@ -39,7 +39,18 @@ export class BorrowRequestsComponent implements OnInit {
   loadRequests() {
     this.http.get<BorrowRequest[]>(`${this.apiUrl}/requests`).subscribe({
       next: (data: BorrowRequest[]) => {
-        this.requests = data;
+        this.requests = (data || []).map((item) => ({
+          ...item,
+          status: (item.status || 'PENDING').toUpperCase()
+        })).sort((a, b) => {
+          const aStatus = a.status;
+          const bStatus = b.status;
+          if (aStatus === 'PENDING' && bStatus !== 'PENDING') return -1;
+          if (aStatus !== 'PENDING' && bStatus === 'PENDING') return 1;
+          const aTime = a.requestDate ? new Date(a.requestDate).getTime() : 0;
+          const bTime = b.requestDate ? new Date(b.requestDate).getTime() : 0;
+          return bTime - aTime;
+        });
       },
       error: (error: any) => {
         console.error('Error loading requests:', error);

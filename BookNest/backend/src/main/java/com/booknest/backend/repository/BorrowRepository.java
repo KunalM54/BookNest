@@ -29,6 +29,12 @@ public interface BorrowRepository extends JpaRepository<Borrow, Long> {
     @Query("SELECT COUNT(b) FROM Borrow b WHERE b.student = :student")
     Long countByStudent(User student);
 
+    @Query("SELECT COUNT(b) FROM Borrow b WHERE b.student = :student AND b.status IN (com.booknest.backend.model.Borrow.BorrowStatus.PENDING, com.booknest.backend.model.Borrow.BorrowStatus.APPROVED, com.booknest.backend.model.Borrow.BorrowStatus.OVERDUE)")
+    Long countActiveByStudent(User student);
+
+    @Query("SELECT COUNT(b) FROM Borrow b WHERE b.student = :student AND b.status = com.booknest.backend.model.Borrow.BorrowStatus.RETURNED")
+    Long countReturnedByStudent(User student);
+
     List<Borrow> findByStudent(User student);
     
     @Query("SELECT b FROM Borrow b WHERE b.student.id = :studentId AND b.status = 'APPROVED' ORDER BY b.requestDate DESC")
@@ -39,5 +45,11 @@ public interface BorrowRepository extends JpaRepository<Borrow, Long> {
     
     @Query("SELECT b FROM Borrow b WHERE b.student.id = :studentId AND b.status = 'PENDING' ORDER BY b.requestDate DESC")
     List<Borrow> findRequestsByStudentId(Long studentId);
+
+    @Query("SELECT b FROM Borrow b WHERE b.student.id = :studentId AND b.status IN ('PENDING','APPROVED','REJECTED') ORDER BY b.requestDate DESC")
+    List<Borrow> findRequestsHistoryByStudentId(Long studentId);
+
+    @Query("SELECT COUNT(b) > 0 FROM Borrow b WHERE b.student.id = :studentId AND b.book.id = :bookId AND b.status IN :statuses")
+    boolean existsByStudentIdAndBookIdAndStatusIn(Long studentId, Long bookId, List<Borrow.BorrowStatus> statuses);
 }
 

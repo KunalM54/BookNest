@@ -1,4 +1,13 @@
 <div class="page-container">
+  <div class="loading-overlay" *ngIf="isLoading">
+    <div class="loading-card">
+      <div class="loader"></div>
+      <div class="loading-text">
+        <h4>Updating profile</h4>
+        <p>Please wait a moment...</p>
+      </div>
+    </div>
+  </div>
 
   <div class="page-header">
     <h1 class="page-title">Admin Profile</h1>
@@ -87,7 +96,20 @@
 
         <div class="form-group">
           <label>Phone Number</label>
-          <input type="text" [(ngModel)]="phone" name="phone" class="form-control">
+          <div class="phone-row">
+            <span class="phone-prefix">+91</span>
+            <input
+              type="text"
+              [(ngModel)]="phone"
+              name="phone"
+              class="form-control phone-input"
+              inputmode="numeric"
+              maxlength="10"
+              (input)="onPhoneInput($event.target.value)">
+          </div>
+          <p class="helper-text" *ngIf="phone && phone.length > 0 && phone.length < 10">
+            Phone number must be exactly 10 digits.
+          </p>
         </div>
 
         <button type="submit" class="btn-primary full-width" [disabled]="isLoading">

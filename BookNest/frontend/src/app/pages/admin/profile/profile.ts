@@ -78,48 +78,75 @@ export class ProfileComponent implements OnInit {
     this.isLoading = true;
     this.successMessage = '';
     this.errorMessage = '';
+    const loadingStart = Date.now();
 
     const fullName = `${this.firstName} ${this.lastName}`.trim();
+    const normalizedPhone = this.sanitizePhone(this.phone);
+    const normalizedEmail = (this.email || '').trim().toLowerCase();
+
+    if (normalizedPhone && normalizedPhone.length !== 10) {
+      this.isLoading = false;
+      this.errorMessage = 'Phone number must be exactly 10 digits.';
+      return;
+    }
     
     const updates = {
       fullName: fullName,
-      email: this.email,
-      phone: this.phone
+      email: normalizedEmail,
+      phone: normalizedPhone
     };
 
     this.http.put<any>(`${this.apiUrl}/users/${this.userId}`, updates).subscribe({
       next: (response) => {
-        if (response.success) {
-          if (response.forceLogout) {
-            this.successMessage = 'Profile updated! Since you changed your email, please login with your new credentials.';
-            setTimeout(() => {
-              this.authService.logout();
-              this.router.navigate(['/login']);
-            }, 2000);
-          } else {
-            this.successMessage = 'Profile updated successfully!';
-            const token = this.authService.getToken();
+        const elapsed = Date.now() - loadingStart;
+        const delay = Math.max(0, 2000 - elapsed);
+        setTimeout(() => {
+          if (response.success) {
+            if (response.forceLogout) {
+              this.successMessage = 'Profile updated! Since you changed your email, please login with your new credentials.';
+              setTimeout(() => {
+                this.authService.logout();
+                this.router.navigate(['/login']);
+              }, 2000);
+            } else {
+              this.successMessage = 'Profile updated successfully!';
+              const token = this.authService.getToken();
 
-            if (token) {
-              this.authService.setSession({
-                token,
-                fullName: fullName,
-                email: this.email,
-                role: this.role,
-                userId: this.userId
-              });
+              if (token) {
+                this.authService.setSession({
+                  token,
+                  fullName: fullName,
+                  email: normalizedEmail,
+                  role: this.role,
+                  userId: this.userId
+                });
+              }
             }
+          } else {
+            this.errorMessage = response.message || 'Failed to update profile';
           }
-        } else {
-          this.errorMessage = response.message || 'Failed to update profile';
-        }
-        this.isLoading = false;
+          this.isLoading = false;
+          this.phone = normalizedPhone;
+          this.email = normalizedEmail;
+        }, delay);
       },
       error: (err) => {
-        console.error('Error updating profile:', err);
-        this.errorMessage = 'Failed to update profile. Please try again.';
-        this.isLoading = false;
+        const elapsed = Date.now() - loadingStart;
+        const delay = Math.max(0, 2000 - elapsed);
+        setTimeout(() => {
+          console.error('Error updating profile:', err);
+          this.errorMessage = 'Failed to update profile. Please try again.';
+          this.isLoading = false;
+        }, delay);
       }
     });
+  }
+
+  onPhoneInput(value: string) {
+    this.phone = this.sanitizePhone(value);
+  }
+
+  private sanitizePhone(value: string): string {
+    return (value || '').replace(/\D/g, '').slice(0, 10);
   }
 }

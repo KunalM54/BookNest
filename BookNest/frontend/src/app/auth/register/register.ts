@@ -118,21 +118,30 @@ export class Register {
     };
 
     this.isLoading = true;
+    const loadingStart = Date.now();
 
     this.http.post<any>('http://localhost:8080/api/auth/register', payload)
       .subscribe({
         next: (response) => {
-          this.isLoading = false;
-          if (response.success) {
-            this.snackbar.show('Registration successful. Please log in.');
-            this.router.navigate(['/login']);
-          } else {
-            this.errorMessage = response.message || "Registration failed.";
-          }
+          const elapsed = Date.now() - loadingStart;
+          const delay = Math.max(0, 2000 - elapsed);
+          setTimeout(() => {
+            this.isLoading = false;
+            if (response.success) {
+              this.snackbar.show('Registration successful. Please log in.');
+              this.router.navigate(['/login']);
+            } else {
+              this.errorMessage = response.message || "Registration failed.";
+            }
+          }, delay);
         },
         error: (error) => {
-          this.isLoading = false;
-          this.errorMessage = error.error?.message || 'An error occurred during registration.';
+          const elapsed = Date.now() - loadingStart;
+          const delay = Math.max(0, 2000 - elapsed);
+          setTimeout(() => {
+            this.isLoading = false;
+            this.errorMessage = error.error?.message || 'An error occurred during registration.';
+          }, delay);
         }
       });
 

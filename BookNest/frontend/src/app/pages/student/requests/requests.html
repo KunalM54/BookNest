@@ -26,7 +26,7 @@
 
           <td class="book-info">
             <span class="material-icons book-icon">menu_book</span>
-            {{req.book}}
+            {{req.bookTitle}}
           </td>
 
           <td>{{req.requestDate}}</td>
@@ -36,9 +36,9 @@
             <span
               class="status-badge"
               [ngClass]="{
-                'status-orange': req.status === 'Pending',
-                'status-green': req.status === 'Approved',
-                'status-red': req.status === 'Rejected'
+                'status-orange': req.status === 'PENDING',
+                'status-green': req.status === 'APPROVED',
+                'status-red': req.status === 'REJECTED'
               }">
 
               {{req.status}}

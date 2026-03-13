@@ -36,9 +36,12 @@ public class Borrow {
     @Column(name = "return_date")
     private LocalDate returnDate;
 
+    @Column(name = "action_date")
+    private LocalDate actionDate;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private BorrowStatus status;
+    private BorrowStatus status = BorrowStatus.PENDING;
 
     public enum BorrowStatus {
         PENDING,

@@ -33,6 +33,9 @@ public class User {
     @Column
     private String phone;
 
+    @Column
+    private String department;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
@@ -42,8 +45,6 @@ public class User {
 
     @Column(name = "joined_date")
     private LocalDate joinedDate;
-
-
 
 
     public enum Role {

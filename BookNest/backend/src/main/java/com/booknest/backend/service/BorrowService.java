@@ -63,9 +63,27 @@ public class BorrowService {
             response.put("message", "Book not found");
             return response;
         }
-        
+
         User student = studentOpt.get();
         Book book = bookOpt.get();
+
+        if (borrowRepository.existsByStudentIdAndBookIdAndStatusIn(
+                student.getId(),
+                book.getId(),
+                List.of(Borrow.BorrowStatus.APPROVED, Borrow.BorrowStatus.OVERDUE))) {
+            response.put("success", false);
+            response.put("message", "You already borrowed this book and have not returned it");
+            return response;
+        }
+
+        if (borrowRepository.existsByStudentIdAndBookIdAndStatusIn(
+                student.getId(),
+                book.getId(),
+                List.of(Borrow.BorrowStatus.PENDING))) {
+            response.put("success", false);
+            response.put("message", "A request for this book is already pending");
+            return response;
+        }
         
         if (!student.isActive()) {
             response.put("success", false);
@@ -113,6 +131,15 @@ public class BorrowService {
             response.put("message", "Request is not pending");
             return response;
         }
+
+        if (borrowRepository.existsByStudentIdAndBookIdAndStatusIn(
+                borrow.getStudent().getId(),
+                borrow.getBook().getId(),
+                List.of(Borrow.BorrowStatus.APPROVED, Borrow.BorrowStatus.OVERDUE))) {
+            response.put("success", false);
+            response.put("message", "Student already has this book borrowed and not returned");
+            return response;
+        }
         
         Book book = borrow.getBook();
         if (book.getAvailableCopies() <= 0) {
@@ -128,6 +155,7 @@ public class BorrowService {
         // Update borrow status
         borrow.setStatus(Borrow.BorrowStatus.APPROVED);
         borrow.setDueDate(LocalDate.now().plusDays(14)); // 2 weeks due date
+        borrow.setActionDate(LocalDate.now());
         
         borrowRepository.save(borrow);
         
@@ -152,6 +180,7 @@ public class BorrowService {
         
         Borrow borrow = borrowOpt.get();
         borrow.setStatus(Borrow.BorrowStatus.REJECTED);
+        borrow.setActionDate(LocalDate.now());
         borrowRepository.save(borrow);
         
         response.put("success", true);
@@ -253,6 +282,10 @@ public class BorrowService {
 
     public List<Borrow> getRequests(Long studentId) {
         return borrowRepository.findRequestsByStudentId(studentId);
+    }
+
+    public List<Borrow> getRequestsHistory(Long studentId) {
+        return borrowRepository.findRequestsHistoryByStudentId(studentId);
     }
 }
 

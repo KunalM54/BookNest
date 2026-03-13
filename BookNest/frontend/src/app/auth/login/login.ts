@@ -70,35 +70,44 @@ export class LoginComponent {
     };
 
     this.isLoading = true;
+    const loadingStart = Date.now();
 
     // Call backend API
     this.http.post<any>('http://localhost:8080/api/auth/login', credentials)
       .subscribe({
         next: (response) => {
-          this.isLoading = false;
-          if (response.success) {
-            this.authService.setSession({
-              token: response.token,
-              fullName: response.fullName,
-              email: response.email,
-              role: response.role,
-              userId: response.userId
-            });
-            this.snackbar.show(`Login successful. Welcome ${response.fullName || 'back'}!`);
+          const elapsed = Date.now() - loadingStart;
+          const delay = Math.max(0, 2000 - elapsed);
+          setTimeout(() => {
+            this.isLoading = false;
+            if (response.success) {
+              this.authService.setSession({
+                token: response.token,
+                fullName: response.fullName,
+                email: response.email,
+                role: response.role,
+                userId: response.userId
+              });
+              this.snackbar.show(`Login successful. Welcome ${response.fullName || 'back'}!`);
 
-            // Redirect based on role
-            if (response.role === 'ADMIN') {
-              this.router.navigate(['/admin/dashboard']);
+              // Redirect based on role
+              if (response.role === 'ADMIN') {
+                this.router.navigate(['/admin/dashboard']);
+              } else {
+                this.router.navigate(['/student/dashboard']);
+              }
             } else {
-              this.router.navigate(['/student/dashboard']);
+              this.errorMessage = response.message || "Login failed.";
             }
-          } else {
-            this.errorMessage = response.message || "Login failed.";
-          }
+          }, delay);
         },
         error: (error) => {
-          this.isLoading = false;
-          this.errorMessage = error.error?.message || 'Failed to log in.';
+          const elapsed = Date.now() - loadingStart;
+          const delay = Math.max(0, 2000 - elapsed);
+          setTimeout(() => {
+            this.isLoading = false;
+            this.errorMessage = error.error?.message || 'Failed to log in.';
+          }, delay);
         }
       });
   }

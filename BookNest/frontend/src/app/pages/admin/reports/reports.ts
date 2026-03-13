@@ -54,18 +54,14 @@ export class ReportsComponent implements OnInit {
   loadCategoryStats() {
     this.http.get<any[]>(`${this.apiUrl}/reports/categories`).subscribe({
       next: (data) => {
-        this.categoryStats = data;
+        this.categoryStats = (data || []).map(item => ({
+          name: item.name,
+          count: Number(item.count) || 0
+        }));
       },
       error: (err) => {
         console.error('Error loading category stats:', err);
-        // Fallback to mock data if API fails
-        this.categoryStats = [
-          { name: 'Computer Science', count: 45 },
-          { name: 'Fiction', count: 25 },
-          { name: 'History', count: 15 },
-          { name: 'Science', count: 70 },
-          { name: 'Others', count: 5 }
-        ];
+        this.categoryStats = [];
       }
     });
   }

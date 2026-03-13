@@ -70,9 +70,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../../services/auth';
-import { BorrowService } from '../../../services/borrow';
+import { BorrowRequest, BorrowService } from '../../../services/borrow';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-student-dashboard',
@@ -89,8 +89,7 @@ export class DashboardComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private borrowService: BorrowService,
-    private http: HttpClient
+    private borrowService: BorrowService
   ) {}
 
   ngOnInit(): void {
@@ -99,25 +98,49 @@ export class DashboardComponent implements OnInit {
   }
 
   loadDashboardData() {
-    this.borrowService.getStats().subscribe({
-      next: (data: any) => {
-        this.stats = [
-          { title: 'Books Borrowed', value: data.booksIssued?.toString() || '0', icon: 'menu_book', color: 'blue' },
-          { title: 'Return Due', value: data.overdueBooks?.toString() || '0', icon: 'event_busy', color: 'red' },
-          { title: 'Pending Requests', value: '0', icon: 'hourglass_empty', color: 'orange' },
-          { title: 'Total Read', value: '14', icon: 'check_circle', color: 'green' }
-        ];
-      }
-    });
+    const userId = this.authService.getUserId();
+    if (!userId) {
+      this.stats = [];
+      this.currentBooks = [];
+      return;
+    }
 
-    this.http.get<any[]>('http://localhost:8080/api/borrow/current').subscribe({
-      next: (books: any[]) => {
-        this.currentBooks = books.map((book: any) => ({
-          title: book.bookTitle,
-          author: book.author || 'Unknown',
-          due: book.dueDate || '',
+    forkJoin({
+      myBooks: this.borrowService.getMyBooks(userId),
+      myRequests: this.borrowService.getMyRequests(userId),
+      myHistory: this.borrowService.getHistory(userId)
+    }).subscribe({
+      next: ({ myBooks, myRequests, myHistory }) => {
+        const books = (myBooks || []).map((book: BorrowRequest) => ({
+          title: book.bookTitle || 'Unknown',
+          author: book.bookAuthor || 'Unknown',
+          due: book.dueDate || '-',
           status: this.getBookStatus(book.dueDate || '')
         }));
+
+        this.currentBooks = books;
+
+        const overdueCount = (myBooks || []).filter((book: BorrowRequest) => {
+          return !!book.dueDate && new Date(book.dueDate) < new Date();
+        }).length;
+
+        const pendingCount = (myRequests || []).length;
+
+        const totalRead = (myHistory || []).filter((record: BorrowRequest) => {
+          return record.status === 'RETURNED';
+        }).length;
+
+        this.stats = [
+          { title: 'Books Borrowed', value: books.length.toString(), icon: 'menu_book', color: 'blue' },
+          { title: 'Return Due', value: overdueCount.toString(), icon: 'event_busy', color: 'red' },
+          { title: 'Pending Requests', value: pendingCount.toString(), icon: 'hourglass_empty', color: 'orange' },
+          { title: 'Total Read', value: totalRead.toString(), icon: 'check_circle', color: 'green' }
+        ];
+      },
+      error: (err) => {
+        console.error('Error loading dashboard data', err);
+        this.stats = [];
+        this.currentBooks = [];
       }
     });
   }

@@ -153,6 +153,16 @@ public class BorrowController {
         return ResponseEntity.ok(dtos);
     }
 
+    // Get student request history (pending + approved + rejected)
+    @GetMapping("/my-requests/history")
+    public ResponseEntity<List<BorrowDTO>> getMyRequestHistory(@RequestParam Long userId) {
+        List<Borrow> borrows = borrowService.getRequestsHistory(userId);
+        List<BorrowDTO> dtos = borrows.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
+    }
+
     // Helper method to convert Borrow entity to DTO
     private BorrowDTO convertToDTO(Borrow borrow) {
         BorrowDTO dto = new BorrowDTO();
@@ -163,11 +173,13 @@ public class BorrowController {
         dto.setStudentEmail(borrow.getStudent().getEmail());
         dto.setBookId(borrow.getBook().getId());
         dto.setBookTitle(borrow.getBook().getTitle());
+        dto.setBookAuthor(borrow.getBook().getAuthor());
         dto.setBookIsbn(borrow.getBook().getIsbn());
         dto.setRequestDate(borrow.getRequestDate());
         dto.setDueDate(borrow.getDueDate());
         dto.setReturnDate(borrow.getReturnDate());
-        dto.setStatus(borrow.getStatus().name());
+        dto.setActionDate(borrow.getActionDate());
+        dto.setStatus(borrow.getStatus() != null ? borrow.getStatus().name() : Borrow.BorrowStatus.PENDING.name());
         return dto;
     }
 }
