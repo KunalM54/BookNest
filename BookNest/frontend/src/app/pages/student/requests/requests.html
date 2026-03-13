@@ -16,7 +16,6 @@
           <th>Book</th>
           <th>Request Date</th>
           <th>Status</th>
-          <th>Admin Action</th>
         </tr>
       </thead>
 
@@ -47,15 +46,13 @@
 
           </td>
 
-          <td>{{req.actionDate}}</td>
-
         </tr>
 
         <!-- EMPTY STATE -->
 
         <tr *ngIf="requests.length === 0">
 
-          <td colspan="4" class="empty-table">
+          <td colspan="3" class="empty-table">
 
             <span class="material-icons empty-icon">
               assignment

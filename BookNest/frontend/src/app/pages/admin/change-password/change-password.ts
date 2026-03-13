@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { SnackbarService } from '../../../services/snackbar';
 import { AuthService } from '../../../services/auth';
+import { strongPasswordPattern } from '../../../auth/auth.validators';
 
 @Component({
   selector: 'app-change-password',
@@ -26,11 +27,14 @@ export class ChangePassword {
   showNew = false;
   showConfirm = false;
   isLoading = false;
+  submitted = false;
 
   errorMessage = '';
   successMessage = '';
 
   private apiUrl = 'http://localhost:8080/api';
+  strongPasswordPattern = strongPasswordPattern;
+  noWhitespacePattern = /^(?!\s*$).+/;
 
   form = {
     currentPassword: '',
@@ -54,23 +58,43 @@ export class ChangePassword {
 
     this.errorMessage = '';
     this.successMessage = '';
+    this.submitted = true;
 
     if(!this.form.currentPassword || !this.form.newPassword || !this.form.confirmPassword){
-      this.errorMessage = "All fields are required.";
       return;
     }
 
-    if(this.form.newPassword.length < 6){
-      this.errorMessage = "Password must be at least 6 characters.";
+    if (this.form.currentPassword.trim().length === 0) {
+      return;
+    }
+
+    if (this.form.newPassword.trim().length === 0) {
+      return;
+    }
+
+    if (this.form.confirmPassword.trim().length === 0) {
+      return;
+    }
+
+    if (this.form.newPassword.length < 6 || this.form.newPassword.length > 64) {
+      return;
+    }
+
+    if (!strongPasswordPattern.test(this.form.newPassword)) {
       return;
     }
 
     if(this.form.newPassword !== this.form.confirmPassword){
-      this.errorMessage = "Passwords do not match.";
       return;
     }
 
     this.isLoading = true;
+    const loadingStart = Date.now();
+    const finalizeLoading = (fn: () => void) => {
+      const elapsed = Date.now() - loadingStart;
+      const remaining = Math.max(0, 2000 - elapsed);
+      setTimeout(fn, remaining);
+    };
     
     // Get user ID from the current tab session
     const userId = this.authService.getUserId();
@@ -88,23 +112,27 @@ export class ChangePassword {
     this.http.put<any>(`${this.apiUrl}/users/${userId}/change-password`, passwordData)
       .subscribe({
         next: (response) => {
-          this.isLoading = false;
-          if (response.success) {
-            this.successMessage = response.message;
-            this.snackbar.show("Password changed successfully! Please login with new password.");
-            
-            // Force logout after password change
-            setTimeout(() => {
-              this.authService.logout();
-              this.router.navigate(['/login']);
-            }, 2000);
-          } else {
-            this.errorMessage = response.message || "Failed to change password.";
-          }
+          finalizeLoading(() => {
+            this.isLoading = false;
+            if (response.success) {
+              this.successMessage = response.message;
+              this.snackbar.show("Password changed successfully! Please login with new password.");
+              
+              // Force logout after password change
+              setTimeout(() => {
+                this.authService.logout();
+                this.router.navigate(['/login']);
+              }, 2000);
+            } else {
+              this.errorMessage = response.message || "Failed to change password.";
+            }
+          });
         },
         error: (err) => {
-          this.isLoading = false;
-          this.errorMessage = err.error?.message || "Failed to change password. Please check your current password.";
+          finalizeLoading(() => {
+            this.isLoading = false;
+            this.errorMessage = err.error?.message || "Failed to change password. Please check your current password.";
+          });
         }
       });
 
