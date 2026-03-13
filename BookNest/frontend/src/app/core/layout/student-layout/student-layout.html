@@ -1,0 +1,112 @@
+<div class="layout-container">
+  
+  <!-- STUDENT SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo-container">
+        <span class="material-icons logo-icon">local_library</span>
+        <div class="logo-text">
+          <h2>BookNest</h2>
+          <span class="student-badge">STUDENT</span>
+        </div>
+      </div>
+    </div>
+
+    <ul class="nav-links">
+      <!-- 1. Dashboard -->
+      <li>
+        <a routerLink="/student/dashboard" routerLinkActive="active-link">
+          <span class="material-icons">dashboard</span>
+          <span>Dashboard</span>
+        </a>
+      </li>
+
+      <li class="menu-header">LIBRARY</li>
+
+      <!-- 2. Browse Books (THE FIX) -->
+      <li>
+        <a routerLink="/student/browse" routerLinkActive="active-link">
+          <span class="material-icons">search</span>
+          <span>Browse Books</span>
+        </a>
+      </li>
+
+      <!-- 3. My Books -->
+      <li>
+        <a routerLink="/student/my-books" routerLinkActive="active-link">
+          <span class="material-icons">menu_book</span>
+          <span>My Books</span>
+        </a>
+      </li>
+
+      <!-- 4. History -->
+      <li>
+        <a routerLink="/student/history" routerLinkActive="active-link">
+          <span class="material-icons">history</span>
+          <span>History</span>
+        </a>
+      </li>
+      
+      <li class="menu-header">ACCOUNT</li>
+      
+      <!-- 5. Profile -->
+      <li>
+        <a routerLink="/student/profile" routerLinkActive="active-link">
+          <span class="material-icons">person</span>
+          <span>My Profile</span>
+        </a>
+      </li>
+      
+      <li>
+        <a routerLink="/student/requests" routerLinkActive="active-link">
+          <span class="material-icons">assignment_turned_in</span>
+          <span>Requests</span>
+        </a>
+      </li>
+      
+      <li>
+        <a routerLink="/student/notices" routerLinkActive="active-link">
+          <span class="material-icons">campaign</span>
+          <span>Notices</span>
+        </a>
+      </li>
+      
+      <li>
+        <a routerLink="/student/change-password" routerLinkActive="active-link">
+          <span class="material-icons">lock</span>
+          <span>Change Password</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <button type="button" class="logout-btn" (click)="logout()">
+        <span class="material-icons">logout</span>
+        <span>Logout</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="spacer"></div> 
+      <div class="user-profile">
+        <div class="user-info">
+          <span class="name">Student User</span>
+          <span class="role">ID: S10239</span>
+        </div>
+        <!-- Yellow Avatar for Student -->
+        <img src="https://ui-avatars.com/api/?name=Student+User&background=f59e0b&color=fff" alt="Student">
+      </div>
+    </header>
+
+    <!-- PAGE CONTENT -->
+    <div class="content-area">
+      <router-outlet></router-outlet>
+    </div>
+
+  </main>
+</div>

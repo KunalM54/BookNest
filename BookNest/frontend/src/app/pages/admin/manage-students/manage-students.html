@@ -1,0 +1,101 @@
+<div class="page-container">
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <h1 class="page-title">
+      <span class="material-icons page-icon">group</span>
+      Manage Students
+    </h1>
+  </div>
+
+  <div class="admin-toolbar-stack">
+    <div class="card student-toolbar-card">
+      <div class="search-wrapper">
+        <span class="material-icons search-icon">search</span>
+        <input type="text" [(ngModel)]="searchTerm" placeholder="Search students..." class="search-input">
+      </div>
+
+      <div class="filters">
+        <div class="filter-group">
+          <label>Sort Name</label>
+          <select (change)="sortByName($event)">
+            <option value="">Default</option>
+            <option value="asc">Name A → Z</option>
+            <option value="desc">Name Z → A</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Borrow Count</label>
+          <select (change)="sortByBorrow($event)">
+            <option value="">Default</option>
+            <option value="asc">Lowest Borrowed</option>
+            <option value="desc">Highest Borrowed</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Status</label>
+          <select (change)="filterStatus($event)">
+            <option value="all">All Students</option>
+            <option value="active">Active</option>
+            <option value="blocked">Blocked</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="card table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Student</th>
+          <th>Email</th>
+          <th>Student ID</th>
+          <th>Books Borrowed</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let student of filteredStudents">
+          <td>
+            <div class="student-info">
+              <div class="avatar">{{student.fullName.charAt(0)}}</div>
+              <div>
+                <div class="fw-bold">{{student.fullName}}</div>
+              </div>
+            </div>
+          </td>
+          <td>{{student.email}}</td>
+          <td>{{student.studentId}}</td>
+          <td>{{student.borrowedCount}}</td>
+          <td>
+            <span class="status-badge" [ngClass]="student.active ? 'status-green' : 'status-red'">
+              {{student.active ? 'Active' : 'Blocked'}}
+            </span>
+          </td>
+          <td>
+            <button class="action-btn view" (click)="viewStudent(student)" title="View Details">
+              <span class="material-icons">visibility</span>
+            </button>
+            <button *ngIf="student.active" class="action-btn block" (click)="blockStudent(student)" title="Block Student">
+              <span class="material-icons">block</span>
+            </button>
+            <button *ngIf="!student.active" class="action-btn activate" (click)="activateStudent(student)" title="Activate Student">
+              <span class="material-icons">check_circle</span>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="filteredStudents.length === 0">
+          <td colspan="6" class="empty-state">
+            <span class="material-icons empty-icon">group_off</span>
+            No students found
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+

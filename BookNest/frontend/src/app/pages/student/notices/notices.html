@@ -1,0 +1,78 @@
+<div class="page-container">
+
+  <div class="page-header">
+    <h1 class="page-title">
+      <span class="material-icons page-icon">campaign</span>
+      Library Notices
+    </h1>
+  </div>
+
+  <div class="notices-list">
+
+    <div
+      class="card notice-card"
+      [class.notice-card-high]="isHighPriority(notice)"
+      *ngFor="let notice of notices">
+
+      <div class="notice-header">
+
+        <div class="notice-title-group">
+          <div class="notice-title">
+
+            <span
+              class="material-icons notice-icon"
+              [class.important]="isHighPriority(notice)">
+
+              {{ isHighPriority(notice) ? 'priority_high' : 'info' }}
+
+            </span>
+
+            <h3>{{notice.title}}</h3>
+          </div>
+
+          <span
+            class="notice-priority-badge"
+            [class.notice-priority-badge-high]="isHighPriority(notice)">
+            {{ isHighPriority(notice) ? 'High priority' : 'Normal' }}
+          </span>
+
+        </div>
+
+        <span class="notice-date">
+          {{ formatDate(notice.createdAt) }}
+        </span>
+
+      </div>
+
+      <p class="notice-message">
+        {{notice.message}}
+      </p>
+
+    </div>
+
+
+    <!-- EMPTY STATE -->
+
+    <div
+      class="card empty-state"
+      *ngIf="!isLoading && notices.length === 0">
+
+      <span class="material-icons empty-icon">
+        campaign
+      </span>
+
+      <p>No notices available</p>
+
+    </div>
+
+    <div class="card empty-state" *ngIf="isLoading">
+      <span class="material-icons empty-icon">
+        hourglass_top
+      </span>
+
+      <p>Loading notices...</p>
+    </div>
+
+  </div>
+
+</div>

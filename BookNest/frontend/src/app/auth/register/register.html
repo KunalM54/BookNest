@@ -1,0 +1,134 @@
+<div class="auth-page">
+  <app-navbar></app-navbar>
+
+  <div class="auth-content">
+    <div class="card-wrapper">
+      <div class="form-side">
+        <h2>Create Account</h2>
+        <p class="error-message" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </p>
+
+        <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+          <div class="input-group">
+            <label for="fullname">Full Name</label>
+            <input
+              type="text"
+              id="fullname"
+              formControlName="fullName"
+              placeholder="John Doe"
+              [class.input-invalid]="fullName?.invalid && (fullName?.touched || submitted)">
+            <p class="error-message" *ngIf="fullName?.invalid && (fullName?.touched || submitted)">
+              <span *ngIf="fullName?.hasError('required')">Full name is required.</span>
+              <span *ngIf="fullName?.hasError('whitespace')">Full name cannot be blank spaces.</span>
+              <span *ngIf="fullName?.hasError('minlength')">Full name must be at least 3 characters.</span>
+              <span *ngIf="fullName?.hasError('maxlength')">Full name must be 50 characters or less.</span>
+              <span *ngIf="fullName?.hasError('pattern')">Use letters only, with spaces, apostrophes, or hyphens if needed.</span>
+            </p>
+          </div>
+
+          <div class="input-group">
+            <label for="sID">Student ID</label>
+            <input
+              type="text"
+              id="sID"
+              formControlName="sID"
+              placeholder="S23411"
+              [class.input-invalid]="sID?.invalid && (sID?.touched || submitted)">
+            <p class="helper-text">Format: `S` followed by 4 to 10 digits.</p>
+            <p class="error-message" *ngIf="sID?.invalid && (sID?.touched || submitted)">
+              <span *ngIf="sID?.hasError('required')">Student ID is required.</span>
+              <span *ngIf="sID?.hasError('whitespace')">Student ID cannot be blank spaces.</span>
+              <span *ngIf="sID?.hasError('pattern')">Student ID must start with `S` and contain 4 to 10 digits.</span>
+            </p>
+          </div>
+
+          <div class="input-group">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              formControlName="email"
+              placeholder="example@email.com"
+              [class.input-invalid]="email?.invalid && (email?.touched || submitted)">
+            <p class="error-message" *ngIf="email?.invalid && (email?.touched || submitted)">
+              <span *ngIf="email?.hasError('required')">Email is required.</span>
+              <span *ngIf="email?.hasError('whitespace')">Email cannot be blank spaces.</span>
+              <span *ngIf="email?.hasError('email')">Please enter a valid email address.</span>
+              <span *ngIf="email?.hasError('maxlength')">Email is too long.</span>
+            </p>
+          </div>
+
+          <div class="input-group">
+            <label for="password">Password</label>
+
+            <div class="password-field">
+              <input
+                [type]="showPassword ? 'text' : 'password'"
+                id="password"
+                formControlName="password"
+                placeholder="Create password"
+                [class.input-invalid]="password?.invalid && (password?.touched || submitted)">
+
+              <button type="button" class="eye-btn" (click)="togglePassword()">
+                <span class="material-icons" *ngIf="!showPassword">visibility</span>
+                <span class="material-icons" *ngIf="showPassword">visibility_off</span>
+              </button>
+
+            </div>
+            <p class="helper-text">Use 6 to 64 characters with uppercase, lowercase, and a number.</p>
+            <p class="error-message" *ngIf="password?.invalid && (password?.touched || submitted)">
+              <span *ngIf="password?.hasError('required')">Password is required.</span>
+              <span *ngIf="password?.hasError('whitespace')">Password cannot be blank spaces.</span>
+              <span *ngIf="password?.hasError('minlength')">Password must be at least 6 characters.</span>
+              <span *ngIf="password?.hasError('maxlength')">Password must be 64 characters or less.</span>
+              <span *ngIf="password?.hasError('pattern')">Password must include uppercase, lowercase, and a number, with no spaces.</span>
+            </p>
+
+          </div>
+
+          <div class="input-group">
+            <label for="confirmPassword">Confirm Password</label>
+
+            <div class="password-field">
+              <input
+                [type]="showConfirmPassword ? 'text' : 'password'"
+                id="confirmPassword"
+                formControlName="confirmPassword"
+                placeholder="Confirm password"
+                [class.input-invalid]="(confirmPassword?.invalid && (confirmPassword?.touched || submitted)) || (registerForm.hasError('passwordMismatch') && (confirmPassword?.touched || submitted))">
+
+              <button type="button" class="eye-btn" (click)="toggleConfirmPassword()">
+                <span class="material-icons" *ngIf="!showConfirmPassword">visibility</span>
+                <span class="material-icons" *ngIf="showConfirmPassword">visibility_off</span>
+              </button>
+
+            </div>
+            <p class="error-message" *ngIf="confirmPassword?.invalid && (confirmPassword?.touched || submitted)">
+              <span *ngIf="confirmPassword?.hasError('required')">Please confirm your password.</span>
+              <span *ngIf="confirmPassword?.hasError('whitespace')">Confirm password cannot be blank spaces.</span>
+            </p>
+            <p class="error-message" *ngIf="registerForm.hasError('passwordMismatch') && (confirmPassword?.touched || submitted)">
+              Passwords do not match.
+            </p>
+
+          </div>
+
+          <button type="submit" class="submit-btn" [disabled]="isLoading || registerForm.invalid">
+            Register
+          </button>
+        </form>
+
+        <div class="card-footer">
+          <p>Already have an account? <a routerLink="/login">Log in</a></p>
+        </div>
+      </div>
+
+      <div class="image-side">
+        <img src="assets/register.jpg" alt="Register Image">
+      </div>
+    </div>
+  </div>
+
+  <app-footer></app-footer>
+</div>

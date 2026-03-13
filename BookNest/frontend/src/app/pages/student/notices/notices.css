@@ -1,0 +1,121 @@
+/* NOTICE LIST */
+
+.notices-list{
+display:flex;
+flex-direction:column;
+gap:16px;
+}
+
+/* NOTICE CARD */
+
+.notice-card{
+padding:20px 22px;
+border-left:4px solid #2563eb;
+transition:0.2s;
+}
+
+.notice-card-high{
+border-left-color:#ef4444;
+}
+
+.notice-card:hover{
+transform:translateY(-2px);
+box-shadow:0 6px 18px rgba(0,0,0,0.08);
+}
+
+/* HEADER */
+
+.notice-header{
+display:flex;
+justify-content:space-between;
+align-items:flex-start;
+gap:16px;
+margin-bottom:10px;
+}
+
+/* TITLE */
+
+.notice-title-group{
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.notice-title{
+display:flex;
+align-items:center;
+gap:8px;
+}
+
+.notice-title h3{
+font-size:1rem;
+font-weight:600;
+color:#1f2937;
+}
+
+/* ICON */
+
+.notice-icon{
+color:#2563eb;
+font-size:20px;
+}
+
+.notice-icon.important{
+color:#ef4444;
+}
+
+.notice-priority-badge{
+display:inline-flex;
+align-self:flex-start;
+padding:6px 12px;
+border-radius:999px;
+background:#dbeafe;
+color:#1d4ed8;
+font-size:0.78rem;
+font-weight:600;
+}
+
+.notice-priority-badge-high{
+background:#fee2e2;
+color:#b91c1c;
+}
+
+/* DATE */
+
+.notice-date{
+font-size:0.85rem;
+color:#6b7280;
+white-space:nowrap;
+}
+
+/* MESSAGE */
+
+.notice-message{
+font-size:0.95rem;
+color:#374151;
+line-height:1.5;
+margin-top:6px;
+}
+
+/* EMPTY STATE */
+
+.empty-state{
+text-align:center;
+padding:40px;
+color:#9ca3af;
+}
+
+.empty-icon{
+font-size:36px;
+margin-bottom:6px;
+}
+
+@media (max-width:768px){
+.notice-header{
+flex-direction:column;
+}
+
+.notice-date{
+white-space:normal;
+}
+}

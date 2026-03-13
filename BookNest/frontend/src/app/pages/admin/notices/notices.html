@@ -1,0 +1,280 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1 class="page-title">
+      <span class="material-icons page-icon">campaign</span>
+      Manage Notices
+    </h1>
+
+    <button class="btn-primary" (click)="openAddModal()">
+      <span class="material-icons">add</span>
+      Add Notice
+    </button>
+  </div>
+
+  <div class="admin-toolbar-stack">
+    <div class="card controls-card">
+      <div class="search-wrapper">
+        <span class="material-icons search-icon">search</span>
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="onSearchChange()"
+          placeholder="Search notices by title or message..."
+          class="search-input">
+      </div>
+
+      <div class="notice-stats-grid">
+        <div class="stat-card stat-card-total">
+          <div class="stat-icon-wrap">
+            <span class="material-icons">campaign</span>
+          </div>
+          <div class="stat-copy">
+            <small>Total notices</small>
+            <strong>{{ totalNoticeCount }}</strong>
+          </div>
+        </div>
+
+        <div class="stat-card stat-card-general">
+          <div class="stat-icon-wrap">
+            <span class="material-icons">notifications</span>
+          </div>
+          <div class="stat-copy">
+            <small>General notices</small>
+            <strong>{{ generalNoticeCount }}</strong>
+          </div>
+        </div>
+
+        <div class="stat-card stat-card-important">
+          <div class="stat-icon-wrap">
+            <span class="material-icons">priority_high</span>
+          </div>
+          <div class="stat-copy">
+            <small>Important notices</small>
+            <strong>{{ importantNoticeCount }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="error-message" *ngIf="errorMessage && !showModal">
+    {{ errorMessage }}
+  </div>
+
+  <div class="loading" *ngIf="isLoading && !showModal">
+    Loading...
+  </div>
+
+  <div class="card table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Notice</th>
+          <th>Message</th>
+          <th>Priority</th>
+          <th>Published</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let notice of paginatedNotices">
+          <td>
+            <div class="notice-title-cell">
+              <span
+                class="material-icons notice-row-icon"
+                [class.important]="isHighPriority(notice)">
+                {{ isHighPriority(notice) ? 'priority_high' : 'notifications' }}
+              </span>
+
+              <div class="notice-copy">
+                <div class="fw-bold">{{ notice.title }}</div>
+                <small class="notice-type">
+                  {{ getPriorityDescription(notice) }}
+                </small>
+              </div>
+            </div>
+          </td>
+
+          <td>
+            <p class="truncate-text notice-message" [title]="notice.message">
+              {{ notice.message }}
+            </p>
+          </td>
+
+          <td>
+            <span
+              class="priority-badge"
+              [class.priority-important]="isHighPriority(notice)"
+              [class.priority-regular]="!isHighPriority(notice)">
+              {{ getPriorityLabel(notice) }}
+            </span>
+          </td>
+
+          <td>
+            <div class="published-cell">
+              <strong>{{ formatDate(getNoticeDateTime(notice)) }}</strong>
+              <small>{{ formatTime(getNoticeDateTime(notice)) }}</small>
+              <span class="published-label">
+                {{ hasBeenUpdated(notice) ? 'Updated' : 'Published' }}
+              </span>
+            </div>
+          </td>
+
+          <td>
+            <div class="action-buttons">
+              <button
+                class="action-btn edit"
+                (click)="openEditModal(notice)"
+                title="Edit">
+                <span class="material-icons">edit</span>
+              </button>
+
+              <button
+                class="action-btn delete"
+                (click)="openDeleteDialog(notice.id)"
+                title="Delete">
+                <span class="material-icons">delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+
+        <tr *ngIf="filteredNotices.length === 0 && !isLoading">
+          <td colspan="5" class="empty-state">
+            <span class="material-icons empty-icon">campaign</span>
+            No notices found
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pagination-bar" *ngIf="filteredNotices.length > 0 && !isLoading">
+    <div class="pagination-summary">
+      Showing {{ paginationStart }}-{{ paginationEnd }} of {{ filteredNotices.length }} notices
+    </div>
+
+    <div class="pagination-controls">
+      <button
+        type="button"
+        class="pagination-btn"
+        (click)="goToPreviousPage()"
+        [disabled]="currentPage === 1">
+        Previous
+      </button>
+
+      <button
+        *ngFor="let page of pageNumbers"
+        type="button"
+        class="pagination-btn"
+        [class.active]="page === currentPage"
+        (click)="goToPage(page)">
+        {{ page }}
+      </button>
+
+      <button
+        type="button"
+        class="pagination-btn"
+        (click)="goToNextPage()"
+        [disabled]="currentPage === totalPages">
+        Next
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ isEditing ? 'Edit Notice' : 'Add Notice' }}</h2>
+      <button class="close-btn" (click)="closeModal()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="error-message inline-error" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <div class="form-group">
+        <label for="noticeTitle">Notice Title *</label>
+        <input
+          id="noticeTitle"
+          type="text"
+          [(ngModel)]="noticeForm.title"
+          name="noticeTitle"
+          placeholder="e.g. Holiday closing or system maintenance"
+          class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label for="noticeMessage">Message *</label>
+        <textarea
+          id="noticeMessage"
+          rows="5"
+          [(ngModel)]="noticeForm.message"
+          name="noticeMessage"
+          placeholder="Write the full notice details here..."
+          class="form-control form-textarea"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Priority *</label>
+
+        <div class="priority-selector">
+          <button
+            type="button"
+            class="priority-option priority-option-normal"
+            [class.active]="noticeForm.priority === 'NORMAL'"
+            (click)="setNoticePriority('NORMAL')">
+            <span class="material-icons">notifications</span>
+            <div class="priority-option-copy">
+              <span class="priority-option-title">Normal</span>
+              <small>Use this for regular announcements and reminders.</small>
+            </div>
+          </button>
+
+          <button
+            type="button"
+            class="priority-option priority-option-high"
+            [class.active]="noticeForm.priority === 'HIGH'"
+            (click)="setNoticePriority('HIGH')">
+            <span class="material-icons">priority_high</span>
+            <div class="priority-option-copy">
+              <span class="priority-option-title">High</span>
+              <small>Use this for urgent or important notices that need extra attention.</small>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" (click)="closeModal()">
+          Cancel
+        </button>
+        <button type="button" class="btn-primary" (click)="saveNotice()" [disabled]="isLoading">
+          {{ isEditing ? 'Update' : 'Publish' }} Notice
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="confirmDeleteId !== null" class="dialog-overlay">
+  <div class="dialog-box">
+    <h3>Delete Notice</h3>
+    <p>Are you sure you want to delete this notice?</p>
+
+    <div class="dialog-actions">
+      <button class="btn-secondary" (click)="closeDeleteDialog()">
+        Cancel
+      </button>
+
+      <button class="btn-danger" (click)="deleteNotice()">
+        Delete
+      </button>
+    </div>
+  </div>
+</div>

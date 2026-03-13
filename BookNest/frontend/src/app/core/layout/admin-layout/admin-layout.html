@@ -1,0 +1,103 @@
+<div class="layout-container admin-shell">
+  
+  <!-- ADMIN SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo-container">
+        <span class="material-icons logo-icon">local_library</span>
+        <div class="logo-text">
+          <h2>BookNest</h2>
+          <span class="admin-badge">ADMIN</span>
+        </div>
+      </div>
+    </div>
+
+    <ul class="nav-links">
+      <li>
+        <a routerLink="/admin/dashboard" routerLinkActive="active-link">
+          <span class="material-icons">dashboard</span>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      
+      <li class="menu-header">MANAGEMENT</li>
+      
+      <li>
+        <a routerLink="/admin/books" routerLinkActive="active-link">
+          <span class="material-icons">library_books</span>
+          <span>Manage Books</span>
+        </a>
+      </li>
+      
+      <li>
+        <a routerLink="/admin/students" routerLinkActive="active-link">
+          <span class="material-icons">people</span>
+          <span>Manage Students</span>
+        </a>
+      </li>
+      
+      <li>
+        <a routerLink="/admin/requests" routerLinkActive="active-link">
+          <span class="material-icons">assignment_turned_in</span>
+          <span>Borrow Requests</span>
+          <!-- Dynamic count badge example -->
+<span class="badge-count" *ngIf="pendingCount > 0">{{pendingCount}}</span> 
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/admin/notices" routerLinkActive="active-link">
+          <span class="material-icons">campaign</span>
+          <span>Notices</span>
+        </a>
+      </li>
+      
+      <li class="menu-header">SYSTEM</li>
+      
+      <li>
+        <a routerLink="/admin/reports" routerLinkActive="active-link">
+          <span class="material-icons">analytics</span>
+          <span>Reports</span>
+        </a>
+      </li>
+      
+      <li>
+        <a routerLink="/admin/profile" routerLinkActive="active-link">
+          <span class="material-icons">person</span>
+          <span>Profile</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <button type="button" class="logout-btn" (click)="logout()">
+        <span class="material-icons">logout</span>
+        <span>Logout</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <!-- You can add a breadcrumb or page title here dynamically if needed -->
+      <div class="spacer"></div> 
+
+      <div class="user-profile">
+        <div class="user-info">
+          <span class="name">Administrator</span>
+          <span class="role">Super User</span>
+        </div>
+        <img src="https://ui-avatars.com/api/?name=Admin+User&background=2563eb&color=fff" alt="Admin">
+      </div>
+    </header>
+
+    <!-- PAGE CONTENT (Where dashboard, books, students etc. will appear) -->
+    <div class="content-area">
+      <router-outlet></router-outlet>
+    </div>
+
+  </main>
+</div>
