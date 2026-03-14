@@ -11,7 +11,7 @@
   align-items: center;
   padding: 1.5rem 5%;
   background: white;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -113,66 +113,17 @@
   justify-content: center;
 }
 
-/* --- BOOK COVER COLLAGE --- */
-.book-collage {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(120px, 1fr));
-  gap: 14px;
-  align-items: end;
-  max-width: 480px;
-  width: 100%;
+/* --- HERO SVG IMAGE --- */
+.hero-image {
   animation: float 3s ease-in-out infinite;
 }
 
-.book-card {
-  height: 180px;
+.hero-svg {
+  width: 100%;
+  max-width: 480px;
+  height: auto;
   border-radius: 12px;
-  padding: 14px;
-  color: white;
-  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.18);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  gap: 6px;
-  position: relative;
-  overflow: hidden;
-}
-
-.book-card::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(0,0,0,0.1), rgba(0,0,0,0.55));
-}
-
-.book-title,
-.book-author {
-  position: relative;
-  z-index: 1;
-}
-
-.book-title {
-  font-size: 0.95rem;
-  font-weight: 700;
-  line-height: 1.2;
-}
-
-.book-author {
-  font-size: 0.75rem;
-  opacity: 0.9;
-}
-
-.book-one { background: linear-gradient(135deg, #0f172a, #2563eb); }
-.book-two { background: linear-gradient(135deg, #7c3aed, #ec4899); }
-.book-three { background: linear-gradient(135deg, #059669, #10b981); }
-.book-four { background: linear-gradient(135deg, #f97316, #f59e0b); }
-.book-five { background: linear-gradient(135deg, #1e293b, #64748b); }
-.book-six { background: linear-gradient(135deg, #0ea5e9, #38bdf8); }
-
-@keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-20px); }
-  100% { transform: translateY(0px); }
+  display: block;
 }
 
 /* --- FEATURES SECTION --- */
@@ -203,8 +154,8 @@
 
 .feature-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-  
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+
 }
 
 .icon-bg {
@@ -292,26 +243,25 @@
     text-align: center;
     padding: 2rem;
   }
-  
+
   .hero h1 {
     font-size: 2.5rem;
   }
-  
+
   .hero-actions {
     justify-content: center;
   }
 
-  .book-collage {
-    grid-template-columns: repeat(2, minmax(120px, 1fr));
+  .hero-svg {
     max-width: 360px;
   }
-  
+
   .footer-content {
     flex-direction: column;
     gap: 20px;
     text-align: center;
   }
-  
+
   .footer-links a {
     margin: 0 10px;
   }
