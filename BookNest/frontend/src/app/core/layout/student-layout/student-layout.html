@@ -1,5 +1,5 @@
 <div class="layout-container">
-  
+
   <!-- STUDENT SIDEBAR -->
   <aside class="sidebar">
     <div class="brand">
@@ -46,9 +46,9 @@
           <span>History</span>
         </a>
       </li>
-      
+
       <li class="menu-header">ACCOUNT</li>
-      
+
       <!-- 5. Profile -->
       <li>
         <a routerLink="/student/profile" routerLinkActive="active-link">
@@ -56,21 +56,21 @@
           <span>My Profile</span>
         </a>
       </li>
-      
+
       <li>
         <a routerLink="/student/requests" routerLinkActive="active-link">
           <span class="material-icons">assignment_turned_in</span>
           <span>Requests</span>
         </a>
       </li>
-      
+
       <li>
         <a routerLink="/student/notices" routerLinkActive="active-link">
           <span class="material-icons">campaign</span>
           <span>Notices</span>
         </a>
       </li>
-      
+
       <li>
         <a routerLink="/student/change-password" routerLinkActive="active-link">
           <span class="material-icons">lock</span>
@@ -80,19 +80,39 @@
     </ul>
 
     <div class="sidebar-footer">
-      <button type="button" class="logout-btn" (click)="logout()">
+      <button type="button" class="logout-btn" (click)="openLogoutModal()">
         <span class="material-icons">logout</span>
         <span>Logout</span>
       </button>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="modal-overlay" *ngIf="showLogoutModal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>Confirm Logout</h3>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to logout?</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" (click)="closeLogoutModal()">
+            Cancel
+          </button>
+          <button class="btn btn-danger" (click)="confirmLogout()">
+            Yes, Logout
+          </button>
+        </div>
+      </div>
     </div>
   </aside>
 
   <!-- MAIN CONTENT -->
   <main class="main-content">
-    
+
     <!-- TOPBAR -->
     <header class="topbar">
-      <div class="spacer"></div> 
+      <div class="spacer"></div>
       <div class="user-profile">
         <div class="user-info">
           <span class="name">Student User</span>

@@ -2,7 +2,7 @@
 .dashboard-container {
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 30px;
 }
 
 /* --- 1. WELCOME BANNER --- */
@@ -295,12 +295,12 @@
   color: #dc2626;
 }
 
-.btn-icon.remove{
-background:#f3f4f6;
-color:#6b7280;
+.btn-icon.remove {
+  background: #f3f4f6;
+  color: #6b7280;
 }
 
-.btn-icon.remove:hover{
-background:#6b7280;
-color:white;
+.btn-icon.remove:hover {
+  background: #6b7280;
+  color: white;
 }

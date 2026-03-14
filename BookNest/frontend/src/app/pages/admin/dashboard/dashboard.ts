@@ -29,7 +29,7 @@ interface DashboardStats {
   selector: 'app-admin-dashboard',
   standalone: true,
   imports: [CommonModule, RouterLink],
-  templateUrl: './dashboard.html',
+  templateUrl: './dashboard-updated.html',
   styleUrls: ['./dashboard.css']
 })
 export class DashboardComponent implements OnInit {

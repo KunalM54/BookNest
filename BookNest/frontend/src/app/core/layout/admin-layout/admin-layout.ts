@@ -9,16 +9,17 @@ import { BorrowService } from '../../../services/borrow';
   standalone: true,
   imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './admin-layout.html',
-  styleUrls: ['./admin-layout.css']
+  styleUrls: ['./admin-layout.css', './admin-layout-modal.css']
 })
 export class AdminLayoutComponent implements OnInit {
   pendingCount: number = 0;
+  showLogoutModal = false;
 
   constructor(
     private authService: AuthService,
     private router: Router,
     private borrowService: BorrowService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.loadPendingCount();
@@ -33,8 +34,17 @@ export class AdminLayoutComponent implements OnInit {
     });
   }
 
-  logout() {
+  openLogoutModal() {
+    this.showLogoutModal = true;
+  }
+
+  closeLogoutModal() {
+    this.showLogoutModal = false;
+  }
+
+  confirmLogout() {
     this.authService.logout();
     this.router.navigate(['/login']);
+    this.showLogoutModal = false;
   }
 }
