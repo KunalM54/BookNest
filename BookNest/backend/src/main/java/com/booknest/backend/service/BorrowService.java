@@ -154,7 +154,7 @@ public class BorrowService {
         
         // Update borrow status
         borrow.setStatus(Borrow.BorrowStatus.APPROVED);
-        borrow.setDueDate(LocalDate.now().plusDays(14)); // 2 weeks due date
+borrow.setDueDate(LocalDate.now().plusDays(15)); // 15 days due date
         borrow.setActionDate(LocalDate.now());
         
         borrowRepository.save(borrow);
@@ -216,8 +216,11 @@ public class BorrowService {
         bookRepository.save(book);
         
         // Update borrow status
-        borrow.setStatus(Borrow.BorrowStatus.RETURNED);
-        borrow.setReturnDate(LocalDate.now());
+borrow.setStatus(Borrow.BorrowStatus.RETURNED);
+borrow.setReturnDate(LocalDate.now());
+borrow.setActionDate(LocalDate.now());
+
+borrowRepository.save(borrow);
         
         borrowRepository.save(borrow);
         

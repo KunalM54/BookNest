@@ -17,6 +17,8 @@ export interface BorrowRequest {
   returnDate: string | null;
   actionDate?: string | null;
   status: string;
+  borrowDate?: string;
+  displayStatus?: string;
 }
 
 export interface DashboardStats {
@@ -111,4 +113,3 @@ export class BorrowService {
     });
   }
 }
-

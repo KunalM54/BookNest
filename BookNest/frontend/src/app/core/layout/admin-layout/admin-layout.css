@@ -14,10 +14,11 @@
   border-right: 1px solid #e5e7eb;
   display: flex;
   flex-direction: column;
-  padding: 16px 16px;
+  padding: 12px 12px;
   height: 100vh;
-  box-shadow: 2px 0 10px rgba(0,0,0,0.02);
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.02);
 }
+
 
 .brand {
   margin-bottom: 40px;
@@ -58,17 +59,29 @@
   list-style: none;
   padding: 0;
   flex: 1;
-  overflow-y: auto; /* Scroll enabled */
+  overflow-y: auto;
+  /* Scroll enabled */
   /* Scrollbar Styling */
   scrollbar-width: thin;
   scrollbar-color: #cbd5e1 transparent;
 }
 
-.nav-links::-webkit-scrollbar { width: 5px; }
-.nav-links::-webkit-scrollbar-thumb { background-color: #e2e8f0; border-radius: 10px; }
-.nav-links::-webkit-scrollbar-thumb:hover { background-color: #2563eb; }
+.nav-links::-webkit-scrollbar {
+  width: 5px;
+}
 
-.nav-links li { margin-bottom: 4px; }
+.nav-links::-webkit-scrollbar-thumb {
+  background-color: #e2e8f0;
+  border-radius: 10px;
+}
+
+.nav-links::-webkit-scrollbar-thumb:hover {
+  background-color: #2563eb;
+}
+
+.nav-links li {
+  margin-bottom: 4px;
+}
 
 .menu-header {
   font-size: 0.75rem;
@@ -82,7 +95,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 15px;
+  padding: 10px 14px;
   color: #4b5563;
   text-decoration: none;
   border-radius: 8px;
@@ -90,6 +103,7 @@
   transition: all 0.2s ease-in-out;
   position: relative;
 }
+
 
 .nav-links a:hover {
   background-color: #f9fafb;
@@ -136,7 +150,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 15px;
+  padding: 10px 14px;
   background: none;
   border: 1px solid transparent;
   color: #ef4444;
@@ -146,6 +160,7 @@
   border-radius: 8px;
   transition: 0.2s;
 }
+
 
 .logout-btn:hover {
   background-color: #fef2f2;

@@ -1,4 +1,3 @@
-
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../services/auth';
@@ -20,7 +19,7 @@ export class HistoryComponent implements OnInit {
   constructor(
     private borrowService: BorrowService,
     private authService: AuthService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.loadHistory();
@@ -38,12 +37,12 @@ export class HistoryComponent implements OnInit {
 
     this.borrowService.getHistory(userId).subscribe({
       next: (data) => {
-        this.history = (data || []).map((record: any) => ({
+        this.history = (data || []).filter(record => record.status === 'RETURNED').map((record: any) => ({
           id: record.id,
           title: record.bookTitle || record.title || 'Unknown',
           borrowDate: record.requestDate || record.borrowDate || null,
           returnDate: record.returnDate || null,
-          status: record.status || 'PENDING'
+          status: 'RETURNED'
         }));
         this.isLoading = false;
       },

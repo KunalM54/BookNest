@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { BorrowService, BorrowRequest } from '../../../services/borrow';
+import { BorrowService } from '../../../services/borrow';
 import { SnackbarService } from '../../../services/snackbar';
 import { AuthService } from '../../../services/auth';
 
@@ -21,7 +21,7 @@ export class MyBooksComponent implements OnInit {
     private borrowService: BorrowService,
     private snackbar: SnackbarService,
     private authService: AuthService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.loadBooks();
@@ -42,7 +42,7 @@ export class MyBooksComponent implements OnInit {
         if (books.length === 0) {
           this.errorMessage = 'No books borrowed currently.';
         } else {
-          this.borrowedBooks = books.map((book:any) => ({
+          this.borrowedBooks = books.map((book: any) => ({
             id: book.id,
             title: book.bookTitle || book.title,
             author: book.author || book.bookAuthor || 'Unknown',
@@ -60,24 +60,6 @@ export class MyBooksComponent implements OnInit {
         this.isLoading = false;
       }
     });
-  }
-
-  returnBook(book: any) {
-    if (confirm('Are you sure you want to return this book?')) {
-      this.isLoading = true;
-      this.borrowService.returnBook(book.id).subscribe({
-        next: () => {
-          this.borrowedBooks = this.borrowedBooks.filter(b => b.id !== book.id);
-          this.snackbar.show(`"${book.title}" returned successfully`);
-          this.isLoading = false;
-        },
-        error: (err) => {
-          console.error('Error returning book', err);
-          this.snackbar.show('Error returning book. Please try again.');
-          this.isLoading = false;
-        }
-      });
-    }
   }
 
 }

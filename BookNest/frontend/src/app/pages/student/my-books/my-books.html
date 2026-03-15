@@ -15,10 +15,9 @@
         <tr>
           <th>Book</th>
           <th>Author</th>
-          <th>Borrowed</th>
+          <th>Borrowed Date</th>
           <th>Due Date</th>
           <th>Status</th>
-          <th>Action</th>
         </tr>
       </thead>
 
@@ -33,42 +32,21 @@
 
           <td>{{book.author}}</td>
 
-          <td>{{book.borrowDate}}</td>
+          <td>{{ book.borrowDate | date:'dd-MM-yyyy' }}</td>
 
-          <td>{{book.dueDate}}</td>
-
-          <td>
-            <span class="status-badge"
-              [ngClass]="book.isOverdue ? 'status-red' : 'status-green'">
-
-              <span class="material-icons status-icon">
-                {{ book.isOverdue ? 'error' : 'check_circle' }}
-              </span>
-
-              {{book.isOverdue ? 'Overdue' : 'Active'}}
-
-            </span>
-          </td>
+          <td>{{ book.dueDate ? (book.dueDate | date:'dd-MM-yyyy') : '---' }}</td>
 
           <td>
-
-            <button
-            class="return-btn"
-            (click)="returnBook(book)">
-
-            <span class="material-icons">keyboard_return</span>
-
-            Return
-
-            </button>
-
+            <span class="status-badge" [ngClass]="book.isOverdue ? 'status-red' : 'status-green'">\n <span
+                class="material-icons status-icon">\n {{ book.isOverdue ? 'error' : 'check_circle' }}\n </span>\n
+              {{book.isOverdue ? 'Overdue' : 'Active'}}\n </span>
           </td>
 
         </tr>
 
         <!-- Empty State -->
         <tr *ngIf="borrowedBooks.length === 0">
-          <td colspan="6" class="empty-table">
+          <td colspan="5" class="empty-table">
 
             <span class="material-icons empty-icon">menu_book</span>
 

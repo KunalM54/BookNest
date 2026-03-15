@@ -35,29 +35,8 @@
 
           <td>
 
-            <span
-              class="status-badge"
-              [ngClass]="
-                record.status === 'RETURNED' ? 'status-green' :
-                record.status === 'APPROVED' ? 'status-blue' :
-                record.status === 'OVERDUE' ? 'status-red' :
-                record.status === 'REJECTED' ? 'status-gray' :
-                'status-yellow'
-              ">
-
-              <span class="material-icons status-icon">
-                {{
-                  record.status === 'RETURNED' ? 'check_circle' :
-                  record.status === 'APPROVED' ? 'schedule' :
-                  record.status === 'OVERDUE' ? 'error' :
-                  record.status === 'REJECTED' ? 'cancel' :
-                  'hourglass_empty'
-                }}
-              </span>
-
-              {{record.status}}
-
-            </span>
+            <span class="status-badge status-gray"><span class="material-icons status-icon">check_circle</span>
+              Returned</span>
 
           </td>
 

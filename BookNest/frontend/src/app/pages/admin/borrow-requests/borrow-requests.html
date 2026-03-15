@@ -9,13 +9,14 @@
 
   <div class="card table-container">
 
-    <table class="custom-table">
-
+    <table>
       <thead>
         <tr>
           <th>Student</th>
-          <th>Book Title</th>
+          <th>Book</th>
           <th>Request Date</th>
+          <th>Borrow Date</th>
+          <th>Due Date</th>
           <th>Status</th>
           <th>Actions</th>
         </tr>
@@ -24,8 +25,6 @@
       <tbody>
 
         <tr *ngFor="let req of requests">
-
-          <!-- STUDENT -->
 
           <td>
             <div class="user-info">
@@ -42,8 +41,6 @@
             </div>
           </td>
 
-          <!-- BOOK -->
-
           <td>
             <div class="book-info">
               <span class="material-icons book-icon">menu_book</span>
@@ -51,11 +48,9 @@
             </div>
           </td>
 
-          <!-- DATE -->
-
-          <td>{{req.requestDate}}</td>
-
-          <!-- STATUS -->
+          <td>{{ req.requestDate | date:'dd-MM-yyyy' }}</td>
+          <td>{{ req.borrowDate | date:'dd-MM-yyyy' }}</td>
+          <td>{{ req.dueDate ? (req.dueDate | date:'dd-MM-yyyy') : '---' }}</td>
 
           <td>
 
@@ -63,33 +58,23 @@
               Pending
             </span>
 
-            <span class="status-badge success" *ngIf="req.status === 'APPROVED'">
-              Approved
-            </span>
-
-            <span class="status-badge danger" *ngIf="req.status === 'REJECTED'">
-              Rejected
-            </span>
+            <span class="status-badge issued" *ngIf="req.displayStatus === 'ISSUED'">Issued</span>
+            <span class="status-badge returned" *ngIf="req.displayStatus === 'RETURNED'">Returned</span>
+            <span class="status-badge danger" *ngIf="req.displayStatus === 'REJECTED'">Rejected</span>
 
           </td>
-
-          <!-- ACTIONS -->
 
           <td class="action-buttons">
 
             <ng-container *ngIf="req.status === 'PENDING'">
 
-              <button class="btn-icon approve"
-                (click)="approve(req.id)"
-                title="Approve">
+              <button class="btn-icon approve" (click)="approve(req.id)" title="Approve">
 
                 <span class="material-icons">check</span>
 
               </button>
 
-              <button class="btn-icon reject"
-                (click)="reject(req.id)"
-                title="Reject">
+              <button class="btn-icon reject" (click)="reject(req.id)" title="Reject">
 
                 <span class="material-icons">close</span>
 
@@ -100,11 +85,9 @@
 
             <ng-container *ngIf="req.status !== 'PENDING'">
 
-              <button class="btn-icon remove"
-                (click)="remove(req.id)"
-                title="Remove">
+              <button class="btn-icon return" (click)="markReturned(req.id)" title="Mark Returned">
 
-                <span class="material-icons">delete</span>
+                <span class="material-icons">check_circle</span>
 
               </button>
 
@@ -114,11 +97,9 @@
 
         </tr>
 
-        <!-- EMPTY STATE -->
-
         <tr *ngIf="requests.length === 0">
 
-          <td colspan="5" class="empty-state">
+          <td colspan="7" class="empty-state">
 
             <span class="material-icons empty-icon">check_circle</span>
 
