@@ -6,19 +6,13 @@
   <div class="card search-section">
     <div class="search-wrapper">
       <span class="material-icons search-icon">search</span>
-      <input
-        type="text"
-        [(ngModel)]="searchTerm"
-        placeholder="Search by title, author, or ISBN..."
-        class="search-input-lg">
+      <input type="text" [(ngModel)]="searchTerm" placeholder="Search by title, author, or ISBN..."
+        class="search-input-lg" />
     </div>
 
     <div class="categories">
-      <button
-        *ngFor="let category of categories"
-        class="cat-pill"
-        [class.active]="selectedCategory === category"
-        (click)="setCategory(category)">
+      <button *ngFor="let category of categories" type="button" class="cat-pill"
+        [class.active]="selectedCategory === category" (click)="setCategory(category)">
         {{ category }}
       </button>
     </div>
@@ -32,14 +26,13 @@
   <div class="books-grid" *ngIf="!loading">
     <div class="book-card" *ngFor="let book of filteredBooks">
       <div class="book-cover">
-        <img
-          *ngIf="book.imageData; else studentCoverFallback"
-          [src]="book.imageData"
-          [alt]="book.title"
-          class="book-image">
+        <img *ngIf="book.imageData; else studentCoverFallback" [src]="book.imageData" [alt]="book.title"
+          class="book-image" />
+
         <ng-template #studentCoverFallback>
           <div class="book-cover-fallback">
-            {{ getBookInitial(book) }}
+            <span class="material-icons">menu_book</span>
+            <div class="initial-letter">{{ getBookInitial(book) }}</div>
           </div>
         </ng-template>
       </div>
@@ -49,19 +42,35 @@
         <p class="book-author">by {{ book.author }}</p>
 
         <div class="book-details">
-          <p class="book-detail">ISBN: {{ book.isbn }}</p>
-          <p class="book-detail">Category: {{ book.category }}</p>
-          <p class="book-detail">Copies: {{ book.availableCopies }} / {{ book.totalCopies }}</p>
+          <p class="book-detail">
+            <span class="material-icons">fingerprint</span>
+            <span>{{ book.isbn }}</span>
+          </p>
+
+          <p class="book-detail">
+            <span class="material-icons">category</span>
+            <span>{{ book.category }}</span>
+          </p>
+
+          <p class="book-detail">
+            <span class="material-icons">inventory_2</span>
+            <span>{{ book.availableCopies }} / {{ book.totalCopies }}</span>
+          </p>
         </div>
 
         <div class="book-meta">
-          <span class="category-badge">{{ book.category }}</span>
-          <span [class]="isAvailable(book) ? 'text-green' : 'text-red'">
+          <span class="category-badge">
+            <span class="material-icons">label</span>
+            {{ book.category }}
+          </span>
+
+          <span class="status-badge" [class.available]="isAvailable(book)" [class.unavailable]="!isAvailable(book)">
+            <span class="material-icons">circle</span>
             {{ isAvailable(book) ? 'Available' : 'Out of Stock' }}
           </span>
         </div>
 
-        <button class="btn-primary full-width" [disabled]="!isAvailable(book)" (click)="requestBook(book)">
+        <button type="button" class="btn-primary" [disabled]="!isAvailable(book)" (click)="requestBook(book)">
           {{ isAvailable(book) ? 'Request Book' : 'Unavailable' }}
         </button>
       </div>

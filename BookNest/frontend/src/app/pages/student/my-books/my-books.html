@@ -18,6 +18,7 @@
           <th>Borrowed Date</th>
           <th>Due Date</th>
           <th>Status</th>
+          <th>Action</th>
         </tr>
       </thead>
 
@@ -37,16 +38,28 @@
           <td>{{ book.dueDate ? (book.dueDate | date:'dd-MM-yyyy') : '---' }}</td>
 
           <td>
-            <span class="status-badge" [ngClass]="book.isOverdue ? 'status-red' : 'status-green'">\n <span
-                class="material-icons status-icon">\n {{ book.isOverdue ? 'error' : 'check_circle' }}\n </span>\n
-              {{book.isOverdue ? 'Overdue' : 'Active'}}\n </span>
+            <span class="status-badge" [ngClass]="book.isOverdue ? 'status-red' : 'status-green'"> <span
+                class="material-icons status-icon">
+                {{ book.isOverdue ? 'error' : 'check_circle' }}
+              </span>
+              {{book.isOverdue ? 'Overdue' : 'Active'}}
+            </span>
+          </td>
+          <td class="action-cell">
+            <button *ngIf="!book.isOverdue" class="return-btn" (click)="returnBook(book.id)">
+              <span class="material-icons">assignment_return</span>
+              Return
+            </button>
+            <div *ngIf="book.isOverdue" class="overdue-notice">
+              Overdue - Contact Admin
+            </div>
           </td>
 
         </tr>
 
         <!-- Empty State -->
         <tr *ngIf="borrowedBooks.length === 0">
-          <td colspan="5" class="empty-table">
+          <td colspan="6" class="empty-table">
 
             <span class="material-icons empty-icon">menu_book</span>
 

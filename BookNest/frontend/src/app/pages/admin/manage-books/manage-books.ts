@@ -1,7 +1,9 @@
+
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, Validators, FormGroup, FormControl } from '@angular/forms';
 import { Book, BookService } from '../../../services/book';
+import { SnackbarService } from '../../../services/snackbar';
 
 interface BookForm {
   id: number | null;
@@ -11,13 +13,12 @@ interface BookForm {
   category: string;
   imageData: string | null;
   totalCopies: number;
-  availableCopies: number;
 }
 
 @Component({
   selector: 'app-manage-books',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './manage-books.html',
   styleUrls: ['./manage-books.css']
 })
@@ -51,8 +52,26 @@ export class ManageBooksComponent implements OnInit {
   isEditMode = false;
   editingBook: Book | null = null;
   bookForm: BookForm = this.createEmptyForm();
+  form!: FormGroup;
 
-  constructor(private bookService: BookService) {}
+  constructor(
+    private bookService: BookService,
+    private fb: FormBuilder,
+    private snackbarService: SnackbarService
+  ) { }
+
+  capitalizeFirst(str: string): string {
+    if (!str) return '';
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  }
+
+  capitalizeTitle(): void {
+    const titleControl = this.form.get('title');
+    if (titleControl) {
+      const value = titleControl.value || '';
+      titleControl.setValue(this.capitalizeFirst(value), { emitEvent: false });
+    }
+  }
 
   ngOnInit() {
     this.loadBooks();
@@ -66,9 +85,18 @@ export class ManageBooksComponent implements OnInit {
       author: '',
       category: '',
       imageData: null,
-      totalCopies: 1,
-      availableCopies: 1
+      totalCopies: 1
     };
+  }
+
+  createForm() {
+    this.form = this.fb.group({
+      title: ['', Validators.required],
+      isbn: ['', [Validators.required, Validators.pattern(/^\d{12}$/)]],
+      author: ['', Validators.required],
+      category: ['', Validators.required],
+      totalCopies: [1, [Validators.required, Validators.min(1)]]
+    });
   }
 
   loadBooks() {
@@ -166,6 +194,7 @@ export class ManageBooksComponent implements OnInit {
     this.editingBook = null;
     this.errorMessage = '';
     this.bookForm = this.createEmptyForm();
+    this.createForm();
     this.imagePreview = null;
     this.selectedImageName = '';
     this.showModal = true;
@@ -182,9 +211,16 @@ export class ManageBooksComponent implements OnInit {
       author: book.author,
       category: book.category,
       imageData: book.imageData ?? null,
-      totalCopies: book.totalCopies,
-      availableCopies: book.availableCopies
+      totalCopies: book.totalCopies
     };
+    this.createForm();
+    this.form.patchValue({
+      title: book.title,
+      isbn: book.isbn,
+      author: book.author,
+      category: book.category,
+      totalCopies: book.totalCopies
+    });
     this.imagePreview = book.imageData ?? null;
     this.selectedImageName = book.imageData ? 'Current saved cover' : '';
     this.showModal = true;
@@ -241,14 +277,14 @@ export class ManageBooksComponent implements OnInit {
     this.selectedImageName = '';
   }
 
-  onTotalCopiesChange() {
-    if (this.bookForm.totalCopies < 1) {
-      this.bookForm.totalCopies = 1;
+  cleanIsbnInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    let value = input.value.replace(/\D/g, ''); // Keep only digits
+    if (value.length > 12) {
+      value = value.slice(0, 12); // Trim to max 12
     }
-
-    if (this.bookForm.availableCopies > this.bookForm.totalCopies) {
-      this.bookForm.availableCopies = this.bookForm.totalCopies;
-    }
+    input.value = value;
+    this.form.get('isbn')?.setValue(value, { emitEvent: true });
   }
 
   getBookInitial(book: Pick<Book, 'title'>): string {
@@ -256,53 +292,51 @@ export class ManageBooksComponent implements OnInit {
   }
 
   saveBook() {
-    if (!this.bookForm.title || !this.bookForm.isbn || !this.bookForm.author || !this.bookForm.category) {
-      this.errorMessage = 'All fields are required';
+    if (this.form.invalid) {
+      Object.keys(this.form.controls).forEach(key => {
+        this.form.get(key)?.markAsTouched();
+      });
+      this.snackbarService.show('Please correct the errors below.');
       return;
     }
 
-    if (this.bookForm.totalCopies < 1) {
-      this.errorMessage = 'Total copies must be at least 1.';
-      return;
-    }
-
-    if (this.bookForm.availableCopies < 0) {
-      this.errorMessage = 'Available copies cannot be negative.';
-      return;
-    }
-
-    if (this.bookForm.availableCopies > this.bookForm.totalCopies) {
-      this.errorMessage = 'Available copies cannot be greater than total copies.';
-      return;
-    }
-
-    this.errorMessage = '';
     this.isLoading = true;
 
-    const payload: Book = {
-      title: this.bookForm.title.trim(),
-      isbn: this.bookForm.isbn.trim(),
-      author: this.bookForm.author.trim(),
-      category: this.bookForm.category,
-      imageData: this.bookForm.imageData,
-      totalCopies: this.bookForm.totalCopies,
-      availableCopies: this.bookForm.availableCopies
-    };
+    const formValue = this.form.value;
+    const payload = {
+      ...(this.bookForm.id && { id: this.bookForm.id }),
+      title: formValue.title.trim(),
+      isbn: formValue.isbn.trim(),
+      author: formValue.author.trim(),
+      category: formValue.category,
+      imageData: this.imagePreview,
+      totalCopies: formValue.totalCopies,
+      // availableCopies removed - backend handles automatically
+      // availableCopies: formValue.totalCopies
+    } as Book;
+
+    console.log('=== ADD/UPDATE BOOK PAYLOAD ===');
+    console.log(JSON.stringify(payload, null, 2));
+    console.log('Form valid:', this.form.valid);
+    console.log('Title:', formValue.title?.trim());
+    console.log('ISBN:', formValue.isbn?.trim());
+    console.log('Total copies:', formValue.totalCopies);
+    console.log('================================');
 
     if (this.isEditMode && this.bookForm.id) {
-      payload.id = this.bookForm.id;
       this.bookService.updateBook(this.bookForm.id, payload).subscribe({
         next: (response) => {
           if (response.success) {
+            this.snackbarService.show('Book updated successfully!');
             this.loadBooks();
             this.closeModal();
           } else {
-            this.errorMessage = response.message;
+            this.snackbarService.show(response.message || 'Failed to update book');
           }
           this.isLoading = false;
         },
-        error: () => {
-          this.errorMessage = 'Failed to update book';
+        error: (error) => {
+          this.snackbarService.show('Failed to update book. Please try again.');
           this.isLoading = false;
         }
       });
@@ -310,15 +344,16 @@ export class ManageBooksComponent implements OnInit {
       this.bookService.addBook(payload).subscribe({
         next: (response) => {
           if (response.success) {
+            this.snackbarService.show('Book added successfully!');
             this.loadBooks();
             this.closeModal();
           } else {
-            this.errorMessage = response.message;
+            this.snackbarService.show(response.message || 'Failed to add book');
           }
           this.isLoading = false;
         },
-        error: () => {
-          this.errorMessage = 'Failed to add book';
+        error: (error) => {
+          this.snackbarService.show('Failed to add book. Please try again.');
           this.isLoading = false;
         }
       });

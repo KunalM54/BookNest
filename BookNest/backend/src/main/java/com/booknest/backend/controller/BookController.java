@@ -44,6 +44,17 @@ public class BookController {
     // Add new book
     @PostMapping
     public ResponseEntity<Map<String, Object>> addBook(@RequestBody Book book) {
+        System.out.println("=== ADD BOOK REQUEST RECEIVED ===");
+        System.out.println("Title: " + book.getTitle());
+        System.out.println("ISBN: " + book.getIsbn());
+        System.out.println("Author: " + book.getAuthor());
+        System.out.println("Category: " + book.getCategory());
+        System.out.println("TotalCopies: " + book.getTotalCopies());
+        System.out.println("AvailableCopies received: " + book.getAvailableCopies());
+        System.out.println("ImageData length: " + (book.getImageData() != null ? book.getImageData().length() : 0));
+        System.out.println("Full book: " + book);
+        System.out.println("=====================================");
+
         Map<String, Object> response = new HashMap<>();
         
         if (book.getTitle() == null || book.getTitle().trim().isEmpty()) {
@@ -58,9 +69,16 @@ public class BookController {
             return ResponseEntity.badRequest().body(response);
         }
         
+        if (!book.getIsbn().matches("\\d{12}")) {
+            response.put("success", false);
+            response.put("message", "ISBN must be exactly 12 numeric digits");
+            return ResponseEntity.badRequest().body(response);
+        }
+        
         if (bookRepository.existsByIsbn(book.getIsbn())) {
             response.put("success", false);
             response.put("message", "ISBN already exists");
+            System.out.println("VALIDATION FAILED: ISBN already exists");
             return ResponseEntity.badRequest().body(response);
         }
         
@@ -68,9 +86,8 @@ public class BookController {
             book.setTotalCopies(1);
         }
         
-        if (book.getAvailableCopies() == null) {
-            book.setAvailableCopies(book.getTotalCopies());
-        }
+        // Always set availableCopies = totalCopies for new books
+        book.setAvailableCopies(book.getTotalCopies());
 
         if (book.getAvailableCopies() > book.getTotalCopies()) {
             book.setAvailableCopies(book.getTotalCopies());
@@ -92,6 +109,11 @@ public class BookController {
         
         return bookRepository.findById(id)
                 .map(book -> {
+                    if (bookDetails.getIsbn() != null && !bookDetails.getIsbn().matches("\\d{12}")) {
+                        response.put("success", false);
+                        response.put("message", "ISBN must be exactly 12 numeric digits");
+                        return ResponseEntity.badRequest().body(response);
+                    }
                     book.setTitle(bookDetails.getTitle());
                     book.setAuthor(bookDetails.getAuthor());
                     book.setCategory(bookDetails.getCategory());

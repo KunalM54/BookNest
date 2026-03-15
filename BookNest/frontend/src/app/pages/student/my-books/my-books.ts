@@ -48,6 +48,7 @@ export class MyBooksComponent implements OnInit {
             author: book.author || book.bookAuthor || 'Unknown',
             borrowDate: book.requestDate,
             dueDate: book.dueDate,
+            status: book.status,
             isOverdue: book.dueDate && new Date(book.dueDate) < new Date()
           }));
         }
@@ -58,6 +59,22 @@ export class MyBooksComponent implements OnInit {
         this.errorMessage = 'Failed to load your books. Please try again.';
         this.snackbar.show(this.errorMessage);
         this.isLoading = false;
+      }
+    });
+  }
+
+  returnBook(id: number) {
+    this.borrowService.returnBook(id).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.snackbar.show('Book returned successfully!');
+          this.loadBooks();
+        } else {
+          this.snackbar.show(response.message || 'Failed to return book');
+        }
+      },
+      error: (err) => {
+        this.snackbar.show('Failed to return book. Please try again.');
       }
     });
   }

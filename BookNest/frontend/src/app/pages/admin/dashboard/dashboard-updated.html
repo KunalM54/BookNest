@@ -7,14 +7,13 @@
             <p>Manage books, users, and library operations efficiently.</p>
         </div>
         <div class="banner-img">
-            <!-- Using simple logo icon as requested -->
             <span class="material-icons logo-icon">local_library</span>
         </div>
     </div>
 
-    <!-- 2. STATS GRID (Middle - matching Student Dashboard structure) -->
+    <!-- 2. STATS GRID -->
     <div class="stats-grid">
-        <div class="stat-card blue">
+        <div class="stat-card blue clickable-card" (click)="navigateToManageBooks()">
             <div class="stat-icon-bg">
                 <span class="material-icons">library_books</span>
             </div>
@@ -23,6 +22,7 @@
                 <p>Total Books</p>
             </div>
         </div>
+
         <div class="stat-card green">
             <div class="stat-icon-bg">
                 <span class="material-icons">group</span>
@@ -32,6 +32,7 @@
                 <p>Active Members</p>
             </div>
         </div>
+
         <div class="stat-card orange">
             <div class="stat-icon-bg">
                 <span class="material-icons">menu_book</span>
@@ -41,6 +42,7 @@
                 <p>Books Issued</p>
             </div>
         </div>
+
         <div class="stat-card red">
             <div class="stat-icon-bg">
                 <span class="material-icons">warning</span>
@@ -52,7 +54,7 @@
         </div>
     </div>
 
-    <!-- 3. CONTENT SPLIT (Bottom: Recent Requests + Quick Actions) -->
+    <!-- 3. CONTENT SPLIT -->
     <div class="content-split">
 
         <!-- Recent Borrow Requests Table -->
@@ -80,6 +82,7 @@
                                 {{ req.studentName }}
                             </div>
                         </td>
+
                         <td>{{ req.bookTitle }}</td>
                         <td>{{ req.requestDate }}</td>
 
@@ -98,8 +101,6 @@
                         </td>
 
                         <td class="action-buttons">
-
-                            <!-- PENDING ACTIONS -->
                             <ng-container *ngIf="req.status === 'PENDING'">
                                 <button class="btn-icon approve" (click)="approveRequest(req.id)" title="Approve">
                                     <span class="material-icons">check</span>
@@ -109,16 +110,14 @@
                                 </button>
                             </ng-container>
 
-                            <!-- CLOSE BUTTON AFTER ACTION -->
                             <ng-container *ngIf="req.status !== 'PENDING'">
                                 <button class="btn-icon remove" (click)="removeRequest(req.id)" title="Remove">
                                     <span class="material-icons">delete</span>
                                 </button>
                             </ng-container>
-
                         </td>
                     </tr>
-                    <!-- Empty State -->
+
                     <tr *ngIf="requests.length === 0">
                         <td colspan="5" class="empty-state">
                             <span class="material-icons empty-icon">check_circle</span>
@@ -137,13 +136,10 @@
                     <span class="material-icons">add</span>
                     Add New Book
                 </button>
+
                 <button class="action-btn secondary" routerLink="/admin/notices">
                     <span class="material-icons">campaign</span>
                     Add Notice
-                </button>
-                <button class="action-btn outline" routerLink="/admin/reports">
-                    <span class="material-icons">download</span>
-                    Download Report
                 </button>
             </div>
         </div>

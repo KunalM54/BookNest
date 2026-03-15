@@ -85,6 +85,45 @@ td {
     margin-bottom: 5px;
 }
 
+/* Return button */
+.action-cell {
+    padding: 14px 12px;
+}
+
+.return-btn {
+    background: #10b981;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: background 0.2s;
+    text-transform: uppercase;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+.return-btn:hover {
+    background: #059669;
+}
+
+.return-btn .material-icons {
+    font-size: 16px;
+}
+
+.overdue-notice {
+    color: #dc2626;
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 4px 8px;
+    background: #fee2e2;
+    border-radius: 4px;
+}
+
 /* Page icon */
 
 .page-title {

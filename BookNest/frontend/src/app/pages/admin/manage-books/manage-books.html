@@ -15,19 +15,12 @@
     <div class="card search-card">
       <div class="search-wrapper">
         <span class="material-icons search-icon">search</span>
-        <input
-          type="text"
-          [(ngModel)]="searchTerm"
-          (ngModelChange)="onSearchChange()"
-          placeholder="Search by title, author, or ISBN..."
-          class="search-input">
+        <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
+          placeholder="Search by title, author, or ISBN..." class="search-input">
       </div>
 
       <div class="categories">
-        <button
-          *ngFor="let cat of categories"
-          class="cat-pill"
-          [class.active]="selectedCategory === cat"
+        <button *ngFor="let cat of categories" class="cat-pill" [class.active]="selectedCategory === cat"
           (click)="setCategory(cat)">
           {{ cat }}
         </button>
@@ -61,10 +54,7 @@
         <tr *ngFor="let book of paginatedBooks">
           <td>
             <div class="book-cover">
-              <img
-                *ngIf="book.imageData; else adminCoverFallback"
-                [src]="book.imageData"
-                [alt]="book.title"
+              <img *ngIf="book.imageData; else adminCoverFallback" [src]="book.imageData" [alt]="book.title"
                 class="book-cover-image">
               <ng-template #adminCoverFallback>
                 <div class="book-cover-placeholder">
@@ -84,26 +74,18 @@
           <td>{{ book.availableCopies }} / {{ book.totalCopies }}</td>
 
           <td>
-            <span
-              class="status-badge"
-              [ngClass]="book.availableCopies > 0 ? 'status-green' : 'status-red'">
+            <span class="status-badge" [ngClass]="book.availableCopies > 0 ? 'status-green' : 'status-red'">
               {{ book.availableCopies > 0 ? 'Available' : 'Out of Stock' }}
             </span>
           </td>
 
           <td>
             <div class="action-group">
-              <button
-                class="action-btn edit"
-                (click)="openEditModal(book)"
-                title="Edit">
+              <button class="action-btn edit" (click)="openEditModal(book)" title="Edit">
                 <span class="material-icons">edit</span>
               </button>
 
-              <button
-                class="action-btn delete"
-                (click)="deleteBook(book.id!)"
-                title="Delete">
+              <button class="action-btn delete" (click)="deleteBook(book.id!)" title="Delete">
                 <span class="material-icons">delete</span>
               </button>
             </div>
@@ -126,28 +108,16 @@
     </div>
 
     <div class="pagination-controls">
-      <button
-        type="button"
-        class="pagination-btn"
-        (click)="goToPreviousPage()"
-        [disabled]="currentPage === 1">
+      <button type="button" class="pagination-btn" (click)="goToPreviousPage()" [disabled]="currentPage === 1">
         Previous
       </button>
 
-      <button
-        *ngFor="let page of pageNumbers"
-        type="button"
-        class="pagination-btn page-number"
-        [class.active]="page === currentPage"
-        (click)="goToPage(page)">
+      <button *ngFor="let page of pageNumbers" type="button" class="pagination-btn page-number"
+        [class.active]="page === currentPage" (click)="goToPage(page)">
         {{ page }}
       </button>
 
-      <button
-        type="button"
-        class="pagination-btn"
-        (click)="goToNextPage()"
-        [disabled]="currentPage === totalPages">
+      <button type="button" class="pagination-btn" (click)="goToNextPage()" [disabled]="currentPage === totalPages">
         Next
       </button>
     </div>
@@ -162,49 +132,40 @@
         </button>
       </div>
 
-      <div class="modal-body">
+      <div class="modal-body" [formGroup]="form">
         <div class="form-group">
           <label for="title">Title *</label>
-          <input
-            type="text"
-            id="title"
-            [(ngModel)]="bookForm.title"
-            name="title"
-            required
-            class="form-control">
+          <input type="text" id="title" formControlName="title" (blur)="capitalizeTitle()" class="form-control"
+            [class.form-invalid]="form.get('title')!.invalid && form.get('title')!.touched">
+          <div class="form-error" *ngIf="form.get('title')!.invalid && form.get('title')!.touched">
+            Title is required.
+          </div>
         </div>
 
         <div class="form-group">
           <label for="isbn">ISBN *</label>
-          <input
-            type="text"
-            id="isbn"
-            [(ngModel)]="bookForm.isbn"
-            name="isbn"
-            [disabled]="isEditMode"
-            required
-            class="form-control">
+          <input type="text" id="isbn" formControlName="isbn" [readonly]="isEditMode" maxlength="12" pattern="[0-9]*"
+            (input)="cleanIsbnInput($event)" class="form-control"
+            [class.form-invalid]="form.get('isbn')!.invalid && form.get('isbn')!.touched">
+          <div class="form-error" *ngIf="form.get('isbn')!.invalid && form.get('isbn')!.touched">
+            <span *ngIf="form.get('isbn')?.errors?.['required']">ISBN is required.</span>
+            <span *ngIf="form.get('isbn')?.errors?.['pattern']">ISBN must be exactly 12 digits.</span>
+          </div>
         </div>
 
         <div class="form-group">
           <label for="author">Author *</label>
-          <input
-            type="text"
-            id="author"
-            [(ngModel)]="bookForm.author"
-            name="author"
-            required
-            class="form-control">
+          <input type="text" id="author" formControlName="author" class="form-control"
+            [class.form-invalid]="form.get('author')!.invalid && form.get('author')!.touched">
+          <div class="form-error" *ngIf="form.get('author')!.invalid && form.get('author')!.touched">
+            Author is required.
+          </div>
         </div>
 
         <div class="form-group">
           <label for="category">Category *</label>
-          <select
-            id="category"
-            [(ngModel)]="bookForm.category"
-            name="category"
-            required
-            class="form-control">
+          <select id="category" formControlName="category" class="form-control"
+            [class.form-invalid]="form.get('category')!.invalid && form.get('category')!.touched">
             <option value="">Select Category</option>
             <option value="Technology">Technology</option>
             <option value="Academic">Academic</option>
@@ -212,16 +173,14 @@
             <option value="Literature">Literature</option>
             <option value="History">History</option>
           </select>
+          <div class="form-error" *ngIf="form.get('category')?.invalid && form.get('category')?.touched">
+            Category is required.
+          </div>
         </div>
 
         <div class="form-group">
           <label for="bookImage">Book Cover</label>
-          <input
-            type="file"
-            id="bookImage"
-            accept="image/*"
-            class="form-control"
-            (change)="onImageSelected($event)">
+          <input type="file" id="bookImage" accept="image/*" class="form-control" (change)="onImageSelected($event)">
           <small class="form-hint">Upload a JPG, PNG, or WebP image up to 2 MB.</small>
         </div>
 
@@ -235,36 +194,23 @@
           </div>
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label for="totalCopies">Total Copies</label>
-            <input
-              type="number"
-              id="totalCopies"
-              [(ngModel)]="bookForm.totalCopies"
-              (ngModelChange)="onTotalCopiesChange()"
-              name="totalCopies"
-              min="1"
-              class="form-control">
+        <div class="form-group">
+          <label for="totalCopies">Total Copies</label>
+          <input type="number" id="totalCopies" formControlName="totalCopies" min="1" class="form-control"
+            [class.form-invalid]="form.get('totalCopies')!.invalid && form.get('totalCopies')!.touched">
+          <div class="form-error" *ngIf="form.get('totalCopies')!.invalid && form.get('totalCopies')!.touched">
+            <span *ngIf="form.get('totalCopies')?.errors?.['required']">Total copies is required.</span>
+            <span *ngIf="form.get('totalCopies')?.errors?.['min']">Total copies must be at least 1.</span>
           </div>
-
-          <div class="form-group">
-            <label for="availableCopies">Available Copies</label>
-            <input
-              type="number"
-              id="availableCopies"
-              [(ngModel)]="bookForm.availableCopies"
-              name="availableCopies"
-              min="0"
-              class="form-control">
-          </div>
+          <small *ngIf="isEditMode && editingBook" class="form-hint">Available: {{ editingBook.availableCopies }} / {{
+            form.get('totalCopies')?.value || bookForm.totalCopies }}</small>
         </div>
 
         <div class="modal-actions">
           <button type="button" class="btn-secondary" (click)="closeModal()">
             Cancel
           </button>
-          <button type="button" class="btn-primary" (click)="saveBook()" [disabled]="isLoading">
+          <button type="button" class="btn-primary" (click)="saveBook()" [disabled]="isLoading || form.invalid">
             {{ isEditMode ? 'Update' : 'Add' }} Book
           </button>
         </div>
