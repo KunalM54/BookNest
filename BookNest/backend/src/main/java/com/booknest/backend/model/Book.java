@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "books")
 @Data
@@ -37,4 +39,7 @@ public class Book {
 
     @Column(name = "available_copies", nullable = false)
     private Integer availableCopies;
+
+    @Column(name = "added_date")
+    private LocalDate addedDate;
 }

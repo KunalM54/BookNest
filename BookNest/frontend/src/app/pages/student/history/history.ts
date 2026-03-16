@@ -1,20 +1,28 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth';
 import { BorrowService } from '../../../services/borrow';
 
 @Component({
   selector: 'app-history',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './history.html',
   styleUrls: ['./history.css']
 })
 export class HistoryComponent implements OnInit {
 
   history: any[] = [];
+  filteredHistory: any[] = [];
+  paginatedHistory: any[] = [];
   isLoading = false;
   errorMessage = '';
+  searchTerm = '';
+  
+  currentPage = 1;
+  pageSize = 10;
+  totalPages = 1;
 
   constructor(
     private borrowService: BorrowService,
@@ -44,6 +52,7 @@ export class HistoryComponent implements OnInit {
           returnDate: record.returnDate || null,
           status: 'RETURNED'
         }));
+        this.applyFilters();
         this.isLoading = false;
       },
       error: (err) => {
@@ -52,5 +61,52 @@ export class HistoryComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  onSearchChange() {
+    this.currentPage = 1;
+    this.applyFilters();
+  }
+
+  applyFilters() {
+    if (!this.searchTerm) {
+      this.filteredHistory = this.history;
+    } else {
+      const term = this.searchTerm.toLowerCase();
+      this.filteredHistory = this.history.filter(record =>
+        record.title.toLowerCase().includes(term)
+      );
+    }
+    this.updatePagination();
+  }
+
+  updatePagination() {
+    const total = this.filteredHistory.length;
+    this.totalPages = Math.max(1, Math.ceil(total / this.pageSize));
+    if (this.currentPage > this.totalPages) this.currentPage = this.totalPages;
+    
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    this.paginatedHistory = this.filteredHistory.slice(startIndex, startIndex + this.pageSize);
+  }
+
+  goToPage(page: number) {
+    if (page < 1 || page > this.totalPages || page === this.currentPage) return;
+    this.currentPage = page;
+    this.updatePagination();
+  }
+
+  goToPreviousPage() { this.goToPage(this.currentPage - 1); }
+  goToNextPage() { this.goToPage(this.currentPage + 1); }
+
+  get pageNumbers(): number[] {
+    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+  }
+
+  get paginationStart(): number {
+    return this.filteredHistory.length === 0 ? 0 : (this.currentPage - 1) * this.pageSize + 1;
+  }
+
+  get paginationEnd(): number {
+    return Math.min(this.currentPage * this.pageSize, this.filteredHistory.length);
   }
 }

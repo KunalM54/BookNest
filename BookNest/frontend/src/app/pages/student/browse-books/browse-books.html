@@ -12,18 +12,32 @@
       <input 
         type="text" 
         [(ngModel)]="searchTerm" 
+        (ngModelChange)="onSearchChange()"
         placeholder="Search by title, author, or ISBN..."
         class="search-input">
     </div>
-    <div class="category-tabs">
-      <button 
-        *ngFor="let cat of categories" 
-        class="cat-tab"
-        [class.active]="selectedCategory === cat"
-        (click)="setCategory(cat)">
-        {{ cat }}
-      </button>
+    <div class="sort-wrap">
+      <label>Sort by:</label>
+      <select [(ngModel)]="sortBy" (ngModelChange)="onSortChange()" class="sort-select">
+        <option value="newest">Newest</option>
+        <option value="oldest">Oldest</option>
+        <option value="titleAZ">Title A-Z</option>
+        <option value="titleZA">Title Z-A</option>
+        <option value="authorAZ">Author A-Z</option>
+        <option value="available">Available First</option>
+      </select>
     </div>
+  </div>
+
+  <!-- Category Tabs -->
+  <div class="category-tabs">
+    <button 
+      *ngFor="let cat of categories" 
+      class="cat-tab"
+      [class.active]="selectedCategory === cat"
+      (click)="setCategory(cat)">
+      {{ cat }}
+    </button>
   </div>
 
   <!-- Loading -->
@@ -33,7 +47,7 @@
 
   <!-- Books Grid -->
   <div class="books-grid" *ngIf="!loading">
-    <div class="book-card" *ngFor="let book of filteredBooks">
+    <div class="book-card" *ngFor="let book of filteredBooksForDisplay">
       <!-- Cover Image -->
       <div class="card-cover">
         <img 
@@ -85,5 +99,19 @@
     <span class="material-icons empty-icon">menu_book</span>
     <h3>No books found</h3>
     <p>Try adjusting your search</p>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination" *ngIf="filteredBooks.length > 0 && !loading">
+    <button (click)="goToPreviousPage()" [disabled]="currentPage === 1" class="page-btn">
+      Previous
+    </button>
+    <button *ngFor="let page of pageNumbers" (click)="goToPage(page)" 
+      class="page-btn" [class.active]="page === currentPage">
+      {{ page }}
+    </button>
+    <button (click)="goToNextPage()" [disabled]="currentPage === totalPages" class="page-btn">
+      Next
+    </button>
   </div>
 </div>

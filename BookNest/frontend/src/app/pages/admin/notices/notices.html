@@ -130,37 +130,17 @@
     </table>
   </div>
 
-  <div class="pagination-bar" *ngIf="filteredNotices.length > 0 && !isLoading">
-    <div class="pagination-summary">
-      Showing {{ paginationStart }}-{{ paginationEnd }} of {{ filteredNotices.length }} notices
-    </div>
-
-    <div class="pagination-controls">
-      <button
-        type="button"
-        class="pagination-btn"
-        (click)="goToPreviousPage()"
-        [disabled]="currentPage === 1">
-        Previous
-      </button>
-
-      <button
-        *ngFor="let page of pageNumbers"
-        type="button"
-        class="pagination-btn"
-        [class.active]="page === currentPage"
-        (click)="goToPage(page)">
-        {{ page }}
-      </button>
-
-      <button
-        type="button"
-        class="pagination-btn"
-        (click)="goToNextPage()"
-        [disabled]="currentPage === totalPages">
-        Next
-      </button>
-    </div>
+  <div class="pagination" *ngIf="filteredNotices.length > 0 && !isLoading">
+    <button (click)="goToPreviousPage()" [disabled]="currentPage === 1" class="page-btn">
+      Previous
+    </button>
+    <button *ngFor="let page of pageNumbers" (click)="goToPage(page)" 
+      class="page-btn" [class.active]="page === currentPage">
+      {{ page }}
+    </button>
+    <button (click)="goToNextPage()" [disabled]="currentPage === totalPages" class="page-btn">
+      Next
+    </button>
   </div>
 </div>
 

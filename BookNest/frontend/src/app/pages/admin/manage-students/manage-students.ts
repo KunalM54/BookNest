@@ -15,7 +15,13 @@ export class ManageStudentsComponent implements OnInit {
   searchTerm = '';
   statusFilter = 'all';
   students: Student[] = [];
+  filteredStudents: Student[] = [];
+  paginatedStudents: Student[] = [];
   isLoading = false;
+  
+  currentPage = 1;
+  pageSize = 10;
+  totalPages = 1;
 
   constructor(private userService: UserService) { }
 
@@ -28,6 +34,7 @@ export class ManageStudentsComponent implements OnInit {
     this.userService.getAllStudents().subscribe({
       next: (data: Student[]) => {
         this.students = data;
+        this.applyFilters();
         this.isLoading = false;
       },
       error: (error: any) => {
@@ -37,7 +44,12 @@ export class ManageStudentsComponent implements OnInit {
     });
   }
 
-  get filteredStudents() {
+  onSearchChange() {
+    this.currentPage = 1;
+    this.applyFilters();
+  }
+
+  applyFilters() {
     let data = this.students.filter(student =>
       student.fullName.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
       student.email.toLowerCase().includes(this.searchTerm.toLowerCase())
@@ -51,7 +63,38 @@ export class ManageStudentsComponent implements OnInit {
       data = data.filter(s => !s.active);
     }
 
-    return data;
+    this.filteredStudents = data;
+    this.updatePagination();
+  }
+
+  updatePagination() {
+    const total = this.filteredStudents.length;
+    this.totalPages = Math.max(1, Math.ceil(total / this.pageSize));
+    if (this.currentPage > this.totalPages) this.currentPage = this.totalPages;
+    
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    this.paginatedStudents = this.filteredStudents.slice(startIndex, startIndex + this.pageSize);
+  }
+
+  goToPage(page: number) {
+    if (page < 1 || page > this.totalPages || page === this.currentPage) return;
+    this.currentPage = page;
+    this.updatePagination();
+  }
+
+  goToPreviousPage() { this.goToPage(this.currentPage - 1); }
+  goToNextPage() { this.goToPage(this.currentPage + 1); }
+
+  get pageNumbers(): number[] {
+    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+  }
+
+  get paginationStart(): number {
+    return this.filteredStudents.length === 0 ? 0 : (this.currentPage - 1) * this.pageSize + 1;
+  }
+
+  get paginationEnd(): number {
+    return Math.min(this.currentPage * this.pageSize, this.filteredStudents.length);
   }
 
   sortByName(event: any) {
@@ -80,6 +123,7 @@ export class ManageStudentsComponent implements OnInit {
 
   filterStatus(event: any) {
     this.statusFilter = event.target.value;
+    this.applyFilters();
   }
 
   blockStudent(student: Student) {

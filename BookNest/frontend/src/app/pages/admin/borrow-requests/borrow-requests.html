@@ -7,6 +7,23 @@
     </h1>
   </div>
 
+  <!-- Search Bar -->
+  <div class="search-bar">
+    <div class="search-wrapper">
+      <span class="material-icons search-icon">search</span>
+      <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
+        placeholder="Search by student or book..." class="search-input">
+    </div>
+    <div class="sort-wrap">
+      <label>Sort by:</label>
+      <select [(ngModel)]="sortBy" (ngModelChange)="onSortChange()" class="sort-select">
+        <option value="newest">Newest</option>
+        <option value="oldest">Oldest</option>
+        <option value="titleAZ">Book Title A-Z</option>
+      </select>
+    </div>
+  </div>
+
   <!-- Tab Navigation -->
   <div class="tabs-nav">
     <button 
@@ -56,7 +73,7 @@
 
       <tbody>
 
-        <tr *ngFor="let req of filteredRequests">
+        <tr *ngFor="let req of filteredRequestsForDisplay">
 
           <td>
             <div class="user-info">
@@ -130,6 +147,20 @@
 
     </table>
 
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination" *ngIf="filteredRequests.length > 0">
+    <button (click)="goToPreviousPage()" [disabled]="currentPage === 1" class="page-btn">
+      Previous
+    </button>
+    <button *ngFor="let page of pageNumbers" (click)="goToPage(page)" 
+      class="page-btn" [class.active]="page === currentPage">
+      {{ page }}
+    </button>
+    <button (click)="goToNextPage()" [disabled]="currentPage === totalPages" class="page-btn">
+      Next
+    </button>
   </div>
 
 </div>

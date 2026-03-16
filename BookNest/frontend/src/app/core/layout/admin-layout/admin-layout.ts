@@ -14,6 +14,8 @@ import { BorrowService } from '../../../services/borrow';
 export class AdminLayoutComponent implements OnInit {
   pendingCount: number = 0;
   showLogoutModal = false;
+  sidebarCollapsed = false;
+  showUserDropdown = false;
 
   constructor(
     private authService: AuthService,
@@ -34,7 +36,20 @@ export class AdminLayoutComponent implements OnInit {
     });
   }
 
+  toggleSidebar() {
+    this.sidebarCollapsed = !this.sidebarCollapsed;
+  }
+
+  toggleUserDropdown() {
+    this.showUserDropdown = !this.showUserDropdown;
+  }
+
+  closeUserDropdown() {
+    this.showUserDropdown = false;
+  }
+
   openLogoutModal() {
+    this.showUserDropdown = false;
     this.showLogoutModal = true;
   }
 

@@ -1,7 +1,7 @@
 /* Browse Books Page */
 
 .browse-page {
-  padding: 24px;
+  padding: 16px;
   max-width: 1400px;
   margin: 0 auto;
 }
@@ -24,14 +24,23 @@
   font-size: 14px;
 }
 
-/* Search & Filter */
+/* Search & Filter - STICKY */
 .search-filter {
-  margin-bottom: 24px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #f9fafb;
+  padding: 16px 0;
+  margin: -16px -24px 16px;
+  padding: 16px 24px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
 }
 
 .search-input-wrap {
   position: relative;
-  margin-bottom: 16px;
+  flex: 1;
 }
 
 .search-input-wrap .material-icons {
@@ -51,6 +60,38 @@
   font-size: 15px;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.sort-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.sort-wrap label {
+  font-size: 0.9rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.sort-select {
+  padding: 12px 32px 12px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  color: #374151;
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E") no-repeat right 12px center;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  min-width: 150px;
+  transition: border-color 0.2s;
+}
+
+.sort-select:focus {
+  border-color: #3b82f6;
+}
 }
 
 .search-input:focus {
@@ -280,5 +321,64 @@
   
   .card-cover {
     height: 200px;
+  }
+}
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px 20px;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.page-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  height: 38px;
+  padding: 0 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+  color: #4b5563;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.page-btn:hover:not(:disabled) {
+  border-color: #3b82f6;
+  color: #3b82f6;
+  background: #eff6ff;
+}
+
+.page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-color: #e5e7eb;
+}
+
+.page-btn.active {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: white;
+}
+
+@media (max-width: 480px) {
+  .pagination {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  
+  .page-btn {
+    min-width: 38px;
+    height: 34px;
+    font-size: 0.85rem;
   }
 }

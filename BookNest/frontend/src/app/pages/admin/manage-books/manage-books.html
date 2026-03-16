@@ -19,11 +19,23 @@
           placeholder="Search by title, author, or ISBN..." class="search-input">
       </div>
 
-      <div class="categories">
-        <button *ngFor="let cat of categories" class="cat-pill" [class.active]="selectedCategory === cat"
-          (click)="setCategory(cat)">
-          {{ cat }}
-        </button>
+      <div class="toolbar-row">
+        <div class="categories">
+          <button *ngFor="let cat of categories" class="cat-pill" [class.active]="selectedCategory === cat"
+            (click)="setCategory(cat)">
+            {{ cat }}
+          </button>
+        </div>
+        <div class="sort-wrap">
+          <label>Sort by:</label>
+          <select [(ngModel)]="sortBy" (ngModelChange)="onSortChange()" class="sort-select">
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
+            <option value="titleAZ">Title A-Z</option>
+            <option value="titleZA">Title Z-A</option>
+            <option value="authorAZ">Author A-Z</option>
+          </select>
+        </div>
       </div>
     </div>
   </div>
@@ -102,25 +114,17 @@
     </table>
   </div>
 
-  <div class="pagination-bar" *ngIf="filteredBooks.length > 0 && !isLoading">
-    <div class="pagination-summary">
-      Showing {{ paginationStart }}-{{ paginationEnd }} of {{ filteredBooks.length }} books
-    </div>
-
-    <div class="pagination-controls">
-      <button type="button" class="pagination-btn" (click)="goToPreviousPage()" [disabled]="currentPage === 1">
-        Previous
-      </button>
-
-      <button *ngFor="let page of pageNumbers" type="button" class="pagination-btn page-number"
-        [class.active]="page === currentPage" (click)="goToPage(page)">
-        {{ page }}
-      </button>
-
-      <button type="button" class="pagination-btn" (click)="goToNextPage()" [disabled]="currentPage === totalPages">
-        Next
-      </button>
-    </div>
+  <div class="pagination" *ngIf="filteredBooks.length > 0 && !isLoading">
+    <button (click)="goToPreviousPage()" [disabled]="currentPage === 1" class="page-btn">
+      Previous
+    </button>
+    <button *ngFor="let page of pageNumbers" (click)="goToPage(page)" 
+      class="page-btn" [class.active]="page === currentPage">
+      {{ page }}
+    </button>
+    <button (click)="goToNextPage()" [disabled]="currentPage === totalPages" class="page-btn">
+      Next
+    </button>
   </div>
 
   <div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">

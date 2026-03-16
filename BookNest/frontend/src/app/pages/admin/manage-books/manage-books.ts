@@ -28,6 +28,7 @@ export class ManageBooksComponent implements OnInit {
 
   searchTerm = '';
   selectedCategory = 'All';
+  sortBy = 'newest';
   isLoading = false;
   errorMessage = '';
   selectedImageName = '';
@@ -129,10 +130,35 @@ export class ManageBooksComponent implements OnInit {
       return matchesSearch && matchesCategory;
     });
 
+    this.filteredBooks = this.sortBooks(this.filteredBooks);
+
     if (resetPage) {
       this.currentPage = 1;
     }
     this.updatePagination();
+  }
+
+  sortBooks(books: Book[]): Book[] {
+    return books.sort((a, b) => {
+      switch (this.sortBy) {
+        case 'newest':
+          return (b.id || 0) - (a.id || 0);
+        case 'oldest':
+          return (a.id || 0) - (b.id || 0);
+        case 'titleAZ':
+          return a.title.localeCompare(b.title);
+        case 'titleZA':
+          return b.title.localeCompare(a.title);
+        case 'authorAZ':
+          return a.author.localeCompare(b.author);
+        default:
+          return 0;
+      }
+    });
+  }
+
+  onSortChange() {
+    this.filterBooks();
   }
 
   setCategory(cat: string) {

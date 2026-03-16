@@ -7,61 +7,74 @@
     </h1>
   </div>
 
-  <div class="card table-container">
+  <div class="content-card">
+    <!-- Search Bar -->
+    <div class="toolbar">
+      <div class="search-box">
+        <span class="material-icons">search</span>
+        <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
+          placeholder="Search by title or author...">
+      </div>
+      <div class="sort-wrap">
+        <label>Sort by:</label>
+        <select [(ngModel)]="sortBy" (ngModelChange)="onSortChange()" class="sort-select">
+          <option value="newest">Newest</option>
+          <option value="oldest">Oldest</option>
+          <option value="titleAZ">Title A-Z</option>
+        </select>
+      </div>
+    </div>
 
-    <table>
-
-      <thead>
-        <tr>
-          <th>Book</th>
-          <th>Author</th>
-          <th>Borrowed Date</th>
-          <th>Due Date</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-
-      <tbody>
-
-        <tr *ngFor="let book of borrowedBooks">
-
-          <td class="book-info">
-            <span class="material-icons book-icon">menu_book</span>
-            {{book.title}}
-          </td>
-
-          <td>{{book.author}}</td>
-
-          <td>{{ book.borrowDate | date:'dd-MM-yyyy' }}</td>
-
-          <td>{{ book.dueDate ? (book.dueDate | date:'dd-MM-yyyy') : '---' }}</td>
-
-          <td>
-            <span class="status-badge" [ngClass]="book.isOverdue ? 'status-red' : 'status-green'"> 
-              <span class="material-icons status-icon">
-                {{ book.isOverdue ? 'error' : 'check_circle' }}
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Book</th>
+            <th>Author</th>
+            <th>Borrowed Date</th>
+            <th>Due Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let book of paginatedBooks">
+            <td class="book-cell">
+              <span class="material-icons book-icon">menu_book</span>
+              <span>{{book.title}}</span>
+            </td>
+            <td>{{book.author}}</td>
+            <td>{{ book.borrowDate | date:'dd-MM-yyyy' }}</td>
+            <td>{{ book.dueDate ? (book.dueDate | date:'dd-MM-yyyy') : '---' }}</td>
+            <td>
+              <span class="badge" [class.badge-danger]="book.isOverdue" [class.badge-success]="!book.isOverdue">
+                <span class="material-icons">{{ book.isOverdue ? 'error' : 'check_circle' }}</span>
+                {{book.isOverdue ? 'Overdue' : 'Active'}}
               </span>
-              {{book.isOverdue ? 'Overdue' : 'Active'}}
-            </span>
-          </td>
+            </td>
+          </tr>
+          <tr *ngIf="filteredBooks.length === 0">
+            <td colspan="5" class="empty-cell">
+              <span class="material-icons">menu_book</span>
+              <p>No borrowed books found</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-        </tr>
-
-        <!-- Empty State -->
-        <tr *ngIf="borrowedBooks.length === 0">
-          <td colspan="5" class="empty-table">
-
-            <span class="material-icons empty-icon">menu_book</span>
-
-            <p>No borrowed books</p>
-
-          </td>
-        </tr>
-
-      </tbody>
-
-    </table>
-
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="filteredBooks.length > 0">
+      <button (click)="goToPreviousPage()" [disabled]="currentPage === 1" class="page-btn">
+        Previous
+      </button>
+      <button *ngFor="let page of pageNumbers" (click)="goToPage(page)" 
+        class="page-btn" [class.active]="page === currentPage">
+        {{ page }}
+      </button>
+      <button (click)="goToNextPage()" [disabled]="currentPage === totalPages" class="page-btn">
+        Next
+      </button>
+    </div>
   </div>
 
 </div>

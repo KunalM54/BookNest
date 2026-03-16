@@ -1,87 +1,286 @@
 <div class="page-container">
   <div class="page-header">
     <h1 class="page-title">System Reports</h1>
-    <button class="btn-primary" (click)="downloadReport()">
-      <span class="material-icons">download</span>
-      Download PDF
-    </button>
+    <div class="export-dropdown">
+      <button class="btn-primary" (click)="toggleExportMenu()">
+        <span class="material-icons">download</span>
+        Download Report
+        <span class="material-icons">arrow_drop_down</span>
+      </button>
+      <div class="dropdown-menu" *ngIf="showExportMenu">
+        <a (click)="exportReport('Analytics')">
+          <span class="material-icons">analytics</span>
+          Analytics Report
+        </a>
+        <a (click)="exportReport('Borrowing')">
+          <span class="material-icons">menu_book</span>
+          Borrowing Report
+        </a>
+        <a (click)="exportReport('Activity')">
+          <span class="material-icons">history</span>
+          Activity Report
+        </a>
+      </div>
+    </div>
   </div>
 
-  <!-- 1. Key Metrics Cards -->
-  <div class="stats-grid">
-    <div class="card stat-card">
-      <div class="stat-icon blue-bg">
+  <!-- Quick Summary Stats -->
+  <div class="quick-stats-grid">
+    <div class="quick-stat-card">
+      <div class="stat-icon blue">
         <span class="material-icons">menu_book</span>
       </div>
       <div class="stat-info">
-        <h3>Total Books</h3>
-        <p>{{ totalBooks }}</p>
+        <span class="stat-value">{{ quickStats.totalBooks || 0 }}</span>
+        <span class="stat-label">Total Books</span>
       </div>
     </div>
-    <div class="card stat-card">
-      <div class="stat-icon green-bg">
+    <div class="quick-stat-card">
+      <div class="stat-icon green">
         <span class="material-icons">check_circle</span>
       </div>
       <div class="stat-info">
-        <h3>Books Issued</h3>
-        <p>{{ booksIssued }}</p>
+        <span class="stat-value">{{ quickStats.booksIssued || 0 }}</span>
+        <span class="stat-label">Books Issued</span>
       </div>
     </div>
-    <div class="card stat-card">
-      <div class="stat-icon red-bg">
-        <span class="material-icons">warning</span>
-      </div>
-
-      <div class="stat-info">
-        <h3>Overdue Books</h3>
-        <p>{{ overdueBooks }}</p>
-      </div>
-    </div>
-    <div class="card stat-card">
-      <div class="stat-icon yellow-bg">
+    <div class="quick-stat-card">
+      <div class="stat-icon orange">
         <span class="material-icons">group</span>
       </div>
       <div class="stat-info">
-        <h3>Active Students</h3>
-        <p>{{ activeStudents }}</p>
+        <span class="stat-value">{{ quickStats.activeStudents || 0 }}</span>
+        <span class="stat-label">Active Students</span>
+      </div>
+    </div>
+    <div class="quick-stat-card">
+      <div class="stat-icon red">
+        <span class="material-icons">warning</span>
+      </div>
+      <div class="stat-info">
+        <span class="stat-value">{{ quickStats.overdueBooks || 0 }}</span>
+        <span class="stat-label">Overdue Books</span>
       </div>
     </div>
   </div>
 
-  <div class="report-split-layout">
+  <!-- Tab Navigation -->
+  <div class="tabs-nav">
+    <button class="tab-btn" [class.active]="activeTab === 'analytics'" (click)="activeTab = 'analytics'">
+      <span class="material-icons">analytics</span>
+      Analytics
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'reports'" (click)="activeTab = 'reports'">
+      <span class="material-icons">assessment</span>
+      Reports
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'activity'" (click)="activeTab = 'activity'">
+      <span class="material-icons">history</span>
+      Activity
+    </button>
+  </div>
 
-    <!-- 2. Most Popular Categories (Visual Bars) -->
-    <div class="card chart-card">
-      <h3>Most Popular Categories</h3>
-      <div class="bar-chart">
-        <div class="empty-state" *ngIf="categoryStats.length === 0">
-          No category data available
-        </div>
-        <div class="bar-group" *ngFor="let cat of categoryStats">
-          <div class="bar-label">
-            <span>{{cat.name}}</span>
-            <span>{{cat.count}}%</span>
+  <!-- Tab Content -->
+  <div class="tab-content">
+
+    <!-- Analytics Tab -->
+    <div *ngIf="activeTab === 'analytics'" class="tab-panel">
+      <!-- Inventory Overview -->
+      <div class="section-title">
+        <h2>Inventory Overview</h2>
+      </div>
+      <div class="inventory-grid">
+        <div class="inventory-card">
+          <span class="material-icons">library_books</span>
+          <div class="inventory-info">
+            <span class="inventory-value">{{ inventoryOverview.totalCopies || 0 }}</span>
+            <span class="inventory-label">Total Copies</span>
           </div>
-          <div class="progress-bg">
-            <div class="progress-fill" [style.width.%]="cat.count" [style.background]="getBarColor(cat.count)">
+        </div>
+        <div class="inventory-card available">
+          <span class="material-icons">check_circle</span>
+          <div class="inventory-info">
+            <span class="inventory-value">{{ inventoryOverview.availableCopies || 0 }}</span>
+            <span class="inventory-label">Available</span>
+          </div>
+        </div>
+        <div class="inventory-card issued">
+          <span class="material-icons">menu_book</span>
+          <div class="inventory-info">
+            <span class="inventory-value">{{ inventoryOverview.issuedCopies || 0 }}</span>
+            <span class="inventory-label">Issued</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="charts-row">
+        <!-- Books Issued Trend -->
+        <div class="card chart-card">
+          <h3>Books Issued Trend (Last 7 Days)</h3>
+          <div class="line-chart">
+            <div class="chart-bars" *ngIf="issuedTrend.length > 0">
+              <div class="chart-bar" *ngFor="let day of issuedTrend">
+                <div class="bar-container">
+                  <div class="bar-fill" [style.height.%]="getTrendBarHeight(day.count)"></div>
+                </div>
+                <span class="bar-label">{{ day.day }}</span>
+                <span class="bar-value">{{ day.count }}</span>
+              </div>
+            </div>
+            <div class="empty-msg" *ngIf="issuedTrend.length === 0">No data available</div>
+          </div>
+        </div>
+
+        <!-- Category Distribution -->
+        <div class="card chart-card">
+          <h3>Category Distribution</h3>
+          <div class="category-list">
+            <div class="empty-msg" *ngIf="categoryStats.length === 0">No data available</div>
+            <div class="category-item" *ngFor="let cat of categoryStats">
+              <div class="category-header">
+                <span class="category-name">{{ cat.name }}</span>
+                <span class="category-count">{{ cat.count }} books ({{ cat.percentage }}%)</span>
+              </div>
+              <div class="category-bar">
+                <div class="category-fill" [style.width.%]="cat.percentage" [style.background]="getBarColor(cat.percentage)"></div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 3. Recent Activity Log -->
-    <div class="card activity-card">
-      <h3>Recent Activity</h3>
-      <ul class="activity-list">
-        <li *ngFor="let act of activities">
-          <span class="activity-dot"></span>
-          <div class="activity-details">
-            <strong>{{act.user}}</strong> {{act.action}} <strong>{{act.book}}</strong>
-            <small>{{act.time}}</small>
+    <!-- Reports Tab -->
+    <div *ngIf="activeTab === 'reports'" class="tab-panel">
+      <div class="reports-grid">
+        <!-- Top Borrowed Books -->
+        <div class="card">
+          <h3>Top Borrowed Books</h3>
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Book Title</th>
+                  <th>Times Borrowed</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let book of topBooks; let i = index">
+                  <td>{{ i + 1 }}</td>
+                  <td>{{ book.title }}</td>
+                  <td>{{ book.count }}</td>
+                </tr>
+                <tr *ngIf="topBooks.length === 0">
+                  <td colspan="3" class="empty-msg">No data available</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-        </li>
-      </ul>
+        </div>
+
+        <!-- Most Active Students -->
+        <div class="card">
+          <h3>Most Active Students</h3>
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Student Name</th>
+                  <th>Books Borrowed</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let student of activeStudents; let i = index">
+                  <td>{{ i + 1 }}</td>
+                  <td>{{ student.name }}</td>
+                  <td>{{ student.count }}</td>
+                </tr>
+                <tr *ngIf="activeStudents.length === 0">
+                  <td colspan="3" class="empty-msg">No data available</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Least Borrowed Books -->
+        <div class="card">
+          <h3>Least Borrowed Books</h3>
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Book Title</th>
+                  <th>Times Borrowed</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let book of leastUsedBooks; let i = index">
+                  <td>{{ i + 1 }}</td>
+                  <td>{{ book.title }}</td>
+                  <td>{{ book.count }}</td>
+                </tr>
+                <tr *ngIf="leastUsedBooks.length === 0">
+                  <td colspan="3" class="empty-msg">No data available</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Recently Added Books -->
+        <div class="card">
+          <h3>Recently Added Books</h3>
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Book Title</th>
+                  <th>Added Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let book of recentlyAddedBooks; let i = index">
+                  <td>{{ i + 1 }}</td>
+                  <td>{{ book.title }}</td>
+                  <td>{{ book.addedDate }}</td>
+                </tr>
+                <tr *ngIf="recentlyAddedBooks.length === 0">
+                  <td colspan="3" class="empty-msg">No data available</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Activity Tab -->
+    <div *ngIf="activeTab === 'activity'" class="tab-panel">
+      <div class="card activity-card">
+        <h3>Recent Activity Timeline</h3>
+        <div class="activity-list">
+          <div class="activity-item" *ngFor="let act of activities">
+            <div class="activity-icon" [style.background]="act.color + '20'" [style.color]="act.color">
+              <span class="material-icons">{{ act.icon }}</span>
+            </div>
+            <div class="activity-content">
+              <p>
+                <strong>{{ act.user }}</strong> 
+                <span class="action-text">{{ act.action }}</span>
+                <strong *ngIf="act.book">{{ act.book }}</strong>
+              </p>
+              <small>{{ act.time }}</small>
+            </div>
+          </div>
+          <div class="empty-msg" *ngIf="activities.length === 0">No recent activity</div>
+        </div>
+      </div>
     </div>
 
   </div>

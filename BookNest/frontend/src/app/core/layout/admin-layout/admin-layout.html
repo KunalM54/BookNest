@@ -1,4 +1,36 @@
-<div class="layout-container admin-shell">
+<div class="layout-container" [class.sidebar-collapsed]="sidebarCollapsed">
+
+  <!-- TOP NAVBAR -->
+  <header class="top-navbar">
+    <div class="navbar-left">
+      <button class="menu-toggle" (click)="toggleSidebar()">
+        <span class="material-icons">{{ sidebarCollapsed ? 'menu' : 'menu_open' }}</span>
+      </button>
+      <h1 class="page-title">Admin Dashboard</h1>
+    </div>
+    <div class="navbar-right">
+      <div class="user-dropdown" (click)="toggleUserDropdown()">
+        <img src="https://ui-avatars.com/api/?name=Admin+User&background=2563eb&color=fff" alt="Admin" class="user-avatar">
+        <span class="user-name">Administrator</span>
+        <span class="material-icons dropdown-arrow">expand_more</span>
+        <div class="dropdown-menu" *ngIf="showUserDropdown" (click)="$event.stopPropagation()">
+          <a routerLink="/admin/profile" class="dropdown-item" (click)="closeUserDropdown()">
+            <span class="material-icons">person</span>
+            My Profile
+          </a>
+          <a routerLink="/admin/change-password" class="dropdown-item" (click)="closeUserDropdown()">
+            <span class="material-icons">lock</span>
+            Change Password
+          </a>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item logout" (click)="openLogoutModal()">
+            <span class="material-icons">logout</span>
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
 
   <!-- ADMIN SIDEBAR -->
   <aside class="sidebar">
@@ -13,6 +45,7 @@
     </div>
 
     <ul class="nav-links">
+      <li class="menu-header">DASHBOARD</li>
       <li>
         <a routerLink="/admin/dashboard" routerLinkActive="active-link">
           <span class="material-icons">dashboard</span>
@@ -21,30 +54,25 @@
       </li>
 
       <li class="menu-header">MANAGEMENT</li>
-
       <li>
         <a routerLink="/admin/books" routerLinkActive="active-link">
           <span class="material-icons">library_books</span>
           <span>Manage Books</span>
         </a>
       </li>
-
       <li>
         <a routerLink="/admin/students" routerLinkActive="active-link">
           <span class="material-icons">people</span>
           <span>Manage Students</span>
         </a>
       </li>
-
       <li>
         <a routerLink="/admin/requests" routerLinkActive="active-link">
           <span class="material-icons">assignment_turned_in</span>
           <span>Borrow Requests</span>
-          <!-- Dynamic count badge example -->
-          <span class="badge-count" *ngIf="pendingCount > 0">{{pendingCount}}</span>
+          <span class="badge-count" *ngIf="pendingCount > 0">{{ pendingCount }}</span>
         </a>
       </li>
-
       <li>
         <a routerLink="/admin/notices" routerLinkActive="active-link">
           <span class="material-icons">campaign</span>
@@ -53,7 +81,6 @@
       </li>
 
       <li class="menu-header">SYSTEM</li>
-
       <li>
         <a routerLink="/admin/reports" routerLinkActive="active-link">
           <span class="material-icons">analytics</span>
@@ -61,63 +88,46 @@
         </a>
       </li>
 
+      <li class="menu-header">ACCOUNT</li>
       <li>
         <a routerLink="/admin/profile" routerLinkActive="active-link">
           <span class="material-icons">person</span>
           <span>Profile</span>
         </a>
       </li>
+      <li>
+        <button class="logout-btn" (click)="openLogoutModal()">
+          <span class="material-icons">logout</span>
+          <span>Logout</span>
+        </button>
+      </li>
     </ul>
-
-    <div class="sidebar-footer">
-      <button type="button" class="logout-btn" (click)="openLogoutModal()">
-        <span class="material-icons">logout</span>
-        <span>Logout</span>
-      </button>
-    </div>
-
-    <!-- Logout Confirmation Modal -->
-    <div class="modal-overlay" *ngIf="showLogoutModal">
-      <div class="modal-card">
-        <div class="modal-header">
-          <h3>Confirm Logout</h3>
-        </div>
-        <div class="modal-body">
-          <p>Are you sure you want to logout?</p>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-secondary" (click)="closeLogoutModal()">
-            Cancel
-          </button>
-          <button class="btn btn-danger" (click)="confirmLogout()">
-            Yes, Logout
-          </button>
-        </div>
-      </div>
-    </div>
   </aside>
 
   <!-- MAIN CONTENT -->
   <main class="main-content">
-
-    <!-- TOPBAR -->
-    <header class="topbar">
-      <!-- You can add a breadcrumb or page title here dynamically if needed -->
-      <div class="spacer"></div>
-
-      <div class="user-profile">
-        <div class="user-info">
-          <span class="name">Administrator</span>
-          <span class="role">Super User</span>
-        </div>
-        <img src="https://ui-avatars.com/api/?name=Admin+User&background=2563eb&color=fff" alt="Admin">
-      </div>
-    </header>
-
-    <!-- PAGE CONTENT (Where dashboard, books, students etc. will appear) -->
     <div class="content-area">
       <router-outlet></router-outlet>
     </div>
-
   </main>
+
+  <!-- Logout Confirmation Modal -->
+  <div class="modal-overlay" *ngIf="showLogoutModal" (click)="closeLogoutModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Confirm Logout</h3>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to logout?</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeLogoutModal()">
+          Cancel
+        </button>
+        <button class="btn btn-danger" (click)="confirmLogout()">
+          Yes, Logout
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

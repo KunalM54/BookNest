@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -51,5 +52,20 @@ public interface BorrowRepository extends JpaRepository<Borrow, Long> {
 
     @Query("SELECT COUNT(b) > 0 FROM Borrow b WHERE b.student.id = :studentId AND b.book.id = :bookId AND b.status IN :statuses")
     boolean existsByStudentIdAndBookIdAndStatusIn(Long studentId, Long bookId, List<Borrow.BorrowStatus> statuses);
+
+    @Query("SELECT b.book.title, COUNT(b) as cnt FROM Borrow b GROUP BY b.book.id, b.book.title ORDER BY cnt DESC")
+    List<Object[]> findTopBorrowedBooks();
+
+    @Query("SELECT b.student.fullName, COUNT(b) as cnt FROM Borrow b GROUP BY b.student.id, b.student.fullName ORDER BY cnt DESC")
+    List<Object[]> findMostActiveStudents();
+
+    @Query("SELECT b FROM Borrow b WHERE b.status = 'OVERDUE'")
+    List<Borrow> findOverdueBooks();
+
+    @Query("SELECT b.book.title, COUNT(b) as cnt FROM Borrow b GROUP BY b.book.id, b.book.title ORDER BY cnt ASC")
+    List<Object[]> findLeastUsedBooks();
+
+    @Query("SELECT FUNCTION('DATE', b.requestDate), COUNT(b) FROM Borrow b WHERE b.status = 'APPROVED' AND b.requestDate >= :startDate GROUP BY FUNCTION('DATE', b.requestDate) ORDER BY FUNCTION('DATE', b.requestDate)")
+    List<Object[]> findIssuedTrend(LocalDate startDate);
 }
 

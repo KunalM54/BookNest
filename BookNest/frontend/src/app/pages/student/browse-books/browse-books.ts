@@ -17,8 +17,15 @@ export class BrowseBooksComponent implements OnInit {
   searchTerm = '';
   loading = false;
   selectedCategory = 'All';
+  sortBy = 'newest';
   books: Book[] = [];
+  filteredBooks: Book[] = [];
+  paginatedBooks: Book[] = [];
   categories: string[] = ['All'];
+  
+  currentPage = 1;
+  pageSize = 12;
+  totalPages = 1;
 
   constructor(
     private snackbar: SnackbarService,
@@ -43,6 +50,7 @@ export class BrowseBooksComponent implements OnInit {
           'All',
           ...Array.from(new Set(this.books.map((book) => book.category).filter(Boolean))).sort()
         ];
+        this.applyFilters();
         this.loading = false;
       },
       error: () => {
@@ -54,10 +62,19 @@ export class BrowseBooksComponent implements OnInit {
 
   setCategory(category: string) {
     this.selectedCategory = category;
+    this.applyFilters();
   }
 
-  get filteredBooks() {
-    let filtered = this.books;
+  onSearchChange() {
+    this.applyFilters();
+  }
+
+  onSortChange() {
+    this.applyFilters();
+  }
+
+  applyFilters() {
+    let filtered = [...this.books];
 
     if (this.selectedCategory !== 'All') {
       filtered = filtered.filter((book) => book.category === this.selectedCategory);
@@ -71,7 +88,78 @@ export class BrowseBooksComponent implements OnInit {
       );
     }
 
-    return filtered;
+    filtered = this.sortBooks(filtered);
+
+    this.filteredBooks = filtered;
+    this.currentPage = 1;
+    this.updatePagination();
+  }
+
+  sortBooks(books: Book[]): Book[] {
+    return books.sort((a, b) => {
+      switch (this.sortBy) {
+        case 'newest':
+          return (b.id || 0) - (a.id || 0);
+        case 'oldest':
+          return (a.id || 0) - (b.id || 0);
+        case 'titleAZ':
+          return a.title.localeCompare(b.title);
+        case 'titleZA':
+          return b.title.localeCompare(a.title);
+        case 'authorAZ':
+          return a.author.localeCompare(b.author);
+        case 'available':
+          return (b.availableCopies || 0) - (a.availableCopies || 0);
+        default:
+          return 0;
+      }
+    });
+  }
+
+  updatePagination() {
+    const totalBooks = this.filteredBooks.length;
+    this.totalPages = Math.max(1, Math.ceil(totalBooks / this.pageSize));
+    
+    if (this.currentPage > this.totalPages) {
+      this.currentPage = this.totalPages;
+    }
+
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    this.paginatedBooks = this.filteredBooks.slice(startIndex, startIndex + this.pageSize);
+  }
+
+  goToPage(page: number) {
+    if (page < 1 || page > this.totalPages || page === this.currentPage) {
+      return;
+    }
+    this.currentPage = page;
+    this.updatePagination();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  goToPreviousPage() {
+    this.goToPage(this.currentPage - 1);
+  }
+
+  goToNextPage() {
+    this.goToPage(this.currentPage + 1);
+  }
+
+  get pageNumbers(): number[] {
+    return Array.from({ length: this.totalPages }, (_, index) => index + 1);
+  }
+
+  get paginationStart(): number {
+    if (this.filteredBooks.length === 0) return 0;
+    return (this.currentPage - 1) * this.pageSize + 1;
+  }
+
+  get paginationEnd(): number {
+    return Math.min(this.currentPage * this.pageSize, this.filteredBooks.length);
+  }
+
+  get filteredBooksForDisplay() {
+    return this.paginatedBooks;
   }
 
   hasValidImage(book: Book): boolean {

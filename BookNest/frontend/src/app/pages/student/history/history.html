@@ -7,60 +7,72 @@
     </h1>
   </div>
 
-  <div class="card table-container">
+  <div class="content-card">
+    <!-- Search Bar -->
+    <div class="toolbar">
+      <div class="search-box">
+        <span class="material-icons">search</span>
+        <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
+          placeholder="Search by book title...">
+      </div>
+      <div class="sort-wrap">
+        <label>Sort by:</label>
+        <select [(ngModel)]="sortBy" (ngModelChange)="onSortChange()" class="sort-select">
+          <option value="newest">Newest</option>
+          <option value="oldest">Oldest</option>
+          <option value="titleAZ">Title A-Z</option>
+        </select>
+      </div>
+    </div>
 
-    <table>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Book</th>
+            <th>Borrowed On</th>
+            <th>Returned On</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let record of paginatedHistory">
+            <td class="book-cell">
+              <span class="material-icons book-icon">menu_book</span>
+              <span>{{record.title}}</span>
+            </td>
+            <td>{{record.borrowDate || '-'}}</td>
+            <td>{{record.returnDate || '-'}}</td>
+            <td>
+              <span class="badge badge-success">
+                <span class="material-icons">check_circle</span>
+                Returned
+              </span>
+            </td>
+          </tr>
+          <tr *ngIf="filteredHistory.length === 0">
+            <td colspan="4" class="empty-cell">
+              <span class="material-icons">history</span>
+              <p>No history found</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-      <thead>
-        <tr>
-          <th>Book</th>
-          <th>Borrowed On</th>
-          <th>Returned On</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-
-      <tbody>
-
-        <tr *ngFor="let record of history">
-
-          <td class="book-info">
-            <span class="material-icons book-icon">menu_book</span>
-            {{record.title}}
-          </td>
-
-          <td>{{record.borrowDate || '-'}}</td>
-
-          <td>{{record.returnDate || '-'}}</td>
-
-          <td>
-
-            <span class="status-badge status-gray"><span class="material-icons status-icon">check_circle</span>
-              Returned</span>
-
-          </td>
-
-        </tr>
-
-        <!-- Empty State -->
-        <tr *ngIf="history.length === 0">
-
-          <td colspan="4" class="empty-table">
-
-            <span class="material-icons empty-icon">
-              history
-            </span>
-
-            <p>No borrowing history found</p>
-
-          </td>
-
-        </tr>
-
-      </tbody>
-
-    </table>
-
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="filteredHistory.length > 0">
+      <button (click)="goToPreviousPage()" [disabled]="currentPage === 1" class="page-btn">
+        Previous
+      </button>
+      <button *ngFor="let page of pageNumbers" (click)="goToPage(page)" 
+        class="page-btn" [class.active]="page === currentPage">
+        {{ page }}
+      </button>
+      <button (click)="goToNextPage()" [disabled]="currentPage === totalPages" class="page-btn">
+        Next
+      </button>
+    </div>
   </div>
 
 </div>

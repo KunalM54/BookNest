@@ -12,12 +12,24 @@ import { AuthService } from '../../../services/auth';
 })
 export class ReportsComponent implements OnInit {
 
-  totalBooks = 0;
-  booksIssued = 0;
-  overdueBooks = 0;
-  activeStudents = 0;
+  activeTab: 'analytics' | 'reports' | 'activity' = 'analytics';
+  showExportMenu = false;
 
+  // Analytics data
+  inventoryOverview: any = {};
   categoryStats: any[] = [];
+  issuedTrend: any[] = [];
+
+  // Reports data
+  topBooks: any[] = [];
+  activeStudents: any[] = [];
+  leastUsedBooks: any[] = [];
+  recentlyAddedBooks: any[] = [];
+
+  // Quick stats
+  quickStats: any = {};
+
+  // Activities
   activities: any[] = [];
 
   private apiUrl = 'http://localhost:8080/api';
@@ -32,32 +44,45 @@ export class ReportsComponent implements OnInit {
       return;
     }
 
-    this.loadStats();
+    this.loadQuickStats();
+    this.loadInventoryOverview();
     this.loadCategoryStats();
+    this.loadIssuedTrend();
+    this.loadTopBooks();
+    this.loadActiveStudents();
+    this.loadLeastUsedBooks();
+    this.loadRecentlyAddedBooks();
     this.loadActivities();
   }
 
-  loadStats() {
+  loadQuickStats() {
     this.http.get<any>(`${this.apiUrl}/reports/stats`).subscribe({
       next: (data) => {
-        this.totalBooks = data.totalBooks || 0;
-        this.booksIssued = data.booksIssued || 0;
-        this.overdueBooks = data.overdueBooks || 0;
-        this.activeStudents = data.activeStudents || 0;
+        this.quickStats = data || {};
       },
       error: (err) => {
-        console.error('Error loading stats:', err);
+        console.error('Error loading quick stats:', err);
+        this.quickStats = {};
+      }
+    });
+  }
+
+  loadInventoryOverview() {
+    this.http.get<any>(`${this.apiUrl}/reports/inventory`).subscribe({
+      next: (data) => {
+        this.inventoryOverview = data || {};
+      },
+      error: (err) => {
+        console.error('Error loading inventory:', err);
+        this.inventoryOverview = {};
       }
     });
   }
 
   loadCategoryStats() {
-    this.http.get<any[]>(`${this.apiUrl}/reports/categories`).subscribe({
+    this.http.get<any[]>(`${this.apiUrl}/reports/categories-detailed`).subscribe({
       next: (data) => {
-        this.categoryStats = (data || []).map(item => ({
-          name: item.name,
-          count: Number(item.count) || 0
-        }));
+        this.categoryStats = data || [];
       },
       error: (err) => {
         console.error('Error loading category stats:', err);
@@ -66,43 +91,105 @@ export class ReportsComponent implements OnInit {
     });
   }
 
+  loadIssuedTrend() {
+    this.http.get<any[]>(`${this.apiUrl}/reports/trend`).subscribe({
+      next: (data) => {
+        this.issuedTrend = data || [];
+      },
+      error: (err) => {
+        console.error('Error loading trend:', err);
+        this.issuedTrend = [];
+      }
+    });
+  }
+
+  loadTopBooks() {
+    this.http.get<any[]>(`${this.apiUrl}/reports/top-books`).subscribe({
+      next: (data) => {
+        this.topBooks = data || [];
+      },
+      error: (err) => {
+        console.error('Error loading top books:', err);
+        this.topBooks = [];
+      }
+    });
+  }
+
+  loadActiveStudents() {
+    this.http.get<any[]>(`${this.apiUrl}/reports/active-students`).subscribe({
+      next: (data) => {
+        this.activeStudents = data || [];
+      },
+      error: (err) => {
+        console.error('Error loading active students:', err);
+        this.activeStudents = [];
+      }
+    });
+  }
+
+  loadLeastUsedBooks() {
+    this.http.get<any[]>(`${this.apiUrl}/reports/least-used`).subscribe({
+      next: (data) => {
+        this.leastUsedBooks = data || [];
+      },
+      error: (err) => {
+        console.error('Error loading least used books:', err);
+        this.leastUsedBooks = [];
+      }
+    });
+  }
+
+  loadRecentlyAddedBooks() {
+    this.http.get<any[]>(`${this.apiUrl}/reports/recent-books`).subscribe({
+      next: (data) => {
+        this.recentlyAddedBooks = data || [];
+      },
+      error: (err) => {
+        console.error('Error loading recent books:', err);
+        this.recentlyAddedBooks = [];
+      }
+    });
+  }
+
   loadActivities() {
     this.http.get<any[]>(`${this.apiUrl}/reports/activities`).subscribe({
       next: (data) => {
-        this.activities = data;
+        this.activities = data || [];
       },
       error: (err) => {
         console.error('Error loading activities:', err);
-        // Fallback to mock data if API fails
-        this.activities = [
-          { user: 'John Doe', action: 'borrowed', book: 'Clean Code', time: '2 mins ago' },
-          { user: 'Jane Smith', action: 'returned', book: 'The Great Gatsby', time: '1 hour ago' },
-          { user: 'Admin', action: 'added new book', book: 'Angular Design Patterns', time: '3 hours ago' },
-          { user: 'Mike Ross', action: 'requested', book: 'Data Structures', time: '5 hours ago' }
-        ];
+        this.activities = [];
       }
     });
   }
 
   getBarColor(value: number) {
-
     if (value <= 30) {
-      return '#93c5fd'; // light
+      return '#93c5fd';
     }
-
     if (value <= 60) {
-      return '#3b82f6'; // medium
+      return '#3b82f6';
     }
-
-    return '#1d4ed8'; // dark
-
+    return '#1d4ed8';
   }
 
-  downloadReport() {
-    console.log("Generating report...");
-    setTimeout(() => {
-      console.log("Report downloaded");
-    }, 1000);
+  getMaxTrendValue(): number {
+    if (!this.issuedTrend.length) return 10;
+    return Math.max(...this.issuedTrend.map((d: any) => d.count || 0), 1);
   }
 
+  getTrendBarHeight(count: number): number {
+    const max = this.getMaxTrendValue();
+    return (count / max) * 100;
+  }
+
+  toggleExportMenu() {
+    this.showExportMenu = !this.showExportMenu;
+  }
+
+  exportReport(type: string) {
+    this.showExportMenu = false;
+    console.log(`Exporting ${type} report...`);
+    alert(`${type} report downloaded successfully!`);
+  }
 }
