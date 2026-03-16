@@ -14,11 +14,26 @@ export class NoticesStudent implements OnInit {
 
   notices: Notice[] = [];
   isLoading: boolean = false;
+  expandedNoticeId: number | null = null;
 
   constructor(private noticeService: NoticeService) {}
 
   ngOnInit() {
     this.loadNotices();
+  }
+
+  toggleNotice(noticeId: number) {
+    this.expandedNoticeId = this.expandedNoticeId === noticeId ? null : noticeId;
+  }
+
+  isExpanded(noticeId: number): boolean {
+    return this.expandedNoticeId === noticeId;
+  }
+
+  getFirstLine(message: string): string {
+    if (!message) return '';
+    const lines = message.split('\n');
+    return lines[0].substring(0, 80) + (lines[0].length > 80 ? '...' : '');
   }
 
   private resolvePriority(priority?: NoticePriority, isImportant?: boolean): NoticePriority {
@@ -58,7 +73,6 @@ export class NoticesStudent implements OnInit {
     return this.getNoticePriority(notice) === 'HIGH';
   }
 
-  // Format date from ISO string
   formatDate(dateString: string): string {
     if (!dateString) return '';
     const date = new Date(dateString);

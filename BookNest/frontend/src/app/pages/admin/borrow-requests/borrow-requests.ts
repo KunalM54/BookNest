@@ -13,6 +13,7 @@ import type { BorrowRequest } from '../../../services/borrow';
 export class BorrowRequestsComponent implements OnInit {
 
   requests: BorrowRequest[] = [];
+  activeTab: string = 'all';
 
   private apiUrl = 'http://localhost:8080/api/borrow';
 
@@ -20,6 +21,40 @@ export class BorrowRequestsComponent implements OnInit {
 
   ngOnInit() {
     this.loadRequests();
+  }
+
+  setTab(tab: string) {
+    this.activeTab = tab;
+  }
+
+  get filteredRequests() {
+    if (this.activeTab === 'all') {
+      return this.requests;
+    }
+    return this.requests.filter(req => {
+      const status = req.displayStatus?.toUpperCase();
+      switch (this.activeTab) {
+        case 'pending': return status === 'PENDING';
+        case 'issued': return status === 'ISSUED';
+        case 'returned': return status === 'RETURNED';
+        case 'rejected': return status === 'REJECTED';
+        default: return true;
+      }
+    });
+  }
+
+  getTabCount(tab: string): number {
+    if (tab === 'all') return this.requests.length;
+    return this.requests.filter(req => {
+      const status = req.displayStatus?.toUpperCase();
+      switch (tab) {
+        case 'pending': return status === 'PENDING';
+        case 'issued': return status === 'ISSUED';
+        case 'returned': return status === 'RETURNED';
+        case 'rejected': return status === 'REJECTED';
+        default: return true;
+      }
+    }).length;
   }
 
   loadRequests() {

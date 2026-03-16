@@ -16,14 +16,16 @@ thead {
 
 th {
     text-align: left;
-    padding: 12px;
-    font-size: 0.85rem;
-    color: #6b7280;
+    padding: 14px 16px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #4b5563;
     border-bottom: 1px solid #e5e7eb;
+    text-transform: uppercase;
 }
 
 td {
-    padding: 14px 12px;
+    padding: 16px;
     border-bottom: 1px solid #f3f4f6;
     font-size: 0.95rem;
     color: #374151;
@@ -34,12 +36,12 @@ td {
 .book-info {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     font-weight: 500;
 }
 
 .book-icon {
-    font-size: 18px;
+    font-size: 20px;
     color: #9ca3af;
 }
 
@@ -49,9 +51,9 @@ td {
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    padding: 4px 10px;
+    padding: 6px 14px;
     border-radius: 20px;
-    font-size: 0.75rem;
+    font-size: 0.85rem;
     font-weight: 600;
 }
 

@@ -91,15 +91,17 @@ table {
 tbody td {
     padding: 14px 12px;
     border-bottom: 1px solid #f1f5f9;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
 }
 
 thead th {
-    padding: 12px;
-    font-size: 0.85rem;
-    color: #6b7280;
+    padding: 14px 16px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #4b5563;
     border-bottom: 1px solid #e5e7eb;
     text-align: left;
+    text-transform: uppercase;
 }
 
 tbody tr:hover {

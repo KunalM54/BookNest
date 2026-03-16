@@ -1,121 +1,189 @@
-/* NOTICE LIST */
-
-.notices-list{
-display:flex;
-flex-direction:column;
-gap:16px;
+/* Notices List */
+.notices-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-/* NOTICE CARD */
-
-.notice-card{
-padding:20px 22px;
-border-left:4px solid #2563eb;
-transition:0.2s;
+/* Notice Card */
+.notice-card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+  transition: all 0.2s;
 }
 
-.notice-card-high{
-border-left-color:#ef4444;
+.notice-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.notice-card:hover{
-transform:translateY(-2px);
-box-shadow:0 6px 18px rgba(0,0,0,0.08);
+.notice-card-high {
+  border-left: 4px solid #ef4444;
 }
 
-/* HEADER */
-
-.notice-header{
-display:flex;
-justify-content:space-between;
-align-items:flex-start;
-gap:16px;
-margin-bottom:10px;
+.notice-card:not(.notice-card-high) {
+  border-left: 4px solid #3b82f6;
 }
 
-/* TITLE */
-
-.notice-title-group{
-display:flex;
-flex-direction:column;
-gap:10px;
+/* Notice Header */
+.notice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px;
+  cursor: pointer;
+  gap: 16px;
 }
 
-.notice-title{
-display:flex;
-align-items:center;
-gap:8px;
+.notice-left {
+  flex: 1;
+  min-width: 0;
 }
 
-.notice-title h3{
-font-size:1rem;
-font-weight:600;
-color:#1f2937;
+/* Date Badge */
+.notice-date-badge {
+  display: inline-block;
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-bottom: 8px;
 }
 
-/* ICON */
-
-.notice-icon{
-color:#2563eb;
-font-size:20px;
+/* Title Row */
+.notice-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
 }
 
-.notice-icon.important{
-color:#ef4444;
+.priority-icon {
+  font-size: 20px;
+  color: #3b82f6;
+  flex-shrink: 0;
 }
 
-.notice-priority-badge{
-display:inline-flex;
-align-self:flex-start;
-padding:6px 12px;
-border-radius:999px;
-background:#dbeafe;
-color:#1d4ed8;
-font-size:0.78rem;
-font-weight:600;
+.priority-icon.high {
+  color: #ef4444;
 }
 
-.notice-priority-badge-high{
-background:#fee2e2;
-color:#b91c1c;
+.notice-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* DATE */
-
-.notice-date{
-font-size:0.85rem;
-color:#6b7280;
-white-space:nowrap;
+/* Preview */
+.notice-preview {
+  font-size: 0.95rem;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.4;
 }
 
-/* MESSAGE */
-
-.notice-message{
-font-size:0.95rem;
-color:#374151;
-line-height:1.5;
-margin-top:6px;
+/* Read More Button */
+.read-more-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background: #f3f4f6;
+  border: none;
+  border-radius: 8px;
+  color: #4b5563;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
-/* EMPTY STATE */
-
-.empty-state{
-text-align:center;
-padding:40px;
-color:#9ca3af;
+.read-more-btn:hover {
+  background: #e5e7eb;
+  color: #1f2937;
 }
 
-.empty-icon{
-font-size:36px;
-margin-bottom:6px;
+.read-more-btn .material-icons {
+  font-size: 20px;
 }
 
-@media (max-width:768px){
-.notice-header{
-flex-direction:column;
+/* Notice Body (Expanded) */
+.notice-body {
+  padding: 0 20px 20px;
 }
 
-.notice-date{
-white-space:normal;
+.notice-divider {
+  height: 1px;
+  background: #e5e7eb;
+  margin-bottom: 16px;
 }
+
+.notice-full-message {
+  font-size: 1rem;
+  color: #374151;
+  line-height: 1.6;
+  margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #9ca3af;
+}
+
+.empty-state .spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e5e7eb;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.empty-icon {
+  font-size: 56px;
+  opacity: 0.5;
+  margin-bottom: 12px;
+}
+
+.empty-state h3 {
+  margin: 0 0 8px;
+  color: #4b5563;
+  font-size: 1.1rem;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .notice-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .read-more-btn {
+    width: 100%;
+    justify-content: center;
+    margin-top: 12px;
+  }
+  
+  .notice-title {
+    font-size: 1rem;
+  }
 }

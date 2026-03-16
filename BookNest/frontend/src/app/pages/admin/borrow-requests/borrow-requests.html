@@ -7,6 +7,38 @@
     </h1>
   </div>
 
+  <!-- Tab Navigation -->
+  <div class="tabs-nav">
+    <button 
+      class="tab-btn" 
+      [class.active]="activeTab === 'all'"
+      (click)="setTab('all')">
+      <span>All</span>
+      <span class="tab-badge">{{ getTabCount('all') }}</span>
+    </button>
+    <button 
+      class="tab-btn" 
+      [class.active]="activeTab === 'pending'"
+      (click)="setTab('pending')">
+      <span>Pending</span>
+      <span class="tab-badge pending" *ngIf="getTabCount('pending')">{{ getTabCount('pending') }}</span>
+    </button>
+    <button 
+      class="tab-btn" 
+      [class.active]="activeTab === 'issued'"
+      (click)="setTab('issued')">
+      <span>Issued</span>
+      <span class="tab-badge issued" *ngIf="getTabCount('issued')">{{ getTabCount('issued') }}</span>
+    </button>
+    <button 
+      class="tab-btn" 
+      [class.active]="activeTab === 'returned'"
+      (click)="setTab('returned')">
+      <span>Returned</span>
+      <span class="tab-badge returned" *ngIf="getTabCount('returned')">{{ getTabCount('returned') }}</span>
+    </button>
+  </div>
+
   <div class="card table-container">
 
     <table>
@@ -24,27 +56,24 @@
 
       <tbody>
 
-        <tr *ngFor="let req of requests">
+        <tr *ngFor="let req of filteredRequests">
 
           <td>
             <div class="user-info">
-
               <div class="avatar">
-                {{req.studentName.charAt(0)}}
+                {{req.studentName.charAt(0) || 'U'}}
               </div>
-
               <div>
-                <div class="fw-bold">{{req.studentName}}</div>
+                <div class="user-name">{{req.studentName}}</div>
                 <small class="text-muted">{{req.studentIdNumber}}</small>
               </div>
-
             </div>
           </td>
 
           <td>
             <div class="book-info">
               <span class="material-icons book-icon">menu_book</span>
-              {{req.bookTitle}}
+              <span class="book-title">{{req.bookTitle}}</span>
             </div>
           </td>
 
@@ -53,15 +82,10 @@
           <td>{{ req.dueDate ? (req.dueDate | date:'dd-MM-yyyy') : '---' }}</td>
 
           <td>
-
-            <span class="status-badge pending" *ngIf="req.status === 'PENDING'">
-              Pending
-            </span>
-
+            <span class="status-badge pending" *ngIf="req.status === 'PENDING'">Pending</span>
             <span class="status-badge issued" *ngIf="req.displayStatus === 'ISSUED'">Issued</span>
             <span class="status-badge returned" *ngIf="req.displayStatus === 'RETURNED'">Returned</span>
-            <span class="status-badge danger" *ngIf="req.displayStatus === 'REJECTED'">Rejected</span>
-
+            <span class="status-badge rejected" *ngIf="req.displayStatus === 'REJECTED'">Rejected</span>
           </td>
 
           <td class="action-buttons">
@@ -69,44 +93,37 @@
             <ng-container *ngIf="req.status === 'PENDING'">
 
               <button class="btn-icon approve" (click)="approve(req.id)" title="Approve">
-
                 <span class="material-icons">check</span>
-
               </button>
 
               <button class="btn-icon reject" (click)="reject(req.id)" title="Reject">
-
                 <span class="material-icons">close</span>
-
               </button>
 
             </ng-container>
 
-
-            <ng-container *ngIf="req.status !== 'PENDING'">
+            <ng-container *ngIf="req.displayStatus === 'ISSUED'">
 
               <button class="btn-icon return" (click)="markReturned(req.id)" title="Mark Returned">
-
-                <span class="material-icons">check_circle</span>
-
+                <span class="material-icons">assignment_return</span>
               </button>
 
             </ng-container>
+
+            <button class="btn-icon remove" (click)="remove(req.id)" title="Remove">
+              <span class="material-icons">delete</span>
+            </button>
 
           </td>
 
         </tr>
 
-        <tr *ngIf="requests.length === 0">
-
+        <!-- Empty State -->
+        <tr *ngIf="filteredRequests.length === 0">
           <td colspan="7" class="empty-state">
-
-            <span class="material-icons empty-icon">check_circle</span>
-
-            No borrow requests
-
+            <span class="material-icons empty-icon">inbox</span>
+            <p>No requests found</p>
           </td>
-
         </tr>
 
       </tbody>

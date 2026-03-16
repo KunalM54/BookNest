@@ -23,6 +23,7 @@ export class NoticesComponent implements OnInit {
   searchTerm = '';
   isLoading = false;
   errorMessage = '';
+  activeTab: 'all' | 'normal' | 'important' = 'all';
 
   notices: Notice[] = [];
   filteredNotices: Notice[] = [];
@@ -40,6 +41,36 @@ export class NoticesComponent implements OnInit {
 
   ngOnInit() {
     this.loadNotices();
+  }
+
+  setTab(tab: 'all' | 'normal' | 'important') {
+    this.activeTab = tab;
+    this.currentPage = 1;
+    this.filterNotices(false);
+  }
+
+  getTabCount(tab: string): number {
+    switch (tab) {
+      case 'all':
+        return this.notices.length;
+      case 'normal':
+        return this.notices.filter(n => !this.isHighPriority(n)).length;
+      case 'important':
+        return this.notices.filter(n => this.isHighPriority(n)).length;
+      default:
+        return 0;
+    }
+  }
+
+  private filterByTab(): Notice[] {
+    switch (this.activeTab) {
+      case 'normal':
+        return this.notices.filter(n => !this.isHighPriority(n));
+      case 'important':
+        return this.notices.filter(n => this.isHighPriority(n));
+      default:
+        return this.notices;
+    }
   }
 
   private createEmptyForm(): NoticeForm {
@@ -127,16 +158,17 @@ export class NoticesComponent implements OnInit {
 
   filterNotices(resetPage = true) {
     const normalizedSearchTerm = this.searchTerm.trim().toLowerCase();
+    
+    let notices = this.filterByTab();
 
-    this.filteredNotices = this.notices.filter((notice) => {
+    this.filteredNotices = notices.filter((notice) => {
       if (!normalizedSearchTerm) {
         return true;
       }
 
       return (
         notice.title.toLowerCase().includes(normalizedSearchTerm) ||
-        notice.message.toLowerCase().includes(normalizedSearchTerm) ||
-        this.getPrioritySearchLabel(notice).includes(normalizedSearchTerm)
+        notice.message.toLowerCase().includes(normalizedSearchTerm)
       );
     });
 

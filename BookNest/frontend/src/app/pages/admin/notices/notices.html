@@ -11,49 +11,41 @@
     </button>
   </div>
 
-  <div class="admin-toolbar-stack">
-    <div class="card controls-card">
-      <div class="search-wrapper">
-        <span class="material-icons search-icon">search</span>
-        <input
-          type="text"
-          [(ngModel)]="searchTerm"
-          (ngModelChange)="onSearchChange()"
-          placeholder="Search notices by title or message..."
-          class="search-input">
-      </div>
+  <!-- Tabs -->
+  <div class="tabs-nav">
+    <button 
+      class="tab-btn" 
+      [class.active]="activeTab === 'all'"
+      (click)="setTab('all')">
+      All
+      <span class="tab-badge">{{ getTabCount('all') }}</span>
+    </button>
+    <button 
+      class="tab-btn" 
+      [class.active]="activeTab === 'normal'"
+      (click)="setTab('normal')">
+      Normal
+      <span class="tab-badge normal" *ngIf="getTabCount('normal')">{{ getTabCount('normal') }}</span>
+    </button>
+    <button 
+      class="tab-btn" 
+      [class.active]="activeTab === 'important'"
+      (click)="setTab('important')">
+      Important
+      <span class="tab-badge important" *ngIf="getTabCount('important')">{{ getTabCount('important') }}</span>
+    </button>
+  </div>
 
-      <div class="notice-stats-grid">
-        <div class="stat-card stat-card-total">
-          <div class="stat-icon-wrap">
-            <span class="material-icons">campaign</span>
-          </div>
-          <div class="stat-copy">
-            <small>Total notices</small>
-            <strong>{{ totalNoticeCount }}</strong>
-          </div>
-        </div>
-
-        <div class="stat-card stat-card-general">
-          <div class="stat-icon-wrap">
-            <span class="material-icons">notifications</span>
-          </div>
-          <div class="stat-copy">
-            <small>General notices</small>
-            <strong>{{ generalNoticeCount }}</strong>
-          </div>
-        </div>
-
-        <div class="stat-card stat-card-important">
-          <div class="stat-icon-wrap">
-            <span class="material-icons">priority_high</span>
-          </div>
-          <div class="stat-copy">
-            <small>Important notices</small>
-            <strong>{{ importantNoticeCount }}</strong>
-          </div>
-        </div>
-      </div>
+  <!-- Search -->
+  <div class="search-bar">
+    <div class="search-wrapper">
+      <span class="material-icons search-icon">search</span>
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearchChange()"
+        placeholder="Search notices..."
+        class="search-input">
     </div>
   </div>
 
@@ -72,7 +64,7 @@
           <th>Notice</th>
           <th>Message</th>
           <th>Priority</th>
-          <th>Published</th>
+          <th>Date</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -84,15 +76,9 @@
               <span
                 class="material-icons notice-row-icon"
                 [class.important]="isHighPriority(notice)">
-                {{ isHighPriority(notice) ? 'priority_high' : 'notifications' }}
+                {{ isHighPriority(notice) ? 'priority_high' : 'info' }}
               </span>
-
-              <div class="notice-copy">
-                <div class="fw-bold">{{ notice.title }}</div>
-                <small class="notice-type">
-                  {{ getPriorityDescription(notice) }}
-                </small>
-              </div>
+              <span class="fw-bold">{{ notice.title }}</span>
             </div>
           </td>
 
@@ -112,13 +98,7 @@
           </td>
 
           <td>
-            <div class="published-cell">
-              <strong>{{ formatDate(getNoticeDateTime(notice)) }}</strong>
-              <small>{{ formatTime(getNoticeDateTime(notice)) }}</small>
-              <span class="published-label">
-                {{ hasBeenUpdated(notice) ? 'Updated' : 'Published' }}
-              </span>
-            </div>
+            <span class="date-cell">{{ formatDate(getNoticeDateTime(notice)) }}</span>
           </td>
 
           <td>
