@@ -175,6 +175,7 @@ public class BorrowController {
         dto.setBookTitle(borrow.getBook().getTitle());
         dto.setBookAuthor(borrow.getBook().getAuthor());
         dto.setBookIsbn(borrow.getBook().getIsbn());
+        dto.setBookImage(borrow.getBook().getImageData());
         dto.setRequestDate(borrow.getRequestDate());
         dto.setDueDate(borrow.getDueDate());
         dto.setReturnDate(borrow.getReturnDate());

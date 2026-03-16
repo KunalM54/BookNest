@@ -1,0 +1,148 @@
+<div class="user-books-page">
+  <!-- Header -->
+  <div class="page-header">
+    <h1>My Library</h1>
+    <p>Track your borrowed books and requests</p>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="tabs-nav">
+    <button 
+      class="tab-btn" 
+      [class.active]="activeTab === 'mybooks'"
+      (click)="activeTab = 'mybooks'">
+      <span class="material-icons">menu_book</span>
+      My Books
+      <span class="tab-badge" *ngIf="borrowedBooks.length">{{ borrowedBooks.length }}</span>
+    </button>
+    <button 
+      class="tab-btn" 
+      [class.active]="activeTab === 'requests'"
+      (click)="activeTab = 'requests'">
+      <span class="material-icons">pending_actions</span>
+      Requests
+      <span class="tab-badge pending" *ngIf="pendingCount">{{ pendingCount }}</span>
+    </button>
+    <button 
+      class="tab-btn" 
+      [class.active]="activeTab === 'history'"
+      (click)="activeTab = 'history'">
+      <span class="material-icons">history</span>
+      History
+      <span class="tab-badge" *ngIf="history.length">{{ history.length }}</span>
+    </button>
+  </div>
+
+  <!-- Tab Content -->
+  <div class="tab-content">
+    
+    <!-- My Books Tab -->
+    <div *ngIf="activeTab === 'mybooks'" class="tab-panel">
+      <div *ngIf="loading" class="loading-state">
+        <div class="spinner"></div>
+      </div>
+
+      <div *ngIf="!loading && borrowedBooks.length === 0" class="empty-state">
+        <span class="material-icons empty-icon">menu_book</span>
+        <h3>No borrowed books</h3>
+        <p>Browse the library to borrow books</p>
+      </div>
+
+      <div class="books-list" *ngIf="!loading && borrowedBooks.length">
+        <div class="book-item" *ngFor="let book of borrowedBooks">
+          <div class="book-cover-mini">
+            <img *ngIf="book.imageData" [src]="book.imageData" [alt]="book.title">
+            <div *ngIf="!book.imageData" class="cover-placeholder-mini">
+              {{ book.title.charAt(0).toUpperCase() }}
+            </div>
+          </div>
+          <div class="book-details-mini">
+            <h3>{{ book.title }}</h3>
+            <p class="author">by {{ book.author }}</p>
+            <div class="meta-row">
+              <span><strong>Borrowed:</strong> {{ book.borrowDate | date:'dd MMM yyyy' }}</span>
+              <span><strong>Due:</strong> {{ book.dueDate | date:'dd MMM yyyy' }}</span>
+            </div>
+          </div>
+          <div class="book-status-mini">
+            <span class="status-tag" [class.overdue]="book.isOverdue" [class.active]="!book.isOverdue">
+              <span class="material-icons">{{ book.isOverdue ? 'error' : 'check_circle' }}</span>
+              {{ book.isOverdue ? 'Overdue' : 'Active' }}
+            </span>
+            <p class="status-note" *ngIf="book.isOverdue">Contact library admin</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Requests Tab -->
+    <div *ngIf="activeTab === 'requests'" class="tab-panel">
+      <div *ngIf="loadingRequests" class="loading-state">
+        <div class="spinner"></div>
+      </div>
+
+      <div *ngIf="!loadingRequests && requests.length === 0" class="empty-state">
+        <span class="material-icons empty-icon">pending_actions</span>
+        <h3>No requests</h3>
+        <p>Your book requests will appear here</p>
+      </div>
+
+      <div class="requests-list" *ngIf="!loadingRequests && requests.length">
+        <div class="request-item" *ngFor="let req of requests">
+          <div class="request-icon">
+            <span class="material-icons">book</span>
+          </div>
+          <div class="request-details">
+            <h3>{{ req.bookTitle }}</h3>
+            <p class="request-date">Requested on {{ req.requestDate | date:'dd MMM yyyy' }}</p>
+          </div>
+          <div class="request-status">
+            <span 
+              class="status-pill"
+              [class.pending]="req.status === 'PENDING'"
+              [class.approved]="req.status === 'APPROVED'"
+              [class.rejected]="req.status === 'REJECTED'">
+              {{ req.status }}
+            </span>
+            <p class="action-date" *ngIf="req.actionDate && req.actionDate !== '-'">
+              {{ req.actionDate | date:'dd MMM yyyy' }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- History Tab -->
+    <div *ngIf="activeTab === 'history'" class="tab-panel">
+      <div *ngIf="loadingHistory" class="loading-state">
+        <div class="spinner"></div>
+      </div>
+
+      <div *ngIf="!loadingHistory && history.length === 0" class="empty-state">
+        <span class="material-icons empty-icon">history</span>
+        <h3>No history</h3>
+        <p>Your returned books will appear here</p>
+      </div>
+
+      <div class="history-list" *ngIf="!loadingHistory && history.length">
+        <div class="history-item" *ngFor="let record of history">
+          <div class="history-icon">
+            <span class="material-icons">check_circle</span>
+          </div>
+          <div class="history-details">
+            <h3>{{ record.title }}</h3>
+            <p class="history-dates">
+              <span>Borrowed: {{ record.borrowDate | date:'dd MMM yyyy' }}</span>
+              <span class="separator">→</span>
+              <span>Returned: {{ record.returnDate | date:'dd MMM yyyy' }}</span>
+            </p>
+          </div>
+          <div class="history-status">
+            <span class="status-pill returned">Returned</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

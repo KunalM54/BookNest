@@ -1,143 +1,207 @@
-<div class="page-container">
+<div class="profile-page">
+  <!-- Loading Overlay -->
   <div class="loading-overlay" *ngIf="isLoading">
     <div class="loading-card">
       <div class="loader"></div>
       <div class="loading-text">
-        <h4>Updating profile</h4>
-        <p>Please wait a moment...</p>
+        <h4>Please wait...</h4>
       </div>
     </div>
   </div>
 
+  <!-- Page Header -->
   <div class="page-header">
-    <h1 class="page-title">
-      <span class="material-icons page-icon">person</span>
-      My Profile
-    </h1>
+    <h1>My Profile</h1>
   </div>
 
-  <div class="profile-grid">
+  <!-- Tab Navigation -->
+  <div class="tabs-nav">
+    <button 
+      class="tab-btn" 
+      [class.active]="activeTab === 'profile'"
+      (click)="activeTab = 'profile'">
+      <span class="material-icons">person</span>
+      Profile
+    </button>
+    <button 
+      class="tab-btn" 
+      [class.active]="activeTab === 'password'"
+      (click)="activeTab = 'password'">
+      <span class="material-icons">lock</span>
+      Change Password
+    </button>
+  </div>
 
-    <!-- LEFT PROFILE CARD -->
-
-    <div class="card profile-card center-text">
-
-      <div class="avatar-large">
-        {{ initials }}
-      </div>
-
-      <h2>{{ firstName }} {{ lastName }}</h2>
-
-      <p class="text-muted">
-        <span class="material-icons small-icon">school</span>
-        {{ department }}
-      </p>
-
-      <div class="stats-row">
-
-        <div class="stat-box">
-          <strong>{{ read }}</strong>
-          <span>Read</span>
-        </div>
-
-        <div class="stat-box">
-          <strong>{{ borrowed }}</strong>
-          <span>Borrowed</span>
-        </div>
-
-      </div>
-
-      <!-- Quick Actions -->
-
-      <div class="profile-actions">
-
-        <button class="action-btn secondary" routerLink="/student/change-password">
-          <span class="material-icons">lock</span>
-          Change Password
-        </button>
-
-        <button class="action-btn outline" routerLink="/student/notices">
-          <span class="material-icons">campaign</span>
-          Notices
-        </button>
-
-        <button class="action-btn outline" routerLink="/student/requests">
-          <span class="material-icons">assignment</span>
-          My Requests
-        </button>
-      </div>
-
-    </div>
-
-
-    <!-- RIGHT DETAILS CARD -->
-
-    <div class="card details-card">
-
-      <h3>
-        <span class="material-icons section-icon">badge</span>
-        Personal Details
-      </h3>
-
-      <form>
-
-        <div class="form-group">
-          <label>First Name</label>
-          <input type="text" [(ngModel)]="firstName" name="firstName" class="form-control">
-        </div>
-
-        <div class="form-group">
-          <label>Last Name</label>
-          <input type="text" [(ngModel)]="lastName" name="lastName" class="form-control">
-        </div>
-
-        <div class="form-group">
-          <label>Email Address</label>
-          <input type="email" [(ngModel)]="email" name="email" class="form-control">
-        </div>
-
-        <div class="form-group">
-          <label>Student ID</label>
-          <input type="text" [value]="studentId" class="form-control" readonly>
-        </div>
-
-        <div class="form-group">
-          <label>Phone Number</label>
-          <div class="phone-row">
-            <span class="phone-prefix">+91</span>
-            <input
-              type="text"
-              [(ngModel)]="phone"
-              name="phone"
-              class="form-control phone-input"
-              inputmode="numeric"
-              maxlength="10"
-              (input)="onPhoneInput($event.target.value)">
+  <!-- Tab Content -->
+  <div class="tab-content">
+    
+    <!-- Profile Tab -->
+    <div *ngIf="activeTab === 'profile'" class="tab-panel">
+      <div class="profile-grid">
+        
+        <!-- Left Card -->
+        <div class="card profile-card">
+          <div class="avatar-large">
+            {{ initials }}
           </div>
-          <p class="helper-text" *ngIf="phone && phone.length > 0 && phone.length < 10">
-            Phone number must be exactly 10 digits.
+          <h2>{{ firstName }} {{ lastName }}</h2>
+          <p class="text-muted">
+            <span class="material-icons small-icon">school</span>
+            {{ department }}
           </p>
+          
+          <div class="stats-row">
+            <div class="stat-box">
+              <strong>{{ read }}</strong>
+              <span>Read</span>
+            </div>
+            <div class="stat-box">
+              <strong>{{ borrowed }}</strong>
+              <span>Borrowed</span>
+            </div>
+          </div>
         </div>
 
-        <div class="form-group">
-          <label>Department</label>
-          <select [(ngModel)]="department" name="department" class="form-control">
-            <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
-          </select>
+        <!-- Right Card -->
+        <div class="card details-card">
+          <h3>
+            <span class="material-icons section-icon">edit</span>
+            Edit Profile
+          </h3>
+
+          <form>
+            <div class="form-row">
+              <div class="form-group">
+                <label>First Name</label>
+                <input type="text" [(ngModel)]="firstName" name="firstName" class="form-control">
+              </div>
+              <div class="form-group">
+                <label>Last Name</label>
+                <input type="text" [(ngModel)]="lastName" name="lastName" class="form-control">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Email Address</label>
+              <input type="email" [(ngModel)]="email" name="email" class="form-control">
+            </div>
+
+            <div class="form-group">
+              <label>Student ID</label>
+              <input type="text" [value]="studentId" class="form-control" readonly>
+            </div>
+
+            <div class="form-group">
+              <label>Phone Number</label>
+              <div class="phone-row">
+                <span class="phone-prefix">+91</span>
+                <input
+                  type="text"
+                  [(ngModel)]="phone"
+                  name="phone"
+                  class="form-control phone-input"
+                  inputmode="numeric"
+                  maxlength="10"
+                  (input)="onPhoneInput($event.target.value)">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Department</label>
+              <select [(ngModel)]="department" name="department" class="form-control">
+                <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+              </select>
+            </div>
+
+            <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+            <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+            <button type="button" class="btn-primary full-width" (click)="updateProfile()" [disabled]="isLoading">
+              <span class="material-icons">save</span>
+              {{ isLoading ? 'Saving...' : 'Save Changes' }}
+            </button>
+          </form>
         </div>
 
-        <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
-        <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+      </div>
+    </div>
 
-        <button type="button" class="btn-primary full-width" (click)="updateProfile()" [disabled]="isLoading">
-          <span class="material-icons">save</span>
-          {{ isLoading ? 'Saving...' : 'Update Profile' }}
-        </button>
+    <!-- Password Tab -->
+    <div *ngIf="activeTab === 'password'" class="tab-panel">
+      <div class="password-section">
+        <div class="card password-card">
+          <div class="password-header">
+            <span class="material-icons lock-icon">lock</span>
+            <h3>Change Password</h3>
+            <p>Ensure your account is using a strong password</p>
+          </div>
 
-      </form>
+          <form (ngSubmit)="changePassword(); $event.preventDefault()">
+            
+            <div class="form-group">
+              <label>Current Password</label>
+              <div class="password-field">
+                <input 
+                  [type]="showCurrentPassword ? 'text' : 'password'" 
+                  [(ngModel)]="passwordForm.currentPassword"
+                  name="currentPassword" 
+                  placeholder="Enter current password" 
+                  required>
+                <button type="button" class="eye-btn" (click)="toggleCurrentPassword()">
+                  <span class="material-icons">
+                    {{ showCurrentPassword ? 'visibility_off' : 'visibility' }}
+                  </span>
+                </button>
+              </div>
+            </div>
 
+            <div class="form-group">
+              <label>New Password</label>
+              <div class="password-field">
+                <input 
+                  [type]="showNewPassword ? 'text' : 'password'" 
+                  [(ngModel)]="passwordForm.newPassword"
+                  name="newPassword" 
+                  placeholder="Enter new password" 
+                  required>
+                <button type="button" class="eye-btn" (click)="toggleNewPassword()">
+                  <span class="material-icons">
+                    {{ showNewPassword ? 'visibility_off' : 'visibility' }}
+                  </span>
+                </button>
+              </div>
+              <p class="helper-text">Use 6+ characters with uppercase, lowercase, and number</p>
+            </div>
+
+            <div class="form-group">
+              <label>Confirm New Password</label>
+              <div class="password-field">
+                <input 
+                  [type]="showConfirmPassword ? 'text' : 'password'" 
+                  [(ngModel)]="passwordForm.confirmPassword"
+                  name="confirmPassword" 
+                  placeholder="Confirm new password" 
+                  required>
+                <button type="button" class="eye-btn" (click)="toggleConfirmPassword()">
+                  <span class="material-icons">
+                    {{ showConfirmPassword ? 'visibility_off' : 'visibility' }}
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+            <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+
+            <button type="submit" class="btn-primary full-width" [disabled]="isLoading">
+              <span class="material-icons">lock</span>
+              {{ isLoading ? 'Updating...' : 'Update Password' }}
+            </button>
+
+          </form>
+        </div>
+      </div>
     </div>
 
   </div>
-
 </div>

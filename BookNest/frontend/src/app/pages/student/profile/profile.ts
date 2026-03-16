@@ -1,20 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../../services/auth';
 import { SnackbarService } from '../../../services/snackbar';
+import { strongPasswordPattern } from '../../../auth/auth.validators';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule],
   templateUrl: './profile.html',
   styleUrls: ['./profile.css']
 })
 export class ProfileComponent implements OnInit {
 
+  activeTab: 'profile' | 'password' = 'profile';
+
+  // Profile fields
   studentId: number = 0;
   firstName: string = '';
   lastName: string = '';
@@ -27,6 +31,19 @@ export class ProfileComponent implements OnInit {
   isLoading: boolean = false;
   successMessage: string = '';
   errorMessage: string = '';
+
+  // Password fields
+  showCurrentPassword = false;
+  showNewPassword = false;
+  showConfirmPassword = false;
+  passwordSubmitted = false;
+  
+  passwordForm = {
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  };
+
   departments: string[] = [
     'Computer Science',
     'Information Technology',
@@ -41,6 +58,9 @@ export class ProfileComponent implements OnInit {
     'Physics',
     'Chemistry'
   ];
+
+  strongPasswordPattern = strongPasswordPattern;
+  noWhitespacePattern = /^(?!\s*$).+/;
 
   private apiUrl = 'http://localhost:8080/api';
 
@@ -161,6 +181,87 @@ export class ProfileComponent implements OnInit {
         }, delay);
       }
     });
+  }
+
+  // Password methods
+  toggleCurrentPassword() {
+    this.showCurrentPassword = !this.showCurrentPassword;
+  }
+
+  toggleNewPassword() {
+    this.showNewPassword = !this.showNewPassword;
+  }
+
+  toggleConfirmPassword() {
+    this.showConfirmPassword = !this.showConfirmPassword;
+  }
+
+  changePassword() {
+    this.errorMessage = '';
+    this.successMessage = '';
+    this.passwordSubmitted = true;
+
+    if (!this.passwordForm.currentPassword || !this.passwordForm.newPassword || !this.passwordForm.confirmPassword) {
+      return;
+    }
+
+    if (this.passwordForm.newPassword !== this.passwordForm.confirmPassword) {
+      this.errorMessage = 'Passwords do not match.';
+      return;
+    }
+
+    if (this.passwordForm.newPassword.length < 6 || this.passwordForm.newPassword.length > 64) {
+      return;
+    }
+
+    if (!strongPasswordPattern.test(this.passwordForm.newPassword)) {
+      return;
+    }
+
+    this.isLoading = true;
+    const loadingStart = Date.now();
+    const finalizeLoading = (fn: () => void) => {
+      const elapsed = Date.now() - loadingStart;
+      const remaining = Math.max(0, 2000 - elapsed);
+      setTimeout(fn, remaining);
+    };
+
+    const userId = this.authService.getUserId();
+    if (!userId) {
+      this.errorMessage = "User not found. Please login again.";
+      this.isLoading = false;
+      return;
+    }
+
+    const passwordData = {
+      currentPassword: this.passwordForm.currentPassword,
+      newPassword: this.passwordForm.newPassword
+    };
+
+    this.http.put<any>(`${this.apiUrl}/users/${userId}/change-password`, passwordData)
+      .subscribe({
+        next: (response) => {
+          finalizeLoading(() => {
+            this.isLoading = false;
+            if (response.success) {
+              this.successMessage = response.message;
+              this.snackbar.show("Password changed successfully!");
+              setTimeout(() => {
+                this.authService.logout();
+                this.router.navigate(['/login']);
+              }, 2000);
+            } else {
+              this.errorMessage = response.message || "Failed to change password.";
+            }
+          });
+        },
+        error: (err) => {
+          finalizeLoading(() => {
+            this.isLoading = false;
+            this.errorMessage = err.error?.message || "Failed to change password.";
+          });
+        }
+      });
   }
 
   get initials() {

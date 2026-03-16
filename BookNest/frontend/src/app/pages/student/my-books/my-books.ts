@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BorrowService } from '../../../services/borrow';
-import { SnackbarService } from '../../../services/snackbar';
 import { AuthService } from '../../../services/auth';
 
 @Component({
@@ -19,7 +18,6 @@ export class MyBooksComponent implements OnInit {
 
   constructor(
     private borrowService: BorrowService,
-    private snackbar: SnackbarService,
     private authService: AuthService
   ) { }
 
@@ -57,24 +55,7 @@ export class MyBooksComponent implements OnInit {
       error: (err) => {
         console.error('Error loading books', err);
         this.errorMessage = 'Failed to load your books. Please try again.';
-        this.snackbar.show(this.errorMessage);
         this.isLoading = false;
-      }
-    });
-  }
-
-  returnBook(id: number) {
-    this.borrowService.returnBook(id).subscribe({
-      next: (response) => {
-        if (response.success) {
-          this.snackbar.show('Book returned successfully!');
-          this.loadBooks();
-        } else {
-          this.snackbar.show(response.message || 'Failed to return book');
-        }
-      },
-      error: (err) => {
-        this.snackbar.show('Failed to return book. Please try again.');
       }
     });
   }

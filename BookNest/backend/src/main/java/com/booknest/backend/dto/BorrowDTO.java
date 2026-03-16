@@ -19,6 +19,7 @@ public class BorrowDTO {
     private String bookTitle;
     private String bookAuthor;
     private String bookIsbn;
+    private String bookImage;
     private LocalDate requestDate;
     private LocalDate dueDate;
     private LocalDate returnDate;
