@@ -1,84 +1,89 @@
-<div class="page-container">
+<div class="browse-page">
+  <!-- Header -->
   <div class="page-header">
-    <h1 class="page-title">Browse Library</h1>
+    <h1>Browse Library</h1>
+    <p>Find and borrow your favorite books</p>
   </div>
 
-  <div class="card search-section">
-    <div class="search-wrapper">
-      <span class="material-icons search-icon">search</span>
-      <input type="text" [(ngModel)]="searchTerm" placeholder="Search by title, author, or ISBN..."
-        class="search-input-lg" />
+  <!-- Search & Filter -->
+  <div class="search-filter">
+    <div class="search-input-wrap">
+      <span class="material-icons">search</span>
+      <input 
+        type="text" 
+        [(ngModel)]="searchTerm" 
+        placeholder="Search by title, author, or ISBN..."
+        class="search-input">
     </div>
-
-    <div class="categories">
-      <button *ngFor="let category of categories" type="button" class="cat-pill"
-        [class.active]="selectedCategory === category" (click)="setCategory(category)">
-        {{ category }}
+    <div class="category-tabs">
+      <button 
+        *ngFor="let cat of categories" 
+        class="cat-tab"
+        [class.active]="selectedCategory === cat"
+        (click)="setCategory(cat)">
+        {{ cat }}
       </button>
     </div>
   </div>
 
-  <div *ngIf="loading" class="loading-indicator">
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-wrap">
     <div class="spinner"></div>
-    <p>Loading books...</p>
   </div>
 
+  <!-- Books Grid -->
   <div class="books-grid" *ngIf="!loading">
     <div class="book-card" *ngFor="let book of filteredBooks">
-      <div class="book-cover">
-        <img *ngIf="book.imageData; else studentCoverFallback" [src]="book.imageData" [alt]="book.title"
-          class="book-image" />
-
-        <ng-template #studentCoverFallback>
-          <div class="book-cover-fallback">
-            <span class="material-icons">menu_book</span>
-            <div class="initial-letter">{{ getBookInitial(book) }}</div>
-          </div>
-        </ng-template>
+      <!-- Cover Image -->
+      <div class="card-cover">
+        <img 
+          *ngIf="book.imageData && book.imageData.trim()" 
+          [src]="book.imageData" 
+          [alt]="book.title"
+          class="cover-img">
+        <div *ngIf="!book.imageData || !book.imageData.trim()" class="cover-placeholder">
+          <span class="placeholder-letter">{{ book.title.charAt(0).toUpperCase() }}</span>
+        </div>
+        <!-- Status Badge -->
+        <span class="status-badge" [class.available]="isAvailable(book)">
+          {{ isAvailable(book) ? 'Available' : 'Out of Stock' }}
+        </span>
       </div>
 
-      <div class="book-info">
+      <!-- Card Body -->
+      <div class="card-body">
         <h3 class="book-title">{{ book.title }}</h3>
         <p class="book-author">by {{ book.author }}</p>
-
-        <div class="book-details">
-          <p class="book-detail">
-            <span class="material-icons">fingerprint</span>
-            <span>{{ book.isbn }}</span>
-          </p>
-
-          <p class="book-detail">
-            <span class="material-icons">category</span>
-            <span>{{ book.category }}</span>
-          </p>
-
-          <p class="book-detail">
-            <span class="material-icons">inventory_2</span>
-            <span>{{ book.availableCopies }} / {{ book.totalCopies }}</span>
-          </p>
+        
+        <div class="book-info">
+          <div class="info-row">
+            <span class="info-label">ISBN</span>
+            <span class="info-value">{{ book.isbn }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Category</span>
+            <span class="info-value">{{ book.category }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Stock</span>
+            <span class="info-value">{{ book.availableCopies }}/{{ book.totalCopies }}</span>
+          </div>
         </div>
 
-        <div class="book-meta">
-          <span class="category-badge">
-            <span class="material-icons">label</span>
-            {{ book.category }}
-          </span>
-
-          <span class="status-badge" [class.available]="isAvailable(book)" [class.unavailable]="!isAvailable(book)">
-            <span class="material-icons">circle</span>
-            {{ isAvailable(book) ? 'Available' : 'Out of Stock' }}
-          </span>
-        </div>
-
-        <button type="button" class="btn-primary" [disabled]="!isAvailable(book)" (click)="requestBook(book)">
+        <button 
+          class="request-btn" 
+          [disabled]="!isAvailable(book)"
+          (click)="requestBook(book)">
           {{ isAvailable(book) ? 'Request Book' : 'Unavailable' }}
         </button>
       </div>
     </div>
   </div>
 
-  <div *ngIf="!loading && filteredBooks.length === 0" class="empty-books">
-    <span class="material-icons">menu_book</span>
-    <p>No books found</p>
+  <!-- Empty State -->
+  <div *ngIf="!loading && filteredBooks.length === 0" class="empty-wrap">
+    <span class="material-icons empty-icon">menu_book</span>
+    <h3>No books found</h3>
+    <p>Try adjusting your search</p>
   </div>
 </div>

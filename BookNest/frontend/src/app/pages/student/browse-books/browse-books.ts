@@ -74,6 +74,45 @@ export class BrowseBooksComponent implements OnInit {
     return filtered;
   }
 
+  hasValidImage(book: Book): boolean {
+    if (!book.imageData) return false;
+    const trimmed = book.imageData.trim();
+    return trimmed.length > 0;
+  }
+
+  getImageSource(book: Book): string {
+    if (!book.imageData) return '';
+    
+    // Clean the image data
+    let imageData = book.imageData.trim();
+    
+    // If it already has data: prefix, return as-is
+    if (imageData.startsWith('data:')) {
+      return imageData;
+    }
+    
+    // If it's pure base64, we need to detect the type
+    // Try to detect PNG by checking the first few bytes after decoding
+    try {
+      // Base64 decode a small portion
+      const decoded = atob(imageData.substring(0, 16));
+      // Check for PNG magic bytes: 89 50 4E 47 (hex) = \x89PNG
+      if (decoded.startsWith('\x89PNG')) {
+        return `data:image/png;base64,${imageData}`;
+      }
+      // Check for JPEG magic bytes: FF D8 (hex) = \xFF\xD8
+      if (decoded.startsWith('\xFF\xD8')) {
+        return `data:image/jpeg;base64,${imageData}`;
+      }
+    } catch (e) {
+      // If decoding fails, try common formats
+      console.log('Could not detect image type, trying JPEG');
+    }
+    
+    // Default to JPEG
+    return `data:image/jpeg;base64,${imageData}`;
+  }
+
   getBookInitial(book: Book): string {
     return book.title.trim().charAt(0).toUpperCase() || 'B';
   }
