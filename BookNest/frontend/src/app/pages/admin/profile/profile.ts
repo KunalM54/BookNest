@@ -1,19 +1,24 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../../services/auth';
+import { SnackbarService } from '../../../services/snackbar';
+import { strongPasswordPattern } from '../../../auth/auth.validators';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './profile.html',
   styleUrls: ['./profile.css']
 })
 export class ProfileComponent implements OnInit {
 
+  activeTab: 'profile' | 'password' = 'profile';
+
+  // Profile fields
   userId: number = 0;
   firstName: string = '';
   lastName: string = '';
@@ -26,12 +31,28 @@ export class ProfileComponent implements OnInit {
   successMessage: string = '';
   errorMessage: string = '';
 
+  // Password fields
+  showCurrent = false;
+  showNew = false;
+  showConfirm = false;
+  passwordSubmitted = false;
+  
+  passwordForm = {
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  };
+
+  strongPasswordPattern = strongPasswordPattern;
+  noWhitespacePattern = /^(?!\s*$).+/;
+
   private apiUrl = 'http://localhost:8080/api';
 
   constructor(
     private http: HttpClient,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private snackbar: SnackbarService
   ) {}
 
   ngOnInit() {
@@ -103,7 +124,7 @@ export class ProfileComponent implements OnInit {
         setTimeout(() => {
           if (response.success) {
             if (response.forceLogout) {
-              this.successMessage = 'Profile updated! Since you changed your email, please login with your new credentials.';
+              this.successMessage = 'Profile updated! Please login with new credentials.';
               setTimeout(() => {
                 this.authService.logout();
                 this.router.navigate(['/login']);
@@ -111,7 +132,6 @@ export class ProfileComponent implements OnInit {
             } else {
               this.successMessage = 'Profile updated successfully!';
               const token = this.authService.getToken();
-
               if (token) {
                 this.authService.setSession({
                   token,
@@ -140,6 +160,87 @@ export class ProfileComponent implements OnInit {
         }, delay);
       }
     });
+  }
+
+  // Password methods
+  toggleCurrent() {
+    this.showCurrent = !this.showCurrent;
+  }
+
+  toggleNew() {
+    this.showNew = !this.showNew;
+  }
+
+  toggleConfirm() {
+    this.showConfirm = !this.showConfirm;
+  }
+
+  changePassword() {
+    this.errorMessage = '';
+    this.successMessage = '';
+    this.passwordSubmitted = true;
+
+    if (!this.passwordForm.currentPassword || !this.passwordForm.newPassword || !this.passwordForm.confirmPassword) {
+      return;
+    }
+
+    if (this.passwordForm.newPassword !== this.passwordForm.confirmPassword) {
+      this.errorMessage = 'Passwords do not match.';
+      return;
+    }
+
+    if (this.passwordForm.newPassword.length < 6 || this.passwordForm.newPassword.length > 64) {
+      return;
+    }
+
+    if (!strongPasswordPattern.test(this.passwordForm.newPassword)) {
+      return;
+    }
+
+    this.isLoading = true;
+    const loadingStart = Date.now();
+    const finalizeLoading = (fn: () => void) => {
+      const elapsed = Date.now() - loadingStart;
+      const remaining = Math.max(0, 2000 - elapsed);
+      setTimeout(fn, remaining);
+    };
+
+    const userId = this.authService.getUserId();
+    if (!userId) {
+      this.errorMessage = "User not found. Please login again.";
+      this.isLoading = false;
+      return;
+    }
+
+    const passwordData = {
+      currentPassword: this.passwordForm.currentPassword,
+      newPassword: this.passwordForm.newPassword
+    };
+
+    this.http.put<any>(`${this.apiUrl}/users/${userId}/change-password`, passwordData)
+      .subscribe({
+        next: (response) => {
+          finalizeLoading(() => {
+            this.isLoading = false;
+            if (response.success) {
+              this.successMessage = response.message;
+              this.snackbar.show("Password changed successfully!");
+              setTimeout(() => {
+                this.authService.logout();
+                this.router.navigate(['/login']);
+              }, 2000);
+            } else {
+              this.errorMessage = response.message || "Failed to change password.";
+            }
+          });
+        },
+        error: (err) => {
+          finalizeLoading(() => {
+            this.isLoading = false;
+            this.errorMessage = err.error?.message || "Failed to change password.";
+          });
+        }
+      });
   }
 
   onPhoneInput(value: string) {

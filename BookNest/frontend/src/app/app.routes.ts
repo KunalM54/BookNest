@@ -76,8 +76,7 @@ export const routes: Routes = [
       { path: 'requests', component: BorrowRequestsComponent },
       { path: 'reports', component: ReportsComponent },
       { path: 'notices', component: NoticesComponent },
-      { path: 'profile', component: AdminProfile },
-      { path: 'change-password', component: ChangePassword }
+      { path: 'profile', component: AdminProfile }
     ]
   }
 ];
