@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../../services/auth';
@@ -10,30 +10,45 @@ import { AuthService } from '../../../services/auth';
   templateUrl: './student-layout.html',
   styleUrls: ['./student-layout.css', './student-layout-modal.css']
 })
-export class StudentLayoutComponent {
+export class StudentLayoutComponent implements OnInit {
   showLogoutModal = false;
   sidebarCollapsed = false;
-  showUserDropdown = false;
+  studentName: string = '';
+  studentId: string = '';
+  studentInitials: string = '';
 
   constructor(
     private authService: AuthService,
     private router: Router
   ) { }
 
+  ngOnInit() {
+    this.loadStudentInfo();
+  }
+
+  loadStudentInfo() {
+    const user = this.authService.getUser();
+    if (user) {
+      this.studentName = user.fullName || 'Student';
+      this.studentId = user.studentId || user.sid || '';
+      this.studentInitials = this.getInitials(this.studentName);
+    }
+  }
+
+  getInitials(name: string): string {
+    return name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
+  }
+
   toggleSidebar() {
     this.sidebarCollapsed = !this.sidebarCollapsed;
   }
 
-  toggleUserDropdown() {
-    this.showUserDropdown = !this.showUserDropdown;
-  }
-
-  closeUserDropdown() {
-    this.showUserDropdown = false;
-  }
-
   openLogoutModal() {
-    this.showUserDropdown = false;
     this.showLogoutModal = true;
   }
 

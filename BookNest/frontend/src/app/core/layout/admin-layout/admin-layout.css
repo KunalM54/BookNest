@@ -64,6 +64,87 @@
   gap: 8px;
 }
 
+.user-badge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 12px 6px 6px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-info .user-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1e293b;
+  line-height: 1.2;
+}
+
+.user-info .user-email {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+  border-radius: 50%;
+}
+
+.user-info .user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-info .user-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.user-info .user-email {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.user-info .logout-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.user-info .logout-icon:hover {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+.user-info .logout-icon .material-icons {
+  font-size: 20px;
+}
+
 .nav-icon-btn {
   display: flex;
   align-items: center;

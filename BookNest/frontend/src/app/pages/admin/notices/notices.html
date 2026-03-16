@@ -36,16 +36,29 @@
     </button>
   </div>
 
-  <!-- Search -->
-  <div class="search-bar">
-    <div class="search-wrapper">
-      <span class="material-icons search-icon">search</span>
-      <input
-        type="text"
-        [(ngModel)]="searchTerm"
-        (ngModelChange)="onSearchChange()"
-        placeholder="Search notices..."
-        class="search-input">
+  <!-- Search Bar -->
+  <div class="search-bar-container">
+    <div class="search-pill">
+      <div class="search-dropdown">
+        <select [(ngModel)]="activeTab" (change)="setTab(activeTab)" class="category-select">
+          <option value="all">All</option>
+          <option value="normal">Normal</option>
+          <option value="important">Important</option>
+        </select>
+        <span class="material-icons dropdown-icon">expand_more</span>
+      </div>
+      
+      <div class="search-divider"></div>
+      
+      <div class="search-input-area">
+        <input 
+          type="text" 
+          [(ngModel)]="searchTerm" 
+          (ngModelChange)="onSearchChange()"
+          placeholder="Search notices..."
+          class="search-input">
+        <span class="material-icons search-icon">search</span>
+      </div>
     </div>
   </div>
 

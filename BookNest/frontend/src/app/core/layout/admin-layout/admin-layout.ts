@@ -15,7 +15,9 @@ export class AdminLayoutComponent implements OnInit {
   pendingCount: number = 0;
   showLogoutModal = false;
   sidebarCollapsed = false;
-  showUserDropdown = false;
+  adminName: string = '';
+  adminEmail: string = '';
+  adminInitials: string = '';
 
   constructor(
     private authService: AuthService,
@@ -25,6 +27,25 @@ export class AdminLayoutComponent implements OnInit {
 
   ngOnInit() {
     this.loadPendingCount();
+    this.loadAdminInfo();
+  }
+
+  loadAdminInfo() {
+    const user = this.authService.getUser();
+    if (user) {
+      this.adminName = user.fullName || 'Administrator';
+      this.adminEmail = user.email || '';
+      this.adminInitials = this.getInitials(this.adminName);
+    }
+  }
+
+  getInitials(name: string): string {
+    return name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
   }
 
   loadPendingCount() {
@@ -40,16 +61,7 @@ export class AdminLayoutComponent implements OnInit {
     this.sidebarCollapsed = !this.sidebarCollapsed;
   }
 
-  toggleUserDropdown() {
-    this.showUserDropdown = !this.showUserDropdown;
-  }
-
-  closeUserDropdown() {
-    this.showUserDropdown = false;
-  }
-
   openLogoutModal() {
-    this.showUserDropdown = false;
     this.showLogoutModal = true;
   }
 

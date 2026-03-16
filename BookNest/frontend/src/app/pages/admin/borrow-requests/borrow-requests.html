@@ -8,19 +8,29 @@
   </div>
 
   <!-- Search Bar -->
-  <div class="search-bar">
-    <div class="search-wrapper">
-      <span class="material-icons search-icon">search</span>
-      <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
-        placeholder="Search by student or book..." class="search-input">
-    </div>
-    <div class="sort-wrap">
-      <label>Sort by:</label>
-      <select [(ngModel)]="sortBy" (ngModelChange)="onSortChange()" class="sort-select">
-        <option value="newest">Newest</option>
-        <option value="oldest">Oldest</option>
-        <option value="titleAZ">Book Title A-Z</option>
-      </select>
+  <div class="search-bar-container">
+    <div class="search-pill">
+      <div class="search-dropdown">
+        <select [(ngModel)]="activeTab" (change)="setTab(activeTab)" class="category-select">
+          <option value="all">All</option>
+          <option value="pending">Pending</option>
+          <option value="issued">Issued</option>
+          <option value="returned">Returned</option>
+        </select>
+        <span class="material-icons dropdown-icon">expand_more</span>
+      </div>
+      
+      <div class="search-divider"></div>
+      
+      <div class="search-input-area">
+        <input 
+          type="text" 
+          [(ngModel)]="searchTerm" 
+          (ngModelChange)="onSearchChange()"
+          placeholder="Search by student or book..."
+          class="search-input">
+        <span class="material-icons search-icon">search</span>
+      </div>
     </div>
   </div>
 
@@ -57,7 +67,6 @@
   </div>
 
   <div class="card table-container">
-
     <table>
       <thead>
         <tr>
@@ -72,9 +81,7 @@
       </thead>
 
       <tbody>
-
         <tr *ngFor="let req of filteredRequestsForDisplay">
-
           <td>
             <div class="user-info">
               <div class="avatar">
@@ -106,33 +113,25 @@
           </td>
 
           <td class="action-buttons">
-
             <ng-container *ngIf="req.status === 'PENDING'">
-
               <button class="btn-icon approve" (click)="approve(req.id)" title="Approve">
                 <span class="material-icons">check</span>
               </button>
-
               <button class="btn-icon reject" (click)="reject(req.id)" title="Reject">
                 <span class="material-icons">close</span>
               </button>
-
             </ng-container>
 
             <ng-container *ngIf="req.displayStatus === 'ISSUED'">
-
               <button class="btn-icon return" (click)="markReturned(req.id)" title="Mark Returned">
                 <span class="material-icons">assignment_return</span>
               </button>
-
             </ng-container>
 
             <button class="btn-icon remove" (click)="remove(req.id)" title="Remove">
               <span class="material-icons">delete</span>
             </button>
-
           </td>
-
         </tr>
 
         <!-- Empty State -->
@@ -142,11 +141,8 @@
             <p>No requests found</p>
           </td>
         </tr>
-
       </tbody>
-
     </table>
-
   </div>
 
   <!-- Pagination -->

@@ -19,6 +19,7 @@ export class HistoryComponent implements OnInit {
   isLoading = false;
   errorMessage = '';
   searchTerm = '';
+  sortBy = 'newest';
   
   currentPage = 1;
   pageSize = 10;
@@ -68,6 +69,10 @@ export class HistoryComponent implements OnInit {
     this.applyFilters();
   }
 
+  onSortChange() {
+    this.applyFilters();
+  }
+
   applyFilters() {
     if (!this.searchTerm) {
       this.filteredHistory = this.history;
@@ -77,6 +82,21 @@ export class HistoryComponent implements OnInit {
         record.title.toLowerCase().includes(term)
       );
     }
+    
+    // Sort
+    this.filteredHistory = this.filteredHistory.sort((a, b) => {
+      switch (this.sortBy) {
+        case 'newest':
+          return new Date(b.returnDate || 0).getTime() - new Date(a.returnDate || 0).getTime();
+        case 'oldest':
+          return new Date(a.returnDate || 0).getTime() - new Date(b.returnDate || 0).getTime();
+        case 'titleAZ':
+          return (a.title || '').localeCompare(b.title || '');
+        default:
+          return 0;
+      }
+    });
+    
     this.updatePagination();
   }
 

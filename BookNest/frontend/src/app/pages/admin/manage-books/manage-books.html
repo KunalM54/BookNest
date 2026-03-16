@@ -11,31 +11,26 @@
     </button>
   </div>
 
-  <div class="admin-toolbar-stack">
-    <div class="card search-card">
-      <div class="search-wrapper">
-        <span class="material-icons search-icon">search</span>
-        <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
-          placeholder="Search by title, author, or ISBN..." class="search-input">
+  <!-- Search Bar -->
+  <div class="search-bar-container">
+    <div class="search-pill">
+      <div class="search-dropdown">
+        <select [(ngModel)]="selectedCategory" (change)="setCategory(selectedCategory)" class="category-select">
+          <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+        </select>
+        <span class="material-icons dropdown-icon">expand_more</span>
       </div>
-
-      <div class="toolbar-row">
-        <div class="categories">
-          <button *ngFor="let cat of categories" class="cat-pill" [class.active]="selectedCategory === cat"
-            (click)="setCategory(cat)">
-            {{ cat }}
-          </button>
-        </div>
-        <div class="sort-wrap">
-          <label>Sort by:</label>
-          <select [(ngModel)]="sortBy" (ngModelChange)="onSortChange()" class="sort-select">
-            <option value="newest">Newest</option>
-            <option value="oldest">Oldest</option>
-            <option value="titleAZ">Title A-Z</option>
-            <option value="titleZA">Title Z-A</option>
-            <option value="authorAZ">Author A-Z</option>
-          </select>
-        </div>
+      
+      <div class="search-divider"></div>
+      
+      <div class="search-input-area">
+        <input 
+          type="text" 
+          [(ngModel)]="searchTerm" 
+          (ngModelChange)="onSearchChange()"
+          placeholder="Search by title, author, or ISBN..."
+          class="search-input">
+        <span class="material-icons search-icon">search</span>
       </div>
     </div>
   </div>

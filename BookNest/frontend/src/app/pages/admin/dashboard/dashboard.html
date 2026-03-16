@@ -7,11 +7,52 @@
       <p>Manage books, users, and library operations efficiently.</p>
     </div>
     <div class="banner-img">
-      <!-- Using simple logo icon as requested -->
       <span class="material-icons logo-icon">local_library</span>
     </div>
   </div>
 
+  <!-- 2. STATS CARDS -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon books">
+        <span class="material-icons">library_books</span>
+      </div>
+      <div class="stat-content">
+        <span class="stat-value">{{ stats.totalBooks }}</span>
+        <span class="stat-label">Total Books</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon members">
+        <span class="material-icons">people</span>
+      </div>
+      <div class="stat-content">
+        <span class="stat-value">{{ stats.activeMembers }}</span>
+        <span class="stat-label">Active Members</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon issued">
+        <span class="material-icons">assignment</span>
+      </div>
+      <div class="stat-content">
+        <span class="stat-value">{{ stats.booksIssued }}</span>
+        <span class="stat-label">Books Issued</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon overdue">
+        <span class="material-icons">warning</span>
+      </div>
+      <div class="stat-content">
+        <span class="stat-value">{{ stats.overdueBooks }}</span>
+        <span class="stat-label">Overdue Books</span>
+      </div>
+    </div>
+  </div>
 
   <div class="content-split">
 

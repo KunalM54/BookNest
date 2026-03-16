@@ -1,0 +1,14 @@
+<div class="toolbar-row">
+  <app-search-bar
+    [placeholder]="searchPlaceholder"
+    [value]="searchTerm"
+    (valueChange)="onSearchChange($event)">
+  </app-search-bar>
+
+  <app-sort-dropdown
+    *ngIf="showSort"
+    [sortBy]="sortBy"
+    [options]="sortOptions"
+    (sortChange)="onSortChange($event)">
+  </app-sort-dropdown>
+</div>

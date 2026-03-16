@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { SnackbarService } from '../../../services/snackbar';
 import { AuthService } from '../../../services/auth';
 import { Book, BookService } from '../../../services/book';
@@ -13,7 +14,7 @@ import { Book, BookService } from '../../../services/book';
   templateUrl: './browse-books.html',
   styleUrls: ['./browse-books.css']
 })
-export class BrowseBooksComponent implements OnInit {
+export class BrowseBooksComponent implements OnInit, OnDestroy {
   searchTerm = '';
   loading = false;
   selectedCategory = 'All';
@@ -27,6 +28,9 @@ export class BrowseBooksComponent implements OnInit {
   pageSize = 12;
   totalPages = 1;
 
+  private searchSubject = new Subject<string>();
+  private destroy$ = new Subject<void>();
+
   constructor(
     private snackbar: SnackbarService,
     private http: HttpClient,
@@ -35,7 +39,27 @@ export class BrowseBooksComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.setupDebounce();
     this.loadBooks();
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private setupDebounce() {
+    this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.applyFilters();
+    });
+  }
+
+  onSearchInput() {
+    this.searchSubject.next(this.searchTerm);
   }
 
   loadBooks() {
@@ -65,8 +89,21 @@ export class BrowseBooksComponent implements OnInit {
     this.applyFilters();
   }
 
-  onSearchChange() {
+  onCategoryChange() {
     this.applyFilters();
+  }
+
+  onSearch() {
+    this.applyFilters();
+  }
+
+  clearSearch() {
+    this.searchTerm = '';
+    this.applyFilters();
+  }
+
+  onSearchChange() {
+    // Kept for compatibility, but use onSearchInput for live search
   }
 
   onSortChange() {

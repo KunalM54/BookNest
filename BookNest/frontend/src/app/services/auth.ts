@@ -5,10 +5,14 @@ export interface AuthUser {
   email: string;
   role: string;
   userId?: number;
+  studentId?: string;
+  sid?: string;
 }
 
 export interface AuthSession extends AuthUser {
   token: string;
+  studentId?: string;
+  sid?: string;
 }
 
 @Injectable({
@@ -57,7 +61,9 @@ export class AuthService {
       fullName: session.fullName,
       email: session.email,
       role: session.role,
-      userId: session.userId
+      userId: session.userId,
+      studentId: (session as any).studentId,
+      sid: (session as any).sid
     };
   }
 
@@ -186,7 +192,9 @@ export class AuthService {
       fullName: session.fullName ?? '',
       email: session.email ?? '',
       role: session.role ?? '',
-      userId: session.userId != null ? Number(session.userId) : undefined
+      userId: session.userId != null ? Number(session.userId) : undefined,
+      studentId: session.studentId ?? (session as any).sid ?? '',
+      sid: session.sid ?? (session as any).studentId ?? ''
     };
   }
 

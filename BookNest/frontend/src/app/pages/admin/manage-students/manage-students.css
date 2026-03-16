@@ -22,6 +22,113 @@
   color: #3b82f6;
 }
 
+/* Search Bar */
+.search-bar-container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto 20px;
+  position: sticky;
+  top: 8px;
+  z-index: 100;
+}
+
+.search-pill {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 50px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.search-pill:focus-within {
+  border-color: #3b82f6;
+  box-shadow: 0 6px 24px rgba(59, 130, 246, 0.2);
+}
+
+.search-dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.search-dropdown .category-select {
+  appearance: none;
+  -webkit-appearance: none;
+  height: 48px;
+  padding: 0 32px 0 20px;
+  border: none;
+  border-radius: 50px 0 0 50px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #374151;
+  background: transparent;
+  cursor: pointer;
+  outline: none;
+  transition: background 0.2s ease;
+}
+
+.search-dropdown .category-select:hover {
+  background: #f9fafb;
+}
+
+.search-dropdown .dropdown-icon {
+  position: absolute;
+  right: 12px;
+  pointer-events: none;
+  color: #6b7280;
+  font-size: 20px;
+}
+
+.search-divider {
+  width: 1px;
+  height: 24px;
+  background: #e5e7eb;
+  flex-shrink: 0;
+}
+
+.search-input-area {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.search-input-area .search-input {
+  width: 100%;
+  height: 48px;
+  padding: 0 56px 0 16px;
+  border: none;
+  border-radius: 0 50px 50px 0;
+  font-size: 0.95rem;
+  color: #1f2937;
+  background: transparent;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.search-input-area .search-input::placeholder {
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+.search-input-area .search-input:focus {
+  background: #f9fafb;
+}
+
+.search-input-area .search-icon {
+  position: absolute;
+  right: 20px;
+  color: #9ca3af;
+  font-size: 22px;
+  pointer-events: none;
+}
+
 /* Content Card */
 .content-card {
   background: white;

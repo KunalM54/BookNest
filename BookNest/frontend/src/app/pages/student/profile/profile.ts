@@ -85,7 +85,7 @@ export class ProfileComponent implements OnInit {
     this.isLoading = true;
     this.http.get<any>(`${this.apiUrl}/users/me`).subscribe({
       next: (data) => {
-        this.studentId = data.id;
+        this.studentId = data.studentId || data.id;
         const nameParts = data.fullName.split(' ');
         this.firstName = nameParts[0] || '';
         this.lastName = nameParts.slice(1).join(' ') || '';
@@ -104,7 +104,9 @@ export class ProfileComponent implements OnInit {
           fullName: data.fullName,
           email: this.email,
           role: data.role,
-          userId: this.studentId
+          userId: data.id,
+          studentId: data.studentId || '',
+          sid: data.studentId || ''
         });
       },
       error: (err) => {

@@ -9,24 +9,11 @@
       <h1 class="page-title">Student Portal</h1>
     </div>
     <div class="navbar-right">
-      <div class="user-dropdown" (click)="toggleUserDropdown()">
-        <img src="https://ui-avatars.com/api/?name=Student+User&background=f59e0b&color=fff" alt="Student" class="user-avatar">
-        <span class="user-name">Student User</span>
-        <span class="material-icons dropdown-arrow">expand_more</span>
-        <div class="dropdown-menu" *ngIf="showUserDropdown" (click)="$event.stopPropagation()">
-          <a routerLink="/student/profile" class="dropdown-item" (click)="closeUserDropdown()">
-            <span class="material-icons">person</span>
-            My Profile
-          </a>
-          <a routerLink="/student/change-password" class="dropdown-item" (click)="closeUserDropdown()">
-            <span class="material-icons">lock</span>
-            Change Password
-          </a>
-          <div class="dropdown-divider"></div>
-          <button class="dropdown-item logout" (click)="openLogoutModal()">
-            <span class="material-icons">logout</span>
-            Logout
-          </button>
+      <div class="user-badge">
+        <div class="user-avatar">{{ studentInitials }}</div>
+        <div class="user-info">
+          <span class="user-name">{{ studentName }}</span>
+          <span class="user-email">SID: {{ studentId }}</span>
         </div>
       </div>
     </div>

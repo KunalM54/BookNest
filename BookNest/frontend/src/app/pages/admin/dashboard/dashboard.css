@@ -54,56 +54,54 @@
   transform: translateY(-3px);
 }
 
-.clickable-card {
-  cursor: pointer;
-}
-
-.clickable-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 22px rgba(37, 99, 235, 0.12);
-}
-
-.stat-icon-bg {
-  width: 50px;
-  height: 50px;
-  border-radius: 10px;
+.stat-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.stat-icon-bg span {
+.stat-icon.books {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.stat-icon.members {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.stat-icon.issued {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.stat-icon.overdue {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.stat-icon .material-icons {
+  font-size: 28px;
+}
+
+.stat-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-value {
   font-size: 1.8rem;
-  color: white;
-}
-
-.stat-info h3 {
-  margin: 0;
-  font-size: 1.5rem;
+  font-weight: 700;
   color: #1f2937;
+  line-height: 1.2;
 }
 
-.stat-info p {
-  margin: 0;
+.stat-label {
+  font-size: 0.85rem;
   color: #6b7280;
-  font-size: 0.9rem;
-}
-
-/* Colors */
-.stat-card.blue .stat-icon-bg {
-  background-color: #3b82f6;
-}
-
-.stat-card.green .stat-icon-bg {
-  background-color: #10b981;
-}
-
-.stat-card.orange .stat-icon-bg {
-  background-color: #f59e0b;
-}
-
-.stat-card.red .stat-icon-bg {
-  background-color: #ef4444;
 }
 
 /* --- 3. SPLIT SECTION --- */

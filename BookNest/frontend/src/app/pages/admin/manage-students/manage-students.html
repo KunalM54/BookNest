@@ -7,29 +7,33 @@
     </h1>
   </div>
 
-  <div class="content-card">
-    <!-- Toolbar -->
-    <div class="toolbar">
-      <div class="search-box">
-        <span class="material-icons">search</span>
-        <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()" 
-          placeholder="Search students...">
-      </div>
-      <div class="filters">
-        <select (change)="filterStatus($event)">
+  <!-- Search Bar -->
+  <div class="search-bar-container">
+    <div class="search-pill">
+      <div class="search-dropdown">
+        <select [(ngModel)]="selectedStatus" (change)="filterStatus($event)" class="category-select">
           <option value="all">All Students</option>
           <option value="active">Active</option>
           <option value="blocked">Blocked</option>
         </select>
-        <select (change)="sortByName($event)">
-          <option value="">Sort by Name</option>
-          <option value="asc">A → Z</option>
-          <option value="desc">Z → A</option>
-        </select>
+        <span class="material-icons dropdown-icon">expand_more</span>
+      </div>
+      
+      <div class="search-divider"></div>
+      
+      <div class="search-input-area">
+        <input 
+          type="text" 
+          [(ngModel)]="searchTerm" 
+          (ngModelChange)="onSearchChange()"
+          placeholder="Search students..."
+          class="search-input">
+        <span class="material-icons search-icon">search</span>
       </div>
     </div>
+  </div>
 
-    <div class="table-wrapper">
+  <div class="content-card">
       <table>
         <thead>
           <tr>
@@ -90,7 +94,6 @@
     <button (click)="goToNextPage()" [disabled]="currentPage === totalPages" class="page-btn">
       Next
     </button>
-  </div>
   </div>
 
 </div>

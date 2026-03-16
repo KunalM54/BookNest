@@ -24,111 +24,112 @@
   font-size: 14px;
 }
 
-/* Search & Filter - STICKY */
-.search-filter {
+/* Search & Filter Bar */
+.search-bar-container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto 24px;
   position: sticky;
-  top: 0;
+  top: 8px;
   z-index: 100;
-  background: #f9fafb;
-  padding: 16px 0;
-  margin: -16px -24px 16px;
-  padding: 16px 24px;
+}
+
+.search-pill {
   display: flex;
-  gap: 16px;
   align-items: center;
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 50px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  transition: all 0.2s ease;
 }
 
-.search-input-wrap {
+.search-pill:focus-within {
+  border-color: #3b82f6;
+  box-shadow: 0 6px 24px rgba(59, 130, 246, 0.2);
+}
+
+.search-dropdown {
   position: relative;
-  flex: 1;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
 }
 
-.search-input-wrap .material-icons {
+.search-dropdown .category-select {
+  appearance: none;
+  -webkit-appearance: none;
+  height: 48px;
+  padding: 0 32px 0 20px;
+  border: none;
+  border-radius: 50px 0 0 50px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #374151;
+  background: transparent;
+  cursor: pointer;
+  outline: none;
+  transition: background 0.2s ease;
+}
+
+.search-dropdown .category-select:hover {
+  background: #f9fafb;
+}
+
+.search-dropdown .dropdown-icon {
   position: absolute;
-  left: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #9ca3af;
+  right: 12px;
+  pointer-events: none;
+  color: #6b7280;
   font-size: 20px;
 }
 
-.search-input {
-  width: 100%;
-  padding: 14px 16px 14px 48px;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  font-size: 15px;
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+.search-divider {
+  width: 1px;
+  height: 24px;
+  background: #e5e7eb;
+  flex-shrink: 0;
 }
 
-.sort-wrap {
+.search-input-area {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 8px;
-  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
 }
 
-.sort-wrap label {
-  font-size: 0.9rem;
-  color: #6b7280;
-  font-weight: 500;
-}
-
-.sort-select {
-  padding: 12px 32px 12px 14px;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  font-size: 0.9rem;
-  color: #374151;
-  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E") no-repeat right 12px center;
-  cursor: pointer;
+.search-input-area .search-input {
+  width: 100%;
+  height: 48px;
+  padding: 0 56px 0 16px;
+  border: none;
+  border-radius: 0 50px 50px 0;
+  font-size: 0.95rem;
+  color: #1f2937;
+  background: transparent;
   outline: none;
-  appearance: none;
-  min-width: 150px;
-  transition: border-color 0.2s;
+  transition: all 0.2s ease;
 }
 
-.sort-select:focus {
-  border-color: #3b82f6;
-}
-}
-
-.search-input:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+.search-input-area .search-input::placeholder {
+  color: #9ca3af;
+  font-weight: 400;
 }
 
-.category-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+.search-input-area .search-input:focus {
+  background: #f9fafb;
 }
 
-.cat-tab {
-  padding: 8px 16px;
-  border: 1px solid #e5e7eb;
-  border-radius: 20px;
-  background: #fff;
-  color: #4b5563;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
+.search-input-area .search-icon {
+  position: absolute;
+  right: 20px;
+  color: #9ca3af;
+  font-size: 22px;
+  pointer-events: none;
 }
-
-.cat-tab:hover {
-  border-color: #3b82f6;
-  color: #3b82f6;
-}
-
-.cat-tab.active {
-  background: #3b82f6;
-  border-color: #3b82f6;
-  color: #fff;
-}
-
-/* Loading */
 .loading-wrap {
   display: flex;
   justify-content: center;
@@ -380,5 +381,36 @@
     min-width: 38px;
     height: 34px;
     font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .search-pill {
+    flex-direction: column;
+    border-radius: 16px;
+    max-width: 100%;
+  }
+  
+  .search-dropdown {
+    width: 100%;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .search-dropdown .category-select {
+    width: 100%;
+    border-radius: 16px 16px 0 0;
+    padding-right: 40px;
+  }
+  
+  .search-divider {
+    display: none;
+  }
+  
+  .search-input-area {
+    width: 100%;
+  }
+  
+  .search-input-area .search-input {
+    border-radius: 0 0 16px 16px;
   }
 }

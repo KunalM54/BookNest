@@ -13,6 +13,7 @@ import { UserService, Student } from '../../../services/user';
 export class ManageStudentsComponent implements OnInit {
 
   searchTerm = '';
+  selectedStatus = 'all';
   statusFilter = 'all';
   students: Student[] = [];
   filteredStudents: Student[] = [];

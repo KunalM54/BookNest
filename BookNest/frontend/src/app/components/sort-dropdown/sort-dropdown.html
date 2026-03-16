@@ -1,0 +1,6 @@
+<div class="sort-wrap">
+  <label>{{ label }}</label>
+  <select [(ngModel)]="sortBy" (ngModelChange)="onSortChange()" class="sort-select">
+    <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
+  </select>
+</div>

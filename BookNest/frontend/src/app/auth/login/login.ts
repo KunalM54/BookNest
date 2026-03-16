@@ -86,7 +86,9 @@ export class LoginComponent {
                 fullName: response.fullName,
                 email: response.email,
                 role: response.role,
-                userId: response.userId
+                userId: response.userId,
+                studentId: response.studentId || '',
+                sid: response.studentId || ''
               });
               this.snackbar.show(`Login successful. Welcome ${response.fullName || 'back'}!`);
 

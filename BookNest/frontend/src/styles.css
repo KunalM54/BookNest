@@ -28,6 +28,7 @@ body {
   background-color: var(--bg-color);
   color: var(--text-color);
   height: 100vh;
+  overflow-x: hidden;
 }
 
 /* Utility to center pages (Used by Login/Register) */

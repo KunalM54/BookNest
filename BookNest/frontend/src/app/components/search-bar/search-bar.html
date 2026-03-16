@@ -1,0 +1,12 @@
+<div class="search-bar">
+  <span class="material-icons search-icon">search</span>
+  <input
+    type="text"
+    class="search-input"
+    [placeholder]="placeholder"
+    [(ngModel)]="value"
+    (ngModelChange)="onInput($event)" />
+  <button class="clear-btn" *ngIf="value" (click)="clear()" aria-label="Clear">
+    <span class="material-icons">clear</span>
+  </button>
+</div>

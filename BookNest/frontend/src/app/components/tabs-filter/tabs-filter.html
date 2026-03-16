@@ -1,0 +1,10 @@
+<div class="tabs-nav">
+  <button 
+    *ngFor="let tab of tabs"
+    class="tab-btn" 
+    [class.active]="activeTab === tab.value"
+    (click)="onTabClick(tab.value)">
+    <span>{{ tab.label }}</span>
+    <span class="tab-badge" *ngIf="tab.count !== undefined">{{ tab.count }}</span>
+  </button>
+</div>

@@ -5,39 +5,28 @@
     <p>Find and borrow your favorite books</p>
   </div>
 
-  <!-- Search & Filter -->
-  <div class="search-filter">
-    <div class="search-input-wrap">
-      <span class="material-icons">search</span>
-      <input 
-        type="text" 
-        [(ngModel)]="searchTerm" 
-        (ngModelChange)="onSearchChange()"
-        placeholder="Search by title, author, or ISBN..."
-        class="search-input">
+  <!-- Search & Filter Bar -->
+  <div class="search-bar-container">
+    <div class="search-pill">
+      <div class="search-dropdown">
+        <select [(ngModel)]="selectedCategory" (ngModelChange)="onCategoryChange()" class="category-select">
+          <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+        </select>
+        <span class="material-icons dropdown-icon">expand_more</span>
+      </div>
+      
+      <div class="search-divider"></div>
+      
+      <div class="search-input-area">
+        <input 
+          type="text" 
+          [(ngModel)]="searchTerm" 
+          (input)="onSearchInput()"
+          placeholder="Search books, authors, ISBN..."
+          class="search-input">
+        <span class="material-icons search-icon">search</span>
+      </div>
     </div>
-    <div class="sort-wrap">
-      <label>Sort by:</label>
-      <select [(ngModel)]="sortBy" (ngModelChange)="onSortChange()" class="sort-select">
-        <option value="newest">Newest</option>
-        <option value="oldest">Oldest</option>
-        <option value="titleAZ">Title A-Z</option>
-        <option value="titleZA">Title Z-A</option>
-        <option value="authorAZ">Author A-Z</option>
-        <option value="available">Available First</option>
-      </select>
-    </div>
-  </div>
-
-  <!-- Category Tabs -->
-  <div class="category-tabs">
-    <button 
-      *ngFor="let cat of categories" 
-      class="cat-tab"
-      [class.active]="selectedCategory === cat"
-      (click)="setCategory(cat)">
-      {{ cat }}
-    </button>
   </div>
 
   <!-- Loading -->
