@@ -26,7 +26,7 @@ export class BrowseBooksComponent implements OnInit, OnDestroy {
   categories: string[] = ['All'];
   
   currentPage = 1;
-  pageSize = 12;
+  pageSize = 30;
   totalPages = 1;
 
   private searchSubject = new Subject<string>();
