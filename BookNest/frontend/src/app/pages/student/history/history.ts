@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth';
 import { BorrowService } from '../../../services/borrow';
+import { GlobalSearchBarComponent } from '../../../components/global-search-bar/global-search-bar';
 
 @Component({
   selector: 'app-history',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, GlobalSearchBarComponent],
   templateUrl: './history.html',
   styleUrls: ['./history.css']
 })

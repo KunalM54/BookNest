@@ -4,6 +4,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators, FormGroup, FormControl } from '@angular/forms';
 import { Book, BookService } from '../../../services/book';
 import { SnackbarService } from '../../../services/snackbar';
+import { GlobalSearchBarComponent } from '../../../components/global-search-bar/global-search-bar';
 
 interface BookForm {
   id: number | null;
@@ -18,7 +19,7 @@ interface BookForm {
 @Component({
   selector: 'app-manage-books',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, GlobalSearchBarComponent],
   templateUrl: './manage-books.html',
   styleUrls: ['./manage-books.css']
 })

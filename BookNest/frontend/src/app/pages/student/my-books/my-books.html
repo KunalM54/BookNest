@@ -1,80 +1,90 @@
 <div class="page-container">
 
+  <!-- Page Header -->
   <div class="page-header">
-    <h1 class="page-title">
-      <span class="material-icons page-icon">menu_book</span>
-      My Books ({{ borrowedBooks.length }})
-    </h1>
+    <div class="header-left">
+      <h1 class="page-title">
+        <span class="material-icons page-icon">menu_book</span>
+        My Books
+      </h1>
+      <p class="page-subtitle">
+        {{ borrowedBooks.length }} book{{ borrowedBooks.length !== 1 ? 's' : '' }} currently borrowed
+      </p>
+    </div>
   </div>
 
-  <div class="content-card">
-    <!-- Search Bar -->
-    <div class="toolbar">
-      <div class="search-box">
-        <span class="material-icons">search</span>
-        <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
-          placeholder="Search by title or author...">
+  <!-- Search Section -->
+  <div class="search-section">
+    <div class="sort-dropdown">
+      <select [(ngModel)]="sortBy" (ngModelChange)="onSortChange()" class="sort-select">
+        <option value="newest">Newest First</option>
+        <option value="oldest">Oldest First</option>
+        <option value="titleAZ">Title A-Z</option>
+      </select>
+      <span class="material-icons dropdown-icon">expand_more</span>
+    </div>
+    <app-global-search-bar 
+      placeholder="Search by title or author..." 
+      [(value)]="searchTerm"
+      (valueChange)="onSearchChange()">
+    </app-global-search-bar>
+  </div>
+
+  <!-- Books List -->
+  <div class="books-list" *ngIf="filteredBooks.length > 0">
+    <div class="book-card" *ngFor="let book of paginatedBooks">
+      <div class="book-cover">
+        <span class="material-icons">menu_book</span>
       </div>
-      <div class="sort-wrap">
-        <label>Sort by:</label>
-        <select [(ngModel)]="sortBy" (ngModelChange)="onSortChange()" class="sort-select">
-          <option value="newest">Newest</option>
-          <option value="oldest">Oldest</option>
-          <option value="titleAZ">Title A-Z</option>
-        </select>
+      <div class="book-info">
+        <h3 class="book-title">{{ book.title }}</h3>
+        <p class="book-author">{{ book.author }}</p>
+        <div class="book-meta">
+          <span class="meta-item">
+            <span class="material-icons">event</span>
+            Borrowed: {{ book.borrowDate | date:'MMM dd, yyyy' }}
+          </span>
+          <span class="meta-item" [class.overdue]="book.isOverdue">
+            <span class="material-icons">event_busy</span>
+            Due: {{ book.dueDate ? (book.dueDate | date:'MMM dd, yyyy') : 'N/A' }}
+          </span>
+        </div>
+      </div>
+      <div class="book-status">
+        <span class="status-badge" [class.warning]="book.isOverdue" [class.success]="!book.isOverdue">
+          <span class="material-icons">{{ book.isOverdue ? 'error' : 'check_circle' }}</span>
+          {{ book.isOverdue ? 'Overdue' : 'Active' }}
+        </span>
       </div>
     </div>
+  </div>
 
-    <div class="table-wrapper">
-      <table>
-        <thead>
-          <tr>
-            <th>Book</th>
-            <th>Author</th>
-            <th>Borrowed Date</th>
-            <th>Due Date</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let book of paginatedBooks">
-            <td class="book-cell">
-              <span class="material-icons book-icon">menu_book</span>
-              <span>{{book.title}}</span>
-            </td>
-            <td>{{book.author}}</td>
-            <td>{{ book.borrowDate | date:'dd-MM-yyyy' }}</td>
-            <td>{{ book.dueDate ? (book.dueDate | date:'dd-MM-yyyy') : '---' }}</td>
-            <td>
-              <span class="badge" [class.badge-danger]="book.isOverdue" [class.badge-success]="!book.isOverdue">
-                <span class="material-icons">{{ book.isOverdue ? 'error' : 'check_circle' }}</span>
-                {{book.isOverdue ? 'Overdue' : 'Active'}}
-              </span>
-            </td>
-          </tr>
-          <tr *ngIf="filteredBooks.length === 0">
-            <td colspan="5" class="empty-cell">
-              <span class="material-icons">menu_book</span>
-              <p>No borrowed books found</p>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="filteredBooks.length === 0">
+    <span class="material-icons empty-icon">library_books</span>
+    <h3>No borrowed books</h3>
+    <p>You haven't borrowed any books yet. Start exploring the library!</p>
+    <a class="btn-primary" routerLink="/student/browse">
+      <span class="material-icons">search</span>
+      Browse Library
+    </a>
+  </div>
 
-    <!-- Pagination -->
-    <div class="pagination" *ngIf="filteredBooks.length > 0">
-      <button (click)="goToPreviousPage()" [disabled]="currentPage === 1" class="page-btn">
-        Previous
-      </button>
-      <button *ngFor="let page of pageNumbers" (click)="goToPage(page)" 
-        class="page-btn" [class.active]="page === currentPage">
+  <!-- Pagination -->
+  <div class="pagination" *ngIf="filteredBooks.length > pageSize">
+    <button (click)="goToPreviousPage()" [disabled]="currentPage === 1" class="page-btn">
+      <span class="material-icons">chevron_left</span>
+      Previous
+    </button>
+    <div class="page-numbers">
+      <button *ngFor="let page of pageNumbers" (click)="goToPage(page)" class="page-number" [class.active]="page === currentPage">
         {{ page }}
       </button>
-      <button (click)="goToNextPage()" [disabled]="currentPage === totalPages" class="page-btn">
-        Next
-      </button>
     </div>
+    <button (click)="goToNextPage()" [disabled]="currentPage === totalPages" class="page-btn">
+      Next
+      <span class="material-icons">chevron_right</span>
+    </button>
   </div>
 
 </div>

@@ -20,10 +20,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 20px;
+  padding: 0 24px;
   background: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid #E5E7EB;
   z-index: 100;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .navbar-left {
@@ -78,7 +79,7 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
   color: white;
   display: flex;
   align-items: center;
@@ -90,31 +91,13 @@
 .user-info {
   display: flex;
   flex-direction: column;
+  gap: 2px;
 }
 
 .user-info .user-name {
   font-size: 0.9rem;
   font-weight: 600;
   color: #1e293b;
-  line-height: 1.2;
-}
-
-.user-info .user-email {
-  font-size: 0.75rem;
-  color: #64748b;
-}
-  border-radius: 50%;
-}
-
-.user-info .user-details {
-  display: flex;
-  flex-direction: column;
-}
-
-.user-info .user-name {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #334155;
 }
 
 .user-info .user-id {
@@ -261,7 +244,7 @@
 /* --- SIDEBAR STYLES --- */
 .sidebar {
   background-color: #ffffff;
-  border-right: 1px solid #e2e8f0;
+  border-right: 1px solid #E5E7EB;
   display: flex;
   flex-direction: column;
   padding: 0;
@@ -271,56 +254,63 @@
 }
 
 .brand {
-  padding: 16px;
-  border-bottom: 1px solid #e2e8f0;
+  padding: 20px 16px;
+  border-bottom: 1px solid #E5E7EB;
 }
 
 .logo-container {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .logo-icon {
   font-size: 1.8rem;
-  color: #3b82f6;
+  color: #667EEA;
 }
 
 .logo-text h2 {
   font-size: 1.2rem;
-  color: #1e293b;
+  color: #1F2937;
   font-weight: 700;
   margin: 0;
   line-height: 1.2;
 }
 
 .student-badge {
-  font-size: 0.6rem;
-  background-color: #fef3c7;
-  color: #d97706;
-  padding: 2px 6px;
+  display: inline-block;
+  font-size: 0.65rem;
+  background-color: #EEF2FF;
+  color: #667EEA;
+  padding: 3px 8px;
   border-radius: 4px;
   font-weight: 600;
   letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
 
 /* Nav Links */
 .nav-links {
   list-style: none;
-  padding: 12px;
+  padding: 16px 12px;
   flex: 1;
 }
 
 .nav-links li {
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 
 .menu-header {
-  font-size: 0.65rem;
-  color: #94a3b8;
+  font-size: 0.7rem;
+  color: #6B7280;
   font-weight: 600;
-  margin: 16px 0 8px 10px;
-  letter-spacing: 1px;
+  margin: 20px 12px 10px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.menu-header:first-child {
+  margin-top: 0;
 }
 
 .nav-links a,
@@ -328,12 +318,12 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 12px;
-  color: #64748b;
+  padding: 12px 14px;
+  color: #4B5563;
   text-decoration: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-weight: 500;
-  font-size: 0.875rem;
+  font-size: 0.9rem;
   transition: all 0.15s ease;
   border: none;
   background: none;
@@ -344,33 +334,51 @@
 .nav-links a .material-icons,
 .nav-links .logout-btn .material-icons {
   font-size: 20px;
+  color: #6B7280;
   flex-shrink: 0;
+  transition: color 0.15s ease;
 }
 
 .nav-links a:hover,
 .nav-links .logout-btn:hover {
-  background-color: #f1f5f9;
-  color: #3b82f6;
+  background-color: #F3F4F6;
+  color: #1F2937;
+}
+
+.nav-links a:hover .material-icons,
+.nav-links .logout-btn:hover .material-icons {
+  color: #667EEA;
 }
 
 .nav-links a.active-link {
-  background-color: #eff6ff;
-  color: #3b82f6;
-  border-left: 3px solid #3b82f6;
-  padding-left: 9px;
+  background-color: #EEF2FF;
+  color: #1F2937;
+  font-weight: 600;
+  border-left: 3px solid #667EEA;
+  padding-left: 11px;
+}
+
+.nav-links a.active-link .material-icons {
+  color: #667EEA;
 }
 
 .nav-links .logout-btn {
-  color: #ef4444;
+  color: #DC2626;
+  margin-top: 8px;
 }
 
 .nav-links .logout-btn:hover {
-  background-color: #fef2f2;
+  background-color: #FEE2E2;
+  color: #DC2626;
+}
+
+.nav-links .logout-btn:hover .material-icons {
+  color: #DC2626;
 }
 
 /* Collapsed Sidebar */
 .sidebar-collapsed .brand {
-  padding: 12px;
+  padding: 16px 12px;
   justify-content: center;
 }
 
@@ -389,7 +397,7 @@
 .sidebar-collapsed .nav-links a,
 .sidebar-collapsed .nav-links .logout-btn {
   justify-content: center;
-  padding: 10px;
+  padding: 12px;
 }
 
 .sidebar-collapsed .nav-links a span:not(.material-icons),
@@ -400,11 +408,11 @@
 /* --- MAIN CONTENT --- */
 .main-content {
   overflow-y: auto;
-  background: #f8fafc;
+  background: #F8FAFC;
 }
 
 .content-area {
-  padding: 16px;
+  padding: 24px;
   min-height: calc(100vh - 56px);
 }
 

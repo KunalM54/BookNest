@@ -6,11 +6,12 @@ import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { SnackbarService } from '../../../services/snackbar';
 import { AuthService } from '../../../services/auth';
 import { Book, BookService } from '../../../services/book';
+import { GlobalSearchBarComponent } from '../../../components/global-search-bar/global-search-bar';
 
 @Component({
   selector: 'app-browse-books',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, GlobalSearchBarComponent],
   templateUrl: './browse-books.html',
   styleUrls: ['./browse-books.css']
 })

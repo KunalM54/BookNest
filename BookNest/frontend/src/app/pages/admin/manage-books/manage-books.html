@@ -1,195 +1,170 @@
 <div class="page-container">
+
+  <!-- Page Header -->
   <div class="page-header">
-    <h1 class="page-title">
-      <span class="material-icons page-icon">library_books</span>
-      Manage Books
-    </h1>
-
-    <button class="btn-primary" (click)="openAddModal()">
-      <span class="material-icons">add</span>
-      Add New Book
-    </button>
-  </div>
-
-  <!-- Search Bar -->
-  <div class="search-bar-container">
-    <div class="search-pill">
-      <div class="search-dropdown">
-        <select [(ngModel)]="selectedCategory" (change)="setCategory(selectedCategory)" class="category-select">
-          <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
-        </select>
-        <span class="material-icons dropdown-icon">expand_more</span>
-      </div>
-      
-      <div class="search-divider"></div>
-      
-      <div class="search-input-area">
-        <input 
-          type="text" 
-          [(ngModel)]="searchTerm" 
-          (ngModelChange)="onSearchChange()"
-          placeholder="Search by title, author, or ISBN..."
-          class="search-input">
-        <span class="material-icons search-icon">search</span>
-      </div>
+    <div class="header-left">
+      <h1 class="page-title">
+        <span class="material-icons page-icon">library_books</span>
+        Manage Books
+      </h1>
+      <p class="page-subtitle">Add, edit, or remove books from the library</p>
+    </div>
+    <div class="header-right">
+      <button class="btn-primary" (click)="openAddModal()">
+        <span class="material-icons">add</span>
+        Add Book
+      </button>
     </div>
   </div>
 
-  <div class="error-message" *ngIf="errorMessage">
-    {{ errorMessage }}
+  <!-- Sticky Sub-header with Search & Filter -->
+  <div class="sub-header">
+    <div class="filters-left">
+      <div class="filter-group">
+        <select [(ngModel)]="selectedCategory" (change)="setCategory(selectedCategory)" class="filter-select">
+          <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+        </select>
+        <span class="material-icons select-icon">expand_more</span>
+      </div>
+    </div>
+    <app-global-search-bar 
+      placeholder="Search by title, author, or ISBN..." 
+      [(value)]="searchTerm"
+      (valueChange)="onSearchChange()">
+    </app-global-search-bar>
   </div>
 
-  <div class="loading" *ngIf="isLoading">
-    Loading...
-  </div>
+  <!-- Loading & Error -->
+  <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+  <div class="loading" *ngIf="isLoading">Loading...</div>
 
-  <div class="card table-container">
-    <table>
+  <!-- Data Table Card -->
+  <div class="table-card">
+    <table class="data-table">
       <thead>
         <tr>
-          <th>Cover</th>
-          <th>Title</th>
-          <th>Author</th>
-          <th>Category</th>
-          <th>Copies</th>
-          <th>Status</th>
-          <th>Actions</th>
+          <th class="col-cover">Cover</th>
+          <th class="col-title">Title</th>
+          <th class="col-author">Author</th>
+          <th class="col-category">Category</th>
+          <th class="col-copies">Copies</th>
+          <th class="col-status">Status</th>
+          <th class="col-actions">Actions</th>
         </tr>
       </thead>
-
       <tbody>
-        <tr *ngFor="let book of paginatedBooks">
-          <td>
+        <tr *ngFor="let book of paginatedBooks" class="table-row">
+          <td class="col-cover">
             <div class="book-cover">
-              <img *ngIf="book.imageData; else adminCoverFallback" [src]="book.imageData" [alt]="book.title"
-                class="book-cover-image">
+              <img *ngIf="book.imageData; else adminCoverFallback" [src]="book.imageData" [alt]="book.title" class="cover-img">
               <ng-template #adminCoverFallback>
-                <div class="book-cover-placeholder">
-                  {{ getBookInitial(book) }}
-                </div>
+                <div class="cover-placeholder">{{ getBookInitial(book) }}</div>
               </ng-template>
             </div>
           </td>
-
-          <td>
-            <div class="fw-bold">{{ book.title }}</div>
-            <small class="text-muted">ISBN: {{ book.isbn }}</small>
+          <td class="col-title">
+            <div class="title-cell">
+              <span class="primary-text">{{ book.title }}</span>
+              <span class="secondary-text">ISBN: {{ book.isbn }}</span>
+            </div>
           </td>
-
-          <td>{{ book.author }}</td>
-          <td>{{ book.category }}</td>
-          <td>{{ book.availableCopies }} / {{ book.totalCopies }}</td>
-
-          <td>
-            <span class="status-badge" [ngClass]="book.availableCopies > 0 ? 'status-green' : 'status-red'">
+          <td class="col-author">{{ book.author }}</td>
+          <td class="col-category">{{ book.category }}</td>
+          <td class="col-copies text-center">{{ book.availableCopies }} / {{ book.totalCopies }}</td>
+          <td class="col-status">
+            <span class="status-pill" [class.available]="book.availableCopies > 0" [class.unavailable]="book.availableCopies === 0">
               {{ book.availableCopies > 0 ? 'Available' : 'Out of Stock' }}
             </span>
           </td>
-
-          <td>
+          <td class="col-actions">
             <div class="action-group">
               <button class="action-btn edit" (click)="openEditModal(book)" title="Edit">
                 <span class="material-icons">edit</span>
               </button>
-
               <button class="action-btn delete" (click)="deleteBook(book.id!)" title="Delete">
-                <span class="material-icons">delete</span>
+                <span class="material-icons">delete_outline</span>
               </button>
             </div>
           </td>
         </tr>
 
-        <tr *ngIf="filteredBooks.length === 0 && !isLoading">
-          <td colspan="7" class="empty-state">
-            <span class="material-icons empty-icon">menu_book</span>
-            No books found
+        <!-- Empty State -->
+        <tr *ngIf="filteredBooks.length === 0 && !isLoading" class="empty-row">
+          <td colspan="7">
+            <div class="empty-state">
+              <span class="material-icons empty-icon">menu_book</span>
+              <h3>No books found</h3>
+              <p>Try adjusting your search or filter criteria.</p>
+            </div>
           </td>
         </tr>
       </tbody>
     </table>
+
+    <!-- Table Footer -->
+    <div class="table-footer" *ngIf="filteredBooks.length > 0 && !isLoading">
+      <div class="footer-info">
+        Showing <strong>{{ paginatedBooks.length }}</strong> of <strong>{{ filteredBooks.length }}</strong> books
+      </div>
+      <div class="pagination" *ngIf="totalPages > 1">
+        <button (click)="goToPreviousPage()" [disabled]="currentPage === 1" class="page-btn">
+          <span class="material-icons">chevron_left</span>
+        </button>
+        <button *ngFor="let page of pageNumbers" (click)="goToPage(page)" class="page-btn" [class.active]="page === currentPage">{{ page }}</button>
+        <button (click)="goToNextPage()" [disabled]="currentPage === totalPages" class="page-btn">
+          <span class="material-icons">chevron_right</span>
+        </button>
+      </div>
+    </div>
   </div>
 
-  <div class="pagination" *ngIf="filteredBooks.length > 0 && !isLoading">
-    <button (click)="goToPreviousPage()" [disabled]="currentPage === 1" class="page-btn">
-      Previous
-    </button>
-    <button *ngFor="let page of pageNumbers" (click)="goToPage(page)" 
-      class="page-btn" [class.active]="page === currentPage">
-      {{ page }}
-    </button>
-    <button (click)="goToNextPage()" [disabled]="currentPage === totalPages" class="page-btn">
-      Next
-    </button>
-  </div>
-
+  <!-- Add/Edit Modal -->
   <div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
     <div class="modal-content" (click)="$event.stopPropagation()">
       <div class="modal-header">
         <h2>{{ isEditMode ? 'Edit Book' : 'Add New Book' }}</h2>
-        <button class="close-btn" (click)="closeModal()">
-          <span class="material-icons">close</span>
-        </button>
+        <button class="close-btn" (click)="closeModal()"><span class="material-icons">close</span></button>
       </div>
 
       <div class="modal-body" [formGroup]="form">
-        <div class="form-group">
-          <label for="title">Title *</label>
-          <input type="text" id="title" formControlName="title" (blur)="capitalizeTitle()" class="form-control"
-            [class.form-invalid]="form.get('title')!.invalid && form.get('title')!.touched">
-          <div class="form-error" *ngIf="form.get('title')!.invalid && form.get('title')!.touched">
-            Title is required.
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="title">Title *</label>
+            <input type="text" id="title" formControlName="title" (blur)="capitalizeTitle()" class="form-control"
+              [class.form-invalid]="form.get('title')!.invalid && form.get('title')!.touched">
+            <div class="form-error" *ngIf="form.get('title')!.invalid && form.get('title')!.touched">Title is required.</div>
           </div>
-        </div>
 
-        <div class="form-group">
-          <label for="isbn">ISBN *</label>
-          <input type="text" id="isbn" formControlName="isbn" [readonly]="isEditMode" maxlength="12" pattern="[0-9]*"
-            (input)="cleanIsbnInput($event)" class="form-control"
-            [class.form-invalid]="form.get('isbn')!.invalid && form.get('isbn')!.touched">
-          <div class="form-error" *ngIf="form.get('isbn')!.invalid && form.get('isbn')!.touched">
-            <span *ngIf="form.get('isbn')?.errors?.['required']">ISBN is required.</span>
-            <span *ngIf="form.get('isbn')?.errors?.['pattern']">ISBN must be exactly 12 digits.</span>
+          <div class="form-group">
+            <label for="isbn">ISBN *</label>
+            <input type="text" id="isbn" formControlName="isbn" [readonly]="isEditMode" maxlength="12" pattern="[0-9]*"
+              (input)="cleanIsbnInput($event)" class="form-control"
+              [class.form-invalid]="form.get('isbn')!.invalid && form.get('isbn')!.touched">
+            <div class="form-error" *ngIf="form.get('isbn')!.invalid && form.get('isbn')!.touched">
+              <span *ngIf="form.get('isbn')?.errors?.['required']">ISBN is required.</span>
+              <span *ngIf="form.get('isbn')?.errors?.['pattern']">ISBN must be exactly 12 digits.</span>
+            </div>
           </div>
-        </div>
 
-        <div class="form-group">
-          <label for="author">Author *</label>
-          <input type="text" id="author" formControlName="author" class="form-control"
-            [class.form-invalid]="form.get('author')!.invalid && form.get('author')!.touched">
-          <div class="form-error" *ngIf="form.get('author')!.invalid && form.get('author')!.touched">
-            Author is required.
+          <div class="form-group">
+            <label for="author">Author *</label>
+            <input type="text" id="author" formControlName="author" class="form-control"
+              [class.form-invalid]="form.get('author')!.invalid && form.get('author')!.touched">
+            <div class="form-error" *ngIf="form.get('author')!.invalid && form.get('author')!.touched">Author is required.</div>
           </div>
-        </div>
 
-        <div class="form-group">
-          <label for="category">Category *</label>
-          <select id="category" formControlName="category" class="form-control"
-            [class.form-invalid]="form.get('category')!.invalid && form.get('category')!.touched">
-            <option value="">Select Category</option>
-            <option value="Technology">Technology</option>
-            <option value="Academic">Academic</option>
-            <option value="Science">Science</option>
-            <option value="Literature">Literature</option>
-            <option value="History">History</option>
-          </select>
-          <div class="form-error" *ngIf="form.get('category')?.invalid && form.get('category')?.touched">
-            Category is required.
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="bookImage">Book Cover</label>
-          <input type="file" id="bookImage" accept="image/*" class="form-control" (change)="onImageSelected($event)">
-          <small class="form-hint">Upload a JPG, PNG, or WebP image up to 2 MB.</small>
-        </div>
-
-        <div class="cover-preview-panel" *ngIf="imagePreview">
-          <img [src]="imagePreview" [alt]="bookForm.title || 'Book cover preview'" class="cover-preview-image">
-          <div class="cover-preview-meta">
-            <p class="cover-file-name">{{ selectedImageName || 'Selected cover image' }}</p>
-            <button type="button" class="btn-secondary btn-small" (click)="removeSelectedImage()">
-              Remove Image
-            </button>
+          <div class="form-group">
+            <label for="category">Category *</label>
+            <select id="category" formControlName="category" class="form-control"
+              [class.form-invalid]="form.get('category')!.invalid && form.get('category')!.touched">
+              <option value="">Select Category</option>
+              <option value="Technology">Technology</option>
+              <option value="Academic">Academic</option>
+              <option value="Science">Science</option>
+              <option value="Literature">Literature</option>
+              <option value="History">History</option>
+            </select>
+            <div class="form-error" *ngIf="form.get('category')?.invalid && form.get('category')?.touched">Category is required.</div>
           </div>
         </div>
 
@@ -201,14 +176,25 @@
             <span *ngIf="form.get('totalCopies')?.errors?.['required']">Total copies is required.</span>
             <span *ngIf="form.get('totalCopies')?.errors?.['min']">Total copies must be at least 1.</span>
           </div>
-          <small *ngIf="isEditMode && editingBook" class="form-hint">Available: {{ editingBook.availableCopies }} / {{
-            form.get('totalCopies')?.value || bookForm.totalCopies }}</small>
+          <small *ngIf="isEditMode && editingBook" class="form-hint">Available: {{ editingBook.availableCopies }} / {{ form.get('totalCopies')?.value || bookForm.totalCopies }}</small>
+        </div>
+
+        <div class="form-group">
+          <label for="bookImage">Book Cover</label>
+          <input type="file" id="bookImage" accept="image/*" class="form-control" (change)="onImageSelected($event)">
+          <small class="form-hint">Upload a JPG, PNG, or WebP image up to 2 MB.</small>
+        </div>
+
+        <div class="cover-preview-panel" *ngIf="imagePreview">
+          <img [src]="imagePreview" [alt]="'Book cover preview'" class="cover-preview-image">
+          <div class="cover-preview-meta">
+            <p class="cover-file-name">{{ selectedImageName || 'Selected cover image' }}</p>
+            <button type="button" class="btn-secondary btn-small" (click)="removeSelectedImage()">Remove Image</button>
+          </div>
         </div>
 
         <div class="modal-actions">
-          <button type="button" class="btn-secondary" (click)="closeModal()">
-            Cancel
-          </button>
+          <button type="button" class="btn-secondary" (click)="closeModal()">Cancel</button>
           <button type="button" class="btn-primary" (click)="saveBook()" [disabled]="isLoading || form.invalid">
             {{ isEditMode ? 'Update' : 'Add' }} Book
           </button>
@@ -216,4 +202,5 @@
       </div>
     </div>
   </div>
+
 </div>

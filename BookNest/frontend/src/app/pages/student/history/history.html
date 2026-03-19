@@ -1,78 +1,85 @@
 <div class="page-container">
 
+  <!-- Page Header -->
   <div class="page-header">
-    <h1 class="page-title">
-      <span class="material-icons page-icon">history</span>
-      Borrowing History ({{history.length}})
-    </h1>
+    <div class="header-left">
+      <h1 class="page-title">
+        <span class="material-icons page-icon">history</span>
+        Borrowing History
+      </h1>
+      <p class="page-subtitle">
+        {{ history.length }} book{{ history.length !== 1 ? 's' : '' }} returned
+      </p>
+    </div>
   </div>
 
-  <div class="content-card">
-    <!-- Search Bar -->
-    <div class="toolbar">
-      <div class="search-box">
-        <span class="material-icons">search</span>
-        <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
-          placeholder="Search by book title...">
+  <!-- Search Section -->
+  <div class="search-section">
+    <div class="sort-dropdown">
+      <select [(ngModel)]="sortBy" (ngModelChange)="onSortChange()" class="sort-select">
+        <option value="newest">Newest First</option>
+        <option value="oldest">Oldest First</option>
+        <option value="titleAZ">Title A-Z</option>
+      </select>
+      <span class="material-icons dropdown-icon">expand_more</span>
+    </div>
+    <app-global-search-bar 
+      placeholder="Search by book title..." 
+      [(value)]="searchTerm"
+      (valueChange)="onSearchChange()">
+    </app-global-search-bar>
+  </div>
+
+  <!-- History List -->
+  <div class="history-list" *ngIf="filteredHistory.length > 0">
+    <div class="history-card" *ngFor="let record of paginatedHistory">
+      <div class="book-cover">
+        <span class="material-icons">menu_book</span>
       </div>
-      <div class="sort-wrap">
-        <label>Sort by:</label>
-        <select [(ngModel)]="sortBy" (ngModelChange)="onSortChange()" class="sort-select">
-          <option value="newest">Newest</option>
-          <option value="oldest">Oldest</option>
-          <option value="titleAZ">Title A-Z</option>
-        </select>
+      <div class="book-info">
+        <h3 class="book-title">{{ record.title }}</h3>
+        <div class="book-dates">
+          <span class="date-item">
+            <span class="material-icons">calendar_today</span>
+            Borrowed: {{ record.borrowDate || '-' }}
+          </span>
+          <span class="date-item">
+            <span class="material-icons">event_available</span>
+            Returned: {{ record.returnDate || '-' }}
+          </span>
+        </div>
+      </div>
+      <div class="book-status">
+        <span class="status-badge returned">
+          <span class="material-icons">check_circle</span>
+          Returned
+        </span>
       </div>
     </div>
+  </div>
 
-    <div class="table-wrapper">
-      <table>
-        <thead>
-          <tr>
-            <th>Book</th>
-            <th>Borrowed On</th>
-            <th>Returned On</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let record of paginatedHistory">
-            <td class="book-cell">
-              <span class="material-icons book-icon">menu_book</span>
-              <span>{{record.title}}</span>
-            </td>
-            <td>{{record.borrowDate || '-'}}</td>
-            <td>{{record.returnDate || '-'}}</td>
-            <td>
-              <span class="badge badge-success">
-                <span class="material-icons">check_circle</span>
-                Returned
-              </span>
-            </td>
-          </tr>
-          <tr *ngIf="filteredHistory.length === 0">
-            <td colspan="4" class="empty-cell">
-              <span class="material-icons">history</span>
-              <p>No history found</p>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="filteredHistory.length === 0">
+    <span class="material-icons empty-icon">history</span>
+    <h3>No borrowing history</h3>
+    <p>Your returned books will appear here</p>
+  </div>
 
-    <!-- Pagination -->
-    <div class="pagination" *ngIf="filteredHistory.length > 0">
-      <button (click)="goToPreviousPage()" [disabled]="currentPage === 1" class="page-btn">
-        Previous
-      </button>
-      <button *ngFor="let page of pageNumbers" (click)="goToPage(page)" 
-        class="page-btn" [class.active]="page === currentPage">
+  <!-- Pagination -->
+  <div class="pagination" *ngIf="filteredHistory.length > pageSize">
+    <button (click)="goToPreviousPage()" [disabled]="currentPage === 1" class="page-btn">
+      <span class="material-icons">chevron_left</span>
+      Previous
+    </button>
+    <div class="page-numbers">
+      <button *ngFor="let page of pageNumbers" (click)="goToPage(page)" class="page-number" [class.active]="page === currentPage">
         {{ page }}
       </button>
-      <button (click)="goToNextPage()" [disabled]="currentPage === totalPages" class="page-btn">
-        Next
-      </button>
     </div>
+    <button (click)="goToNextPage()" [disabled]="currentPage === totalPages" class="page-btn">
+      Next
+      <span class="material-icons">chevron_right</span>
+    </button>
   </div>
 
 </div>

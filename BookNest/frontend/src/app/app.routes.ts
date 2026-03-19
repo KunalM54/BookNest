@@ -23,6 +23,7 @@ import { NoticesStudent } from './pages/student/notices/notices';
 import { RequestsComponent } from './pages/student/requests/requests';
 import { ChangePasswordStudent } from './pages/student/change-password/change-password';
 import { MyLibraryComponent } from './pages/student/my-library/my-library';
+import { MyActivityComponent } from './pages/student/my-activity/my-activity';
 
 
 // ================= ADMIN PAGES =================
@@ -58,7 +59,8 @@ export const routes: Routes = [
       { path: 'profile', component: StudentProfile },
       { path: 'change-password', component: ChangePasswordStudent },
       { path: 'notices', component: NoticesStudent },
-      { path: 'requests', component: RequestsComponent }
+      { path: 'requests', component: RequestsComponent },
+      { path: 'activity', component: MyActivityComponent }
     ]
   },
 

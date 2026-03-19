@@ -1,162 +1,178 @@
 <div class="page-container">
 
+  <!-- Page Header -->
   <div class="page-header">
-    <h1 class="page-title">
-      <span class="material-icons page-icon">assignment</span>
-      Borrow Requests
-    </h1>
+
+    <div class="header-left">
+      <h1 class="page-title">
+        <span class="material-icons page-icon">assignment</span>
+        Borrow Requests
+      </h1>
+      <p class="page-subtitle">
+        Manage student book borrow requests
+      </p>
+    </div>
+
   </div>
 
-  <!-- Search Bar -->
-  <div class="search-bar-container">
-    <div class="search-pill">
-      <div class="search-dropdown">
-        <select [(ngModel)]="activeTab" (change)="setTab(activeTab)" class="category-select">
-          <option value="all">All</option>
-          <option value="pending">Pending</option>
-          <option value="issued">Issued</option>
-          <option value="returned">Returned</option>
-        </select>
-        <span class="material-icons dropdown-icon">expand_more</span>
+  <!-- Stats Row -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon pending">
+        <span class="material-icons">hourglass_empty</span>
       </div>
-      
-      <div class="search-divider"></div>
-      
-      <div class="search-input-area">
-        <input 
-          type="text" 
-          [(ngModel)]="searchTerm" 
-          (ngModelChange)="onSearchChange()"
-          placeholder="Search by student or book..."
-          class="search-input">
-        <span class="material-icons search-icon">search</span>
+      <div class="stat-content">
+        <span class="stat-value">{{ pendingCount }}</span>
+        <span class="stat-label">Pending</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon issued">
+        <span class="material-icons">menu_book</span>
+      </div>
+      <div class="stat-content">
+        <span class="stat-value">{{ issuedCount }}</span>
+        <span class="stat-label">Issued</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon returned">
+        <span class="material-icons">assignment_turned_in</span>
+      </div>
+      <div class="stat-content">
+        <span class="stat-value">{{ returnedCount }}</span>
+        <span class="stat-label">Returned</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon overdue">
+        <span class="material-icons">warning</span>
+      </div>
+      <div class="stat-content">
+        <span class="stat-value">{{ overdueCount }}</span>
+        <span class="stat-label">Overdue</span>
       </div>
     </div>
   </div>
 
-  <!-- Tab Navigation -->
-  <div class="tabs-nav">
-    <button 
-      class="tab-btn" 
-      [class.active]="activeTab === 'all'"
-      (click)="setTab('all')">
-      <span>All</span>
-      <span class="tab-badge">{{ getTabCount('all') }}</span>
-    </button>
-    <button 
-      class="tab-btn" 
-      [class.active]="activeTab === 'pending'"
-      (click)="setTab('pending')">
-      <span>Pending</span>
-      <span class="tab-badge pending" *ngIf="getTabCount('pending')">{{ getTabCount('pending') }}</span>
-    </button>
-    <button 
-      class="tab-btn" 
-      [class.active]="activeTab === 'issued'"
-      (click)="setTab('issued')">
-      <span>Issued</span>
-      <span class="tab-badge issued" *ngIf="getTabCount('issued')">{{ getTabCount('issued') }}</span>
-    </button>
-    <button 
-      class="tab-btn" 
-      [class.active]="activeTab === 'returned'"
-      (click)="setTab('returned')">
-      <span>Returned</span>
-      <span class="tab-badge returned" *ngIf="getTabCount('returned')">{{ getTabCount('returned') }}</span>
-    </button>
+  <!-- Sticky Sub-header with Search & Filters -->
+  <div class="sub-header">
+    <div class="filters-left">
+      <div class="filter-tabs">
+        <button class="filter-tab" [class.active]="activeTab === 'all'" (click)="setTab('all')">
+          All
+        </button>
+        <button class="filter-tab" [class.active]="activeTab === 'pending'" (click)="setTab('pending')">
+          Pending
+          <span class="badge" *ngIf="pendingCount > 0">{{ pendingCount }}</span>
+        </button>
+        <button class="filter-tab" [class.active]="activeTab === 'issued'" (click)="setTab('issued')">
+          Issued
+        </button>
+        <button class="filter-tab" [class.active]="activeTab === 'returned'" (click)="setTab('returned')">
+          Returned
+        </button>
+      </div>
+    </div>
+    <app-global-search-bar placeholder="Search student or book..." [(value)]="searchTerm"
+      (valueChange)="onSearchChange()">
+    </app-global-search-bar>
   </div>
 
-  <div class="card table-container">
-    <table>
+  <!-- Data Table Card -->
+  <div class="table-card">
+    <table class="data-table">
       <thead>
         <tr>
-          <th>Student</th>
-          <th>Book</th>
-          <th>Request Date</th>
-          <th>Borrow Date</th>
-          <th>Due Date</th>
-          <th>Status</th>
-          <th>Actions</th>
+          <th class="col-student">Student</th>
+          <th class="col-book">Book</th>
+          <th class="col-date">Request Date</th>
+          <th class="col-date">Borrow Date</th>
+          <th class="col-date">Due Date</th>
+          <th class="col-status">Status</th>
+          <th class="col-actions">Actions</th>
         </tr>
       </thead>
-
       <tbody>
-        <tr *ngFor="let req of filteredRequestsForDisplay">
-          <td>
-            <div class="user-info">
-              <div class="avatar">
-                {{req.studentName.charAt(0) || 'U'}}
-              </div>
-              <div>
-                <div class="user-name">{{req.studentName}}</div>
-                <small class="text-muted">{{req.studentIdNumber}}</small>
+        <tr *ngFor="let req of filteredRequestsForDisplay" class="table-row">
+          <td class="col-student">
+            <div class="user-cell">
+              <div class="user-avatar">{{ req.studentName.charAt(0) || 'U' }}</div>
+              <div class="user-details">
+                <span class="user-name">{{ req.studentName }}</span>
+                <span class="user-id">{{ req.studentIdNumber }}</span>
               </div>
             </div>
           </td>
-
-          <td>
-            <div class="book-info">
-              <span class="material-icons book-icon">menu_book</span>
-              <span class="book-title">{{req.bookTitle}}</span>
+          <td class="col-book">
+            <div class="book-cell">
+              <span class="book-title">{{ req.bookTitle }}</span>
+              <span class="book-author">{{ req.bookAuthor || 'Unknown Author' }}</span>
             </div>
           </td>
-
-          <td>{{ req.requestDate | date:'dd-MM-yyyy' }}</td>
-          <td>{{ req.borrowDate | date:'dd-MM-yyyy' }}</td>
-          <td>{{ req.dueDate ? (req.dueDate | date:'dd-MM-yyyy') : '---' }}</td>
-
-          <td>
-            <span class="status-badge pending" *ngIf="req.status === 'PENDING'">Pending</span>
-            <span class="status-badge issued" *ngIf="req.displayStatus === 'ISSUED'">Issued</span>
-            <span class="status-badge returned" *ngIf="req.displayStatus === 'RETURNED'">Returned</span>
-            <span class="status-badge rejected" *ngIf="req.displayStatus === 'REJECTED'">Rejected</span>
+          <td class="col-date">{{ req.requestDate | date:'MMM dd, yyyy' }}</td>
+          <td class="col-date">{{ req.borrowDate ? (req.borrowDate | date:'MMM dd, yyyy') : '—' }}</td>
+          <td class="col-date" [class.overdue]="isOverdue(req.dueDate)">
+            {{ req.dueDate ? (req.dueDate | date:'MMM dd, yyyy') : '—' }}
           </td>
-
-          <td class="action-buttons">
-            <ng-container *ngIf="req.status === 'PENDING'">
-              <button class="btn-icon approve" (click)="approve(req.id)" title="Approve">
+          <td class="col-status">
+            <span class="status-pill" [ngClass]="getStatusClass(req)">
+              {{ getStatusText(req) }}
+            </span>
+          </td>
+          <td class="col-actions">
+            <div class="action-group">
+              <button *ngIf="req.status === 'PENDING'" class="action-btn approve" (click)="approve(req.id)"
+                title="Approve">
                 <span class="material-icons">check</span>
               </button>
-              <button class="btn-icon reject" (click)="reject(req.id)" title="Reject">
+              <button *ngIf="req.status === 'PENDING'" class="action-btn reject" (click)="reject(req.id)"
+                title="Reject">
                 <span class="material-icons">close</span>
               </button>
-            </ng-container>
-
-            <ng-container *ngIf="req.displayStatus === 'ISSUED'">
-              <button class="btn-icon return" (click)="markReturned(req.id)" title="Mark Returned">
+              <button *ngIf="req.displayStatus === 'ISSUED'" class="action-btn return" (click)="markReturned(req.id)"
+                title="Mark Returned">
                 <span class="material-icons">assignment_return</span>
               </button>
-            </ng-container>
-
-            <button class="btn-icon remove" (click)="remove(req.id)" title="Remove">
-              <span class="material-icons">delete</span>
-            </button>
+              <button class="action-btn delete" (click)="remove(req.id)" title="Remove">
+                <span class="material-icons">delete_outline</span>
+              </button>
+            </div>
           </td>
         </tr>
 
         <!-- Empty State -->
-        <tr *ngIf="filteredRequests.length === 0">
-          <td colspan="7" class="empty-state">
-            <span class="material-icons empty-icon">inbox</span>
-            <p>No requests found</p>
+        <tr *ngIf="filteredRequests.length === 0" class="empty-row">
+          <td colspan="7">
+            <div class="empty-state">
+              <span class="material-icons empty-icon">inbox</span>
+              <h3>No requests found</h3>
+              <p>There are no borrow requests matching your criteria.</p>
+            </div>
           </td>
         </tr>
       </tbody>
     </table>
-  </div>
 
-  <!-- Pagination -->
-  <div class="pagination" *ngIf="filteredRequests.length > 0">
-    <button (click)="goToPreviousPage()" [disabled]="currentPage === 1" class="page-btn">
-      Previous
-    </button>
-    <button *ngFor="let page of pageNumbers" (click)="goToPage(page)" 
-      class="page-btn" [class.active]="page === currentPage">
-      {{ page }}
-    </button>
-    <button (click)="goToNextPage()" [disabled]="currentPage === totalPages" class="page-btn">
-      Next
-    </button>
+    <!-- Table Footer -->
+    <div class="table-footer" *ngIf="filteredRequests.length > 0">
+      <div class="footer-info">
+        Showing <strong>{{ filteredRequestsForDisplay.length }}</strong> of <strong>{{ filteredRequests.length
+          }}</strong> requests
+      </div>
+      <div class="pagination" *ngIf="totalPages > 1">
+        <button (click)="goToPreviousPage()" [disabled]="currentPage === 1" class="page-btn">
+          <span class="material-icons">chevron_left</span>
+        </button>
+        <button *ngFor="let page of pageNumbers" (click)="goToPage(page)" class="page-btn"
+          [class.active]="page === currentPage">
+          {{ page }}
+        </button>
+        <button (click)="goToNextPage()" [disabled]="currentPage === totalPages" class="page-btn">
+          <span class="material-icons">chevron_right</span>
+        </button>
+      </div>
+    </div>
   </div>
 
 </div>

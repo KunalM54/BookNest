@@ -1,105 +1,103 @@
-<div class="profile-page">
+<div class="page-container">
+
   <!-- Loading Overlay -->
   <div class="loading-overlay" *ngIf="isLoading">
     <div class="loading-card">
       <div class="loader"></div>
-      <div class="loading-text">
-        <h4>Please wait...</h4>
-      </div>
+      <h4>Please wait...</h4>
     </div>
   </div>
 
   <!-- Page Header -->
   <div class="page-header">
-    <h1>My Profile</h1>
+    <h1 class="page-title">
+      <span class="material-icons">account_circle</span>
+      My Profile
+    </h1>
   </div>
 
   <!-- Tab Navigation -->
   <div class="tabs-nav">
-    <button 
-      class="tab-btn" 
-      [class.active]="activeTab === 'profile'"
-      (click)="activeTab = 'profile'">
+    <button class="tab-btn" [class.active]="activeTab === 'profile'" (click)="activeTab = 'profile'">
       <span class="material-icons">person</span>
       Profile
     </button>
-    <button 
-      class="tab-btn" 
-      [class.active]="activeTab === 'password'"
-      (click)="activeTab = 'password'">
+    <button class="tab-btn" [class.active]="activeTab === 'password'" (click)="activeTab = 'password'">
       <span class="material-icons">lock</span>
       Change Password
     </button>
   </div>
 
   <!-- Tab Content -->
-  <div class="tab-content">
+  <div class="tab-content" *ngIf="!isLoading">
     
     <!-- Profile Tab -->
     <div *ngIf="activeTab === 'profile'" class="tab-panel">
-      <div class="profile-grid">
+      <div class="profile-layout">
         
-        <!-- Left Card -->
-        <div class="card profile-card">
-          <div class="avatar-large">
-            {{ initials }}
-          </div>
-          <h2>{{ firstName }} {{ lastName }}</h2>
-          <p class="text-muted">
-            <span class="material-icons small-icon">school</span>
-            {{ department }}
-          </p>
-          
-          <div class="stats-row">
-            <div class="stat-box">
-              <strong>{{ read }}</strong>
-              <span>Read</span>
+        <!-- Profile Card -->
+        <div class="profile-card">
+          <div class="avatar-section">
+            <div class="avatar-large">
+              {{ initials }}
             </div>
-            <div class="stat-box">
-              <strong>{{ borrowed }}</strong>
-              <span>Borrowed</span>
+            <h2>{{ firstName }} {{ lastName }}</h2>
+            <p class="user-department">
+              <span class="material-icons">school</span>
+              {{ department }}
+            </p>
+          </div>
+          
+          <div class="profile-stats">
+            <div class="stat-item">
+              <span class="stat-value">{{ read }}</span>
+              <span class="stat-label">Books Read</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">{{ borrowed }}</span>
+              <span class="stat-label">Borrowed</span>
             </div>
           </div>
         </div>
 
-        <!-- Right Card -->
-        <div class="card details-card">
+        <!-- Details Card -->
+        <div class="details-card">
           <h3>
-            <span class="material-icons section-icon">edit</span>
+            <span class="material-icons">edit</span>
             Edit Profile
           </h3>
 
-          <form>
+          <form class="profile-form">
             <div class="form-row">
               <div class="form-group">
                 <label>First Name</label>
-                <input type="text" [(ngModel)]="firstName" name="firstName" class="form-control">
+                <input type="text" [(ngModel)]="firstName" name="firstName" class="form-input">
               </div>
               <div class="form-group">
                 <label>Last Name</label>
-                <input type="text" [(ngModel)]="lastName" name="lastName" class="form-control">
+                <input type="text" [(ngModel)]="lastName" name="lastName" class="form-input">
               </div>
             </div>
 
             <div class="form-group">
               <label>Email Address</label>
-              <input type="email" [(ngModel)]="email" name="email" class="form-control">
+              <input type="email" [(ngModel)]="email" name="email" class="form-input">
             </div>
 
             <div class="form-group">
               <label>Student ID</label>
-              <input type="text" [value]="studentId" class="form-control" readonly>
+              <input type="text" [value]="studentId" class="form-input" readonly>
             </div>
 
             <div class="form-group">
               <label>Phone Number</label>
-              <div class="phone-row">
+              <div class="phone-input-group">
                 <span class="phone-prefix">+91</span>
                 <input
                   type="text"
                   [(ngModel)]="phone"
                   name="phone"
-                  class="form-control phone-input"
+                  class="form-input"
                   inputmode="numeric"
                   maxlength="10"
                   (input)="onPhoneInput($event.target.value)">
@@ -108,15 +106,17 @@
 
             <div class="form-group">
               <label>Department</label>
-              <select [(ngModel)]="department" name="department" class="form-control">
+              <select [(ngModel)]="department" name="department" class="form-select">
                 <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
               </select>
             </div>
 
-            <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
-            <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+            <div class="form-alerts">
+              <div class="alert success" *ngIf="successMessage">{{ successMessage }}</div>
+              <div class="alert error" *ngIf="errorMessage">{{ errorMessage }}</div>
+            </div>
 
-            <button type="button" class="btn-primary full-width" (click)="updateProfile()" [disabled]="isLoading">
+            <button type="button" class="btn-primary" (click)="updateProfile()" [disabled]="isLoading">
               <span class="material-icons">save</span>
               {{ isLoading ? 'Saving...' : 'Save Changes' }}
             </button>
@@ -128,78 +128,73 @@
 
     <!-- Password Tab -->
     <div *ngIf="activeTab === 'password'" class="tab-panel">
-      <div class="password-section">
-        <div class="card password-card">
-          <div class="password-header">
-            <span class="material-icons lock-icon">lock</span>
-            <h3>Change Password</h3>
-            <p>Ensure your account is using a strong password</p>
+      <div class="password-card">
+        <div class="password-header">
+          <div class="lock-icon">
+            <span class="material-icons">lock</span>
+          </div>
+          <h3>Change Password</h3>
+          <p>Ensure your account is using a strong password</p>
+        </div>
+
+        <form class="password-form" (ngSubmit)="changePassword(); $event.preventDefault()">
+          
+          <div class="form-group">
+            <label>Current Password</label>
+            <div class="password-input">
+              <input 
+                [type]="showCurrentPassword ? 'text' : 'password'" 
+                [(ngModel)]="passwordForm.currentPassword"
+                name="currentPassword" 
+                placeholder="Enter current password" 
+                required>
+              <button type="button" class="toggle-password" (click)="toggleCurrentPassword()">
+                <span class="material-icons">{{ showCurrentPassword ? 'visibility_off' : 'visibility' }}</span>
+              </button>
+            </div>
           </div>
 
-          <form (ngSubmit)="changePassword(); $event.preventDefault()">
-            
-            <div class="form-group">
-              <label>Current Password</label>
-              <div class="password-field">
-                <input 
-                  [type]="showCurrentPassword ? 'text' : 'password'" 
-                  [(ngModel)]="passwordForm.currentPassword"
-                  name="currentPassword" 
-                  placeholder="Enter current password" 
-                  required>
-                <button type="button" class="eye-btn" (click)="toggleCurrentPassword()">
-                  <span class="material-icons">
-                    {{ showCurrentPassword ? 'visibility_off' : 'visibility' }}
-                  </span>
-                </button>
-              </div>
+          <div class="form-group">
+            <label>New Password</label>
+            <div class="password-input">
+              <input 
+                [type]="showNewPassword ? 'text' : 'password'" 
+                [(ngModel)]="passwordForm.newPassword"
+                name="newPassword" 
+                placeholder="Enter new password" 
+                required>
+              <button type="button" class="toggle-password" (click)="toggleNewPassword()">
+                <span class="material-icons">{{ showNewPassword ? 'visibility_off' : 'visibility' }}</span>
+              </button>
             </div>
+            <small class="form-hint">Use 6+ characters with uppercase, lowercase, and number</small>
+          </div>
 
-            <div class="form-group">
-              <label>New Password</label>
-              <div class="password-field">
-                <input 
-                  [type]="showNewPassword ? 'text' : 'password'" 
-                  [(ngModel)]="passwordForm.newPassword"
-                  name="newPassword" 
-                  placeholder="Enter new password" 
-                  required>
-                <button type="button" class="eye-btn" (click)="toggleNewPassword()">
-                  <span class="material-icons">
-                    {{ showNewPassword ? 'visibility_off' : 'visibility' }}
-                  </span>
-                </button>
-              </div>
-              <p class="helper-text">Use 6+ characters with uppercase, lowercase, and number</p>
+          <div class="form-group">
+            <label>Confirm New Password</label>
+            <div class="password-input">
+              <input 
+                [type]="showConfirmPassword ? 'text' : 'password'" 
+                [(ngModel)]="passwordForm.confirmPassword"
+                name="confirmPassword" 
+                placeholder="Confirm new password" 
+                required>
+              <button type="button" class="toggle-password" (click)="toggleConfirmPassword()">
+                <span class="material-icons">{{ showConfirmPassword ? 'visibility_off' : 'visibility' }}</span>
+              </button>
             </div>
+          </div>
 
-            <div class="form-group">
-              <label>Confirm New Password</label>
-              <div class="password-field">
-                <input 
-                  [type]="showConfirmPassword ? 'text' : 'password'" 
-                  [(ngModel)]="passwordForm.confirmPassword"
-                  name="confirmPassword" 
-                  placeholder="Confirm new password" 
-                  required>
-                <button type="button" class="eye-btn" (click)="toggleConfirmPassword()">
-                  <span class="material-icons">
-                    {{ showConfirmPassword ? 'visibility_off' : 'visibility' }}
-                  </span>
-                </button>
-              </div>
-            </div>
+          <div class="form-alerts">
+            <div class="alert error" *ngIf="errorMessage">{{ errorMessage }}</div>
+            <div class="alert success" *ngIf="successMessage">{{ successMessage }}</div>
+          </div>
 
-            <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
-            <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
-
-            <button type="submit" class="btn-primary full-width" [disabled]="isLoading">
-              <span class="material-icons">lock</span>
-              {{ isLoading ? 'Updating...' : 'Update Password' }}
-            </button>
-
-          </form>
-        </div>
+          <button type="submit" class="btn-primary" [disabled]="isLoading">
+            <span class="material-icons">lock</span>
+            {{ isLoading ? 'Updating...' : 'Update Password' }}
+          </button>
+        </form>
       </div>
     </div>
 

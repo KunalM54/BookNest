@@ -1,0 +1,146 @@
+<div class="page-container">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">
+        <span class="material-icons page-icon">history</span>
+        My Activity
+      </h1>
+      <p class="page-subtitle">
+        Track your requests, borrowed books, and history
+      </p>
+    </div>
+  </div>
+
+  <!-- Sticky Search Bar with Tabs -->
+  <div class="search-bar">
+    <div class="filter-tabs">
+      <button class="filter-tab" [class.active]="activeTab === 'requests'" (click)="setTab('requests')">
+        <span class="material-icons">pending_actions</span>
+        Requests
+        <span class="tab-count" *ngIf="getItemCount('requests') > 0">{{ getItemCount('requests') }}</span>
+      </button>
+      <button class="filter-tab" [class.active]="activeTab === 'borrowed'" (click)="setTab('borrowed')">
+        <span class="material-icons">menu_book</span>
+        My Books
+        <span class="tab-count" *ngIf="getItemCount('borrowed') > 0">{{ getItemCount('borrowed') }}</span>
+      </button>
+      <button class="filter-tab" [class.active]="activeTab === 'history'" (click)="setTab('history')">
+        <span class="material-icons">assignment_turned_in</span>
+        History
+        <span class="tab-count" *ngIf="getItemCount('history') > 0">{{ getItemCount('history') }}</span>
+      </button>
+    </div>
+    <app-global-search-bar 
+      placeholder="Search by title or author..." 
+      [(value)]="searchTerm"
+      (valueChange)="onSearchChange()">
+    </app-global-search-bar>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading your activity...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage && !isLoading" class="error-message">
+    <span class="material-icons">error</span>
+    {{ errorMessage }}
+  </div>
+
+  <!-- Activity Cards -->
+  <div class="activity-list" *ngIf="!isLoading && !errorMessage">
+    <div class="activity-card" *ngFor="let item of paginatedItems">
+      <!-- Book Cover -->
+      <div class="book-cover" *ngIf="activeTab !== 'requests'">
+        <img *ngIf="item.imageData && item.imageData.trim()" [src]="item.imageData" [alt]="item.bookTitle" class="cover-img" (error)="item.imageData = null">
+        <span *ngIf="!item.imageData || !item.imageData.trim()" class="cover-placeholder">{{ getBookInitial(item) }}</span>
+      </div>
+      <div class="book-icon" *ngIf="activeTab === 'requests'">
+        <span class="material-icons">menu_book</span>
+      </div>
+
+      <!-- Book Info -->
+      <div class="book-info">
+        <h3 class="book-title">{{ item.bookTitle }}</h3>
+        <p class="book-author">{{ item.bookAuthor || 'Unknown Author' }}</p>
+        
+        <div class="book-meta">
+          <!-- Request Dates -->
+          <span class="meta-item" *ngIf="activeTab === 'requests'">
+            <span class="material-icons">schedule</span>
+            Requested: {{ item.requestDate | date:'MMM dd, yyyy' }}
+          </span>
+          <!-- Borrow Dates -->
+          <span class="meta-item" *ngIf="activeTab === 'borrowed'">
+            <span class="material-icons">calendar_today</span>
+            Borrowed: {{ item.borrowDate | date:'MMM dd, yyyy' }}
+          </span>
+          <span class="meta-item" *ngIf="activeTab === 'borrowed'" [class.overdue]="item.isOverdue">
+            <span class="material-icons">event</span>
+            Due: {{ item.dueDate | date:'MMM dd, yyyy' }}
+          </span>
+          <!-- History Dates -->
+          <span class="meta-item" *ngIf="activeTab === 'history'">
+            <span class="material-icons">calendar_today</span>
+            Borrowed: {{ item.borrowDate ? (item.borrowDate | date:'MMM dd, yyyy') : '-' }}
+          </span>
+          <span class="meta-item" *ngIf="activeTab === 'history'">
+            <span class="material-icons">event_available</span>
+            Returned: {{ item.returnDate ? (item.returnDate | date:'MMM dd, yyyy') : '-' }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Status & Actions -->
+      <div class="card-actions">
+        <span class="status-badge" 
+          [class.pending]="item.status === 'PENDING'"
+          [class.issued]="item.status === 'ISSUED' || item.status === 'BORROWED'"
+          [class.returned]="item.status === 'RETURNED'"
+          [class.rejected]="item.status === 'REJECTED'"
+          [class.overdue]="item.isOverdue">
+          <span class="material-icons">{{ getStatusIcon(item) }}</span>
+          {{ item.isOverdue ? 'Overdue' : item.status }}
+        </span>
+
+        <button class="cancel-btn" *ngIf="activeTab === 'requests'" (click)="cancelRequest(item.id, item.bookTitle)" title="Cancel Request">
+          <span class="material-icons">close</span>
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="!isLoading && filteredItems.length === 0">
+    <span class="material-icons empty-icon">{{ getEmptyIcon() }}</span>
+    <h3>{{ getEmptyTitle() }}</h3>
+    <p>{{ getEmptyMessage() }}</p>
+    <a class="btn-primary" routerLink="/student/browse" *ngIf="activeTab !== 'history'">
+      <span class="material-icons">search</span>
+      Browse Library
+    </a>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination" *ngIf="filteredItems.length > pageSize && !isLoading">
+    <button (click)="goToPreviousPage()" [disabled]="currentPage === 1" class="page-btn">
+      <span class="material-icons">chevron_left</span>
+      Previous
+    </button>
+    <div class="page-numbers">
+      <button *ngFor="let page of pageNumbers" (click)="goToPage(page)" class="page-number" [class.active]="page === currentPage">
+        {{ page }}
+      </button>
+    </div>
+    <button (click)="goToNextPage()" [disabled]="currentPage === totalPages" class="page-btn">
+      Next
+      <span class="material-icons">chevron_right</span>
+    </button>
+  </div>
+
+</div>

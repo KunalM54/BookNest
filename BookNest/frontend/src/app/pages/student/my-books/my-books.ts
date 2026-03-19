@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BorrowService } from '../../../services/borrow';
 import { AuthService } from '../../../services/auth';
+import { GlobalSearchBarComponent } from '../../../components/global-search-bar/global-search-bar';
 
 @Component({
   selector: 'app-my-books',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, GlobalSearchBarComponent],
   templateUrl: './my-books.html',
   styleUrls: ['./my-books.css']
 })

@@ -3,11 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import type { BorrowRequest } from '../../../services/borrow';
+import { GlobalSearchBarComponent } from '../../../components/global-search-bar/global-search-bar';
 
 @Component({
   selector: 'app-borrow-requests',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, GlobalSearchBarComponent],
   templateUrl: './borrow-requests.html',
   styleUrls: ['./borrow-requests.css']
 })
@@ -127,6 +128,44 @@ export class BorrowRequestsComponent implements OnInit {
 
   get filteredRequestsForDisplay() {
     return this.paginatedRequests;
+  }
+
+  get pendingCount(): number {
+    return this.requests.filter(r => r.status === 'PENDING').length;
+  }
+
+  get issuedCount(): number {
+    return this.requests.filter(r => r.displayStatus === 'ISSUED').length;
+  }
+
+  get returnedCount(): number {
+    return this.requests.filter(r => r.displayStatus === 'RETURNED').length;
+  }
+
+  get overdueCount(): number {
+    return this.requests.filter(r => {
+      if (r.displayStatus !== 'ISSUED' || !r.dueDate) return false;
+      return new Date(r.dueDate) < new Date();
+    }).length;
+  }
+
+  getStatusClass(req: BorrowRequest): string {
+    if (req.dueDate && req.displayStatus === 'ISSUED' && new Date(req.dueDate) < new Date()) {
+      return 'overdue';
+    }
+    return (req.displayStatus || req.status || 'PENDING').toLowerCase();
+  }
+
+  getStatusText(req: BorrowRequest): string {
+    if (req.dueDate && req.displayStatus === 'ISSUED' && new Date(req.dueDate) < new Date()) {
+      return 'Overdue';
+    }
+    return req.displayStatus || req.status || 'Pending';
+  }
+
+  isOverdue(dueDate: string | null): boolean {
+    if (!dueDate) return false;
+    return new Date(dueDate) < new Date();
   }
 
   getTabCount(tab: string): number {

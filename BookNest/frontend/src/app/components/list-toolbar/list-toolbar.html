@@ -1,9 +1,9 @@
 <div class="toolbar-row">
-  <app-search-bar
+  <app-global-search-bar
     [placeholder]="searchPlaceholder"
     [value]="searchTerm"
     (valueChange)="onSearchChange($event)">
-  </app-search-bar>
+  </app-global-search-bar>
 
   <app-sort-dropdown
     *ngIf="showSort"

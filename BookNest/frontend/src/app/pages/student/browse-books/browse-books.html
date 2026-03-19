@@ -1,106 +1,111 @@
-<div class="browse-page">
-  <!-- Header -->
+<div class="page-container">
+
+  <!-- Page Header -->
   <div class="page-header">
-    <h1>Browse Library</h1>
-    <p>Find and borrow your favorite books</p>
+    <div class="header-left">
+      <h1 class="page-title">
+        <span class="material-icons page-icon">auto_stories</span>
+        Browse Library
+      </h1>
+      <p class="page-subtitle">
+        Discover and borrow your favorite books
+      </p>
+    </div>
   </div>
 
-  <!-- Search & Filter Bar -->
-  <div class="search-bar-container">
-    <div class="search-pill">
-      <div class="search-dropdown">
-        <select [(ngModel)]="selectedCategory" (ngModelChange)="onCategoryChange()" class="category-select">
+  <!-- Sticky Sub-header with Search & Filter -->
+  <div class="sub-header">
+    <div class="filters-left">
+      <div class="filter-dropdown">
+        <select [(ngModel)]="selectedCategory" (ngModelChange)="onCategoryChange()" class="filter-select">
           <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
         </select>
         <span class="material-icons dropdown-icon">expand_more</span>
       </div>
-      
-      <div class="search-divider"></div>
-      
-      <div class="search-input-area">
-        <input 
-          type="text" 
-          [(ngModel)]="searchTerm" 
-          (input)="onSearchInput()"
-          placeholder="Search books, authors, ISBN..."
-          class="search-input">
-        <span class="material-icons search-icon">search</span>
-      </div>
+    </div>
+    <div class="search-right">
+      <app-global-search-bar 
+        placeholder="Search by title, author, or ISBN..." 
+        [(value)]="searchTerm"
+        (valueChange)="onSearchInput()">
+      </app-global-search-bar>
     </div>
   </div>
 
   <!-- Loading -->
-  <div *ngIf="loading" class="loading-wrap">
+  <div *ngIf="loading" class="loading-state">
     <div class="spinner"></div>
+    <p>Loading books...</p>
   </div>
 
   <!-- Books Grid -->
-  <div class="books-grid" *ngIf="!loading">
+  <div class="books-grid" *ngIf="!loading && filteredBooks.length > 0">
     <div class="book-card" *ngFor="let book of filteredBooksForDisplay">
-      <!-- Cover Image -->
+      <!-- Cover -->
       <div class="card-cover">
-        <img 
-          *ngIf="book.imageData && book.imageData.trim()" 
-          [src]="book.imageData" 
-          [alt]="book.title"
-          class="cover-img">
+        <img *ngIf="book.imageData && book.imageData.trim()" [src]="book.imageData" [alt]="book.title" class="cover-img">
         <div *ngIf="!book.imageData || !book.imageData.trim()" class="cover-placeholder">
           <span class="placeholder-letter">{{ book.title.charAt(0).toUpperCase() }}</span>
         </div>
-        <!-- Status Badge -->
         <span class="status-badge" [class.available]="isAvailable(book)">
           {{ isAvailable(book) ? 'Available' : 'Out of Stock' }}
         </span>
       </div>
 
-      <!-- Card Body -->
-      <div class="card-body">
+      <!-- Content -->
+      <div class="card-content">
         <h3 class="book-title">{{ book.title }}</h3>
         <p class="book-author">by {{ book.author }}</p>
         
-        <div class="book-info">
-          <div class="info-row">
-            <span class="info-label">ISBN</span>
-            <span class="info-value">{{ book.isbn }}</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Category</span>
-            <span class="info-value">{{ book.category }}</span>
-          </div>
-          <div class="info-row">
-            <span class="info-label">Stock</span>
-            <span class="info-value">{{ book.availableCopies }}/{{ book.totalCopies }}</span>
-          </div>
+        <!-- Hover Reveal Section -->
+        <div class="hover-reveal">
+          <p class="book-info">
+            <span class="material-icons">category</span>
+            {{ book.category }}
+            <span class="separator">•</span>
+            <span class="material-icons">inventory_2</span>
+            {{ book.availableCopies }} copies
+          </p>
+          
+          <button 
+            class="request-btn" 
+            [class.unavailable]="!isAvailable(book)"
+            [disabled]="!isAvailable(book)"
+            (click)="requestBook(book)">
+            <span class="material-icons">{{ isAvailable(book) ? 'add_circle' : 'block' }}</span>
+            {{ isAvailable(book) ? 'Request Book' : 'Unavailable' }}
+          </button>
         </div>
-
-        <button 
-          class="request-btn" 
-          [disabled]="!isAvailable(book)"
-          (click)="requestBook(book)">
-          {{ isAvailable(book) ? 'Request Book' : 'Unavailable' }}
-        </button>
       </div>
     </div>
   </div>
 
   <!-- Empty State -->
-  <div *ngIf="!loading && filteredBooks.length === 0" class="empty-wrap">
-    <span class="material-icons empty-icon">menu_book</span>
+  <div class="empty-state" *ngIf="!loading && filteredBooks.length === 0">
+    <span class="material-icons empty-icon">search_off</span>
     <h3>No books found</h3>
-    <p>Try adjusting your search</p>
+    <p>Try adjusting your search or filter criteria</p>
   </div>
 
   <!-- Pagination -->
-  <div class="pagination" *ngIf="filteredBooks.length > 0 && !loading">
+  <div class="pagination" *ngIf="filteredBooks.length > pageSize && !loading">
     <button (click)="goToPreviousPage()" [disabled]="currentPage === 1" class="page-btn">
+      <span class="material-icons">chevron_left</span>
       Previous
     </button>
-    <button *ngFor="let page of pageNumbers" (click)="goToPage(page)" 
-      class="page-btn" [class.active]="page === currentPage">
-      {{ page }}
-    </button>
+    <div class="page-numbers">
+      <button 
+        *ngFor="let page of pageNumbers" 
+        (click)="goToPage(page)" 
+        class="page-number" 
+        [class.active]="page === currentPage">
+        {{ page }}
+      </button>
+    </div>
     <button (click)="goToNextPage()" [disabled]="currentPage === totalPages" class="page-btn">
       Next
+      <span class="material-icons">chevron_right</span>
     </button>
   </div>
+
 </div>

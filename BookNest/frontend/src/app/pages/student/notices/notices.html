@@ -1,72 +1,63 @@
 <div class="page-container">
 
+  <!-- Page Header -->
   <div class="page-header">
-    <h1 class="page-title">
-      <span class="material-icons page-icon">campaign</span>
-      Library Notices
-    </h1>
+    <div class="header-left">
+      <h1 class="page-title">
+        <span class="material-icons page-icon">campaign</span>
+        Library Notices
+      </h1>
+      <p class="page-subtitle">
+        Stay updated with announcements
+      </p>
+    </div>
   </div>
 
   <!-- Notices List -->
-  <div class="notices-list">
-
-    <!-- Notice Card -->
+  <div class="notices-list" *ngIf="!isLoading && notices.length > 0">
     <div 
-      class="notice-card"
-      [class.notice-card-high]="isHighPriority(notice)"
+      class="notice-card" 
+      [class.important]="isHighPriority(notice)"
       *ngFor="let notice of notices">
       
       <!-- Notice Header -->
       <div class="notice-header" (click)="toggleNotice(notice.id)">
-        
-        <div class="notice-left">
-          <div class="notice-date-badge">
-            {{ formatDate(notice.createdAt) }}
-          </div>
-          
-          <div class="notice-title-row">
-            <span 
-              class="material-icons priority-icon"
-              [class.high]="isHighPriority(notice)">
-              {{ isHighPriority(notice) ? 'priority_high' : 'info' }}
-            </span>
-            <h3 class="notice-title">{{ notice.title }}</h3>
-          </div>
-
-          <p class="notice-preview">
-            {{ getFirstLine(notice.message) }}
-          </p>
+        <div class="notice-icon" [class.important]="isHighPriority(notice)">
+          <span class="material-icons">{{ isHighPriority(notice) ? 'priority_high' : 'info' }}</span>
         </div>
-
-        <button class="read-more-btn">
-          <span class="material-icons">
-            {{ isExpanded(notice.id) ? 'expand_less' : 'expand_more' }}
-          </span>
-          {{ isExpanded(notice.id) ? 'Show Less' : 'Read Notice' }}
+        
+        <div class="notice-content">
+          <div class="notice-top">
+            <h3 class="notice-title">{{ notice.title }}</h3>
+            <span class="notice-date">{{ formatDate(notice.createdAt) }}</span>
+          </div>
+          <p class="notice-preview">{{ getFirstLine(notice.message) }}</p>
+        </div>
+        
+        <button class="expand-btn">
+          <span class="material-icons">{{ isExpanded(notice.id) ? 'expand_less' : 'expand_more' }}</span>
         </button>
       </div>
-
+      
       <!-- Notice Body -->
       <div class="notice-body" *ngIf="isExpanded(notice.id)">
-        <div class="notice-divider"></div>
-        <p class="notice-full-message">{{ notice.message }}</p>
+        <p class="notice-message">{{ notice.message }}</p>
       </div>
-
+      
     </div>
+  </div>
 
-    <!-- Empty State -->
-    <div class="empty-state" *ngIf="!isLoading && notices.length === 0">
-      <span class="material-icons empty-icon">campaign</span>
-      <h3>No notices available</h3>
-      <p>Check back later for updates</p>
-    </div>
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="!isLoading && notices.length === 0">
+    <span class="material-icons empty-icon">campaign</span>
+    <h3>No notices yet</h3>
+    <p>Check back later for updates and announcements</p>
+  </div>
 
-    <!-- Loading State -->
-    <div class="empty-state" *ngIf="isLoading">
-      <div class="spinner"></div>
-      <p>Loading notices...</p>
-    </div>
-
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Loading notices...</p>
   </div>
 
 </div>

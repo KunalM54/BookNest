@@ -1,99 +1,108 @@
 <div class="page-container">
 
+  <!-- Page Header -->
   <div class="page-header">
-    <h1 class="page-title">
-      <span class="material-icons page-icon">group</span>
-      Manage Students
-    </h1>
+    <div class="header-left">
+      <h1 class="page-title">
+        <span class="material-icons page-icon">group</span>
+        Manage Students
+      </h1>
+      <p class="page-subtitle">View and manage student accounts</p>
+    </div>
   </div>
 
-  <!-- Search Bar -->
-  <div class="search-bar-container">
-    <div class="search-pill">
-      <div class="search-dropdown">
-        <select [(ngModel)]="selectedStatus" (change)="filterStatus($event)" class="category-select">
+  <!-- Sticky Sub-header with Search & Filter -->
+  <div class="sub-header">
+    <div class="filters-left">
+      <div class="filter-group">
+        <select [(ngModel)]="selectedStatus" (change)="filterStatus($event)" class="filter-select">
           <option value="all">All Students</option>
           <option value="active">Active</option>
           <option value="blocked">Blocked</option>
         </select>
-        <span class="material-icons dropdown-icon">expand_more</span>
-      </div>
-      
-      <div class="search-divider"></div>
-      
-      <div class="search-input-area">
-        <input 
-          type="text" 
-          [(ngModel)]="searchTerm" 
-          (ngModelChange)="onSearchChange()"
-          placeholder="Search students..."
-          class="search-input">
-        <span class="material-icons search-icon">search</span>
+        <span class="material-icons select-icon">expand_more</span>
       </div>
     </div>
+    <app-global-search-bar 
+      placeholder="Search by name, email, or ID..." 
+      [(value)]="searchTerm"
+      (valueChange)="onSearchChange()">
+    </app-global-search-bar>
   </div>
 
-  <div class="content-card">
-      <table>
-        <thead>
-          <tr>
-            <th>Student</th>
-            <th>Email</th>
-            <th>Student ID</th>
-            <th>Books Borrowed</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let student of paginatedStudents">
-            <td>
-              <div class="student-info">
-                <div class="avatar">{{student.fullName.charAt(0)}}</div>
-                <span class="name">{{student.fullName}}</span>
+  <!-- Data Table Card -->
+  <div class="table-card">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th class="col-student">Student</th>
+          <th class="col-email">Email</th>
+          <th class="col-id">Student ID</th>
+          <th class="col-books">Books Borrowed</th>
+          <th class="col-status">Status</th>
+          <th class="col-actions">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let student of paginatedStudents" class="table-row">
+          <td class="col-student">
+            <div class="user-cell">
+              <div class="user-avatar">{{ student.fullName.charAt(0) || 'S' }}</div>
+              <div class="user-details">
+                <span class="user-name">{{ student.fullName }}</span>
               </div>
-            </td>
-            <td>{{student.email}}</td>
-            <td>{{student.studentId}}</td>
-            <td>{{student.borrowedCount}}</td>
-            <td>
-              <span class="badge" [class.badge-success]="student.active" [class.badge-danger]="!student.active">
-                {{student.active ? 'Active' : 'Blocked'}}
-              </span>
-            </td>
-            <td>
-              <button class="icon-btn view" (click)="viewStudent(student)" title="View">
+            </div>
+          </td>
+          <td class="col-email">{{ student.email }}</td>
+          <td class="col-id">{{ student.studentId }}</td>
+          <td class="col-books text-center">{{ student.borrowedCount || 0 }}</td>
+          <td class="col-status">
+            <span class="status-pill" [class.active]="student.active" [class.blocked]="!student.active">
+              {{ student.active ? 'Active' : 'Blocked' }}
+            </span>
+          </td>
+          <td class="col-actions">
+            <div class="action-group">
+              <button class="action-btn view" (click)="viewStudent(student)" title="View">
                 <span class="material-icons">visibility</span>
               </button>
-              <button class="icon-btn" [class.block]="student.active" [class.activate]="!student.active" 
+              <button class="action-btn" [class.block]="student.active" [class.activate]="!student.active" 
                 (click)="student.active ? blockStudent(student) : activateStudent(student)" 
                 [title]="student.active ? 'Block' : 'Activate'">
-                <span class="material-icons">{{student.active ? 'block' : 'check_circle'}}</span>
+                <span class="material-icons">{{ student.active ? 'block' : 'check_circle' }}</span>
               </button>
-            </td>
-          </tr>
-          <tr *ngIf="filteredStudents.length === 0">
-            <td colspan="6" class="empty-cell">
-              <span class="material-icons">group_off</span>
-              <p>No students found</p>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+            </div>
+          </td>
+        </tr>
 
-  <!-- Pagination -->
-  <div class="pagination" *ngIf="filteredStudents.length > 0">
-    <button (click)="goToPreviousPage()" [disabled]="currentPage === 1" class="page-btn">
-      Previous
-    </button>
-    <button *ngFor="let page of pageNumbers" (click)="goToPage(page)" 
-      class="page-btn" [class.active]="page === currentPage">
-      {{ page }}
-    </button>
-    <button (click)="goToNextPage()" [disabled]="currentPage === totalPages" class="page-btn">
-      Next
-    </button>
+        <!-- Empty State -->
+        <tr *ngIf="filteredStudents.length === 0" class="empty-row">
+          <td colspan="6">
+            <div class="empty-state">
+              <span class="material-icons empty-icon">group_off</span>
+              <h3>No students found</h3>
+              <p>Try adjusting your search or filter criteria.</p>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Table Footer -->
+    <div class="table-footer" *ngIf="filteredStudents.length > 0">
+      <div class="footer-info">
+        Showing <strong>{{ paginatedStudents.length }}</strong> of <strong>{{ filteredStudents.length }}</strong> students
+      </div>
+      <div class="pagination" *ngIf="totalPages > 1">
+        <button (click)="goToPreviousPage()" [disabled]="currentPage === 1" class="page-btn">
+          <span class="material-icons">chevron_left</span>
+        </button>
+        <button *ngFor="let page of pageNumbers" (click)="goToPage(page)" class="page-btn" [class.active]="page === currentPage">{{ page }}</button>
+        <button (click)="goToNextPage()" [disabled]="currentPage === totalPages" class="page-btn">
+          <span class="material-icons">chevron_right</span>
+        </button>
+      </div>
+    </div>
   </div>
 
 </div>

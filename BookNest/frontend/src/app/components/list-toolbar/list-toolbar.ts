@@ -1,13 +1,13 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { SearchBarComponent } from '../search-bar/search-bar';
+import { GlobalSearchBarComponent } from '../global-search-bar/global-search-bar';
 import { SortDropdownComponent, SortOption } from '../sort-dropdown/sort-dropdown';
 
 @Component({
   selector: 'app-list-toolbar',
   standalone: true,
-  imports: [CommonModule, FormsModule, SearchBarComponent, SortDropdownComponent],
+  imports: [CommonModule, FormsModule, GlobalSearchBarComponent, SortDropdownComponent],
   templateUrl: './list-toolbar.html',
   styleUrl: './list-toolbar.css'
 })

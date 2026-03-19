@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Notice, NoticePayload, NoticePriority } from '../../../models/notice.model';
 import { NoticeService } from '../../../services/notice';
+import { GlobalSearchBarComponent } from '../../../components/global-search-bar/global-search-bar';
 
 interface NoticeForm {
   title: string;
@@ -13,7 +14,7 @@ interface NoticeForm {
 @Component({
   selector: 'app-notices',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, GlobalSearchBarComponent],
   templateUrl: './notices.html',
   styleUrls: ['./notices.css']
 })

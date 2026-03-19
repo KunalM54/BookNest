@@ -1,20 +1,17 @@
 <div class="page-container">
 
   <div class="page-header">
-    <h1 class="page-title">
-      <span class="material-icons page-icon">assignment</span>
-      My Book Requests
-    </h1>
+    <div class="header-left">
+      <h1 class="page-title">
+        <span class="material-icons page-icon">assignment</span>
+        My Book Requests
+      </h1>
+    </div>
   </div>
 
   <div class="content-card">
     <!-- Search Bar -->
     <div class="toolbar">
-      <div class="search-box">
-        <span class="material-icons">search</span>
-        <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
-          placeholder="Search by book title...">
-      </div>
       <div class="sort-wrap">
         <label>Sort by:</label>
         <select [(ngModel)]="sortBy" (ngModelChange)="onSortChange()" class="sort-select">
@@ -23,6 +20,11 @@
           <option value="titleAZ">Title A-Z</option>
         </select>
       </div>
+      <app-global-search-bar 
+        placeholder="Search by book title..." 
+        [(value)]="searchTerm"
+        (valueChange)="onSearchChange()">
+      </app-global-search-bar>
     </div>
 
     <div class="table-wrapper">
