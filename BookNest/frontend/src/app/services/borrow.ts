@@ -12,6 +12,7 @@ export interface BorrowRequest {
   bookTitle: string;
   bookAuthor?: string;
   bookIsbn: string;
+  bookImage?: string;
   requestDate: string;
   dueDate: string | null;
   returnDate: string | null;

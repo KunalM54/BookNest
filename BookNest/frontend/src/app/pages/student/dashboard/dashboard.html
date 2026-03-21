@@ -39,7 +39,7 @@
     <div class="content-section">
       <div class="section-header">
         <h2>Currently Borrowed</h2>
-        <a class="view-all-link" routerLink="/student/my-books">
+        <a class="view-all-link" routerLink="/student/activity">
           View All
           <span class="material-icons">arrow_forward</span>
         </a>
@@ -48,7 +48,8 @@
       <div class="books-list" *ngIf="currentBooks.length > 0">
         <div class="book-item" *ngFor="let book of currentBooks">
           <div class="book-cover">
-            <span class="material-icons">menu_book</span>
+            <img *ngIf="book.image && book.image.trim()" [src]="book.image" [alt]="book.title" class="cover-img" (error)="book.image = ''">
+            <span *ngIf="!book.image || !book.image.trim()" class="material-icons">menu_book</span>
           </div>
           <div class="book-details">
             <h4 class="book-title">{{ book.title }}</h4>
@@ -61,7 +62,7 @@
             </div>
           </div>
           <div class="book-status">
-            <span class="status-badge" [class.warning]="book.status === 'Due Soon'" [class.success]="book.status === 'Safe'">
+            <span class="status-badge" [class.warning]="book.status === 'Overdue'" [class.danger]="book.status === 'Overdue'" [class.success]="book.status === 'Safe' || book.status === 'Borrowed'">
               {{ book.status }}
             </span>
           </div>

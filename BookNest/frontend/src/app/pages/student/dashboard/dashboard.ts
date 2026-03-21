@@ -85,7 +85,7 @@ export class DashboardComponent implements OnInit {
 
   studentName = 'Student';
   stats: { title: string; value: string; icon: string; color: string; }[] = [];
-  currentBooks: { title: string; author: string; due: string; status: string; }[] = [];
+  currentBooks: { title: string; author: string; due: string; status: string; image: string; }[] = [];
 
   constructor(
     private authService: AuthService,
@@ -115,7 +115,8 @@ export class DashboardComponent implements OnInit {
           title: book.bookTitle || 'Unknown',
           author: book.bookAuthor || 'Unknown',
           due: book.dueDate || '-',
-          status: this.getBookStatus(book.dueDate || '')
+          status: this.getBookStatus(book.displayStatus || book.status),
+          image: book.bookImage || ''
         }));
 
         this.currentBooks = books;
@@ -146,14 +147,22 @@ export class DashboardComponent implements OnInit {
   }
 
   get dueSoonCount() {
-    return this.currentBooks.filter(book => book.status === 'Due Soon').length;
+    return this.currentBooks.filter(book => book.status === 'Overdue').length;
   }
 
-  getBookStatus(dueDate: string) {
-    if (!dueDate) return 'Safe';
-    const today = new Date();
-    const due = new Date(dueDate);
-    const diff = (due.getTime() - today.getTime()) / (1000 * 3600 * 24);
-    return diff <= 3 ? 'Due Soon' : 'Safe';
+  getBookStatus(displayStatus: string) {
+    switch (displayStatus) {
+      case 'OVERDUE':
+        return 'Overdue';
+      case 'BORROWED':
+        return 'Safe';
+      case 'PENDING':
+        return 'Pending';
+      case 'RETURNED_ON_TIME':
+      case 'RETURNED_LATE':
+        return 'Returned';
+      default:
+        return 'Safe';
+    }
   }
 }
