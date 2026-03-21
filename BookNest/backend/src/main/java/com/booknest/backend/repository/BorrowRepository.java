@@ -12,6 +12,9 @@ import java.util.List;
 @Repository
 public interface BorrowRepository extends JpaRepository<Borrow, Long> {
 
+    @Query("SELECT COUNT(b) FROM Borrow b WHERE b.book.id = :bookId AND b.status IN (com.booknest.backend.model.Borrow.BorrowStatus.PENDING, com.booknest.backend.model.Borrow.BorrowStatus.APPROVED, com.booknest.backend.model.Borrow.BorrowStatus.OVERDUE)")
+    long countActiveBorrowsForBook(Long bookId);
+
     List<Borrow> findAllByOrderByRequestDateDesc();
 
     List<Borrow> findByStatus(Borrow.BorrowStatus status);
@@ -37,13 +40,13 @@ public interface BorrowRepository extends JpaRepository<Borrow, Long> {
     Long countReturnedByStudent(User student);
 
     List<Borrow> findByStudent(User student);
-    
+
     @Query("SELECT b FROM Borrow b WHERE b.student.id = :studentId AND b.status = 'APPROVED' ORDER BY b.requestDate DESC")
     List<Borrow> findMyBooksByStudentId(Long studentId);
-    
+
     @Query("SELECT b FROM Borrow b WHERE b.student.id = :studentId ORDER BY b.requestDate DESC")
     List<Borrow> findHistoryByStudentId(Long studentId);
-    
+
     @Query("SELECT b FROM Borrow b WHERE b.student.id = :studentId AND b.status = 'PENDING' ORDER BY b.requestDate DESC")
     List<Borrow> findRequestsByStudentId(Long studentId);
 
@@ -68,4 +71,3 @@ public interface BorrowRepository extends JpaRepository<Borrow, Long> {
     @Query("SELECT FUNCTION('DATE', b.requestDate), COUNT(b) FROM Borrow b WHERE b.status = 'APPROVED' AND b.requestDate >= :startDate GROUP BY FUNCTION('DATE', b.requestDate) ORDER BY FUNCTION('DATE', b.requestDate)")
     List<Object[]> findIssuedTrend(LocalDate startDate);
 }
-

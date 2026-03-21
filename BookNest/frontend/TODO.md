@@ -1,10 +1,10 @@
-# Admin Dashboard Layout Reorder - Progress Tracker
+# BookNest Admin Delete/Logout Fix - TODO
 
-## Plan Steps (Completed):
-1. [x] Create TODO.md with steps
-2. [x] Edit dashboard.html: Moved stats-grid directly after welcome-banner, before content-split
-3. [x] Update dashboard.css: Increased .dashboard-container gap to 30px
-4. [x] Verified edits via diffs (stats now above Recent Requests & Quick Actions)
-5. [x] Mark complete
+## Steps:
+1. [ ] Update backend BookController.java: Add check for active borrows before deleteBook. If active borrows exist, return {success: false, message: "Cannot delete book with active borrows..."} HTTP 400.
+2. [ ] Update frontend manage-books.ts: Improve deleteBook error handling - log full error (status, message), show specific snackbar errors (e.g., "Book has active borrows"), prevent any unintended logout.
+3. [ ] Test: Start backend/frontend, login admin, try delete non-borrowed book (success), borrowed book (error message, no logout), manual logout (works).
+4. [ ] [Complete] Remove TODO.md or mark done.
 
-**Status:** ✅ Task completed! Layout updated as requested.
+Current progress: Plan approved, starting implementation.
+

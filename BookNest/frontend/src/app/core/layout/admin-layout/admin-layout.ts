@@ -14,7 +14,7 @@ import { BorrowService } from '../../../services/borrow';
 export class AdminLayoutComponent implements OnInit {
   pendingCount: number = 0;
   showLogoutModal = false;
-  sidebarCollapsed = false;
+  sidebarCollapsed = true;
   adminName: string = '';
   adminEmail: string = '';
   adminInitials: string = '';

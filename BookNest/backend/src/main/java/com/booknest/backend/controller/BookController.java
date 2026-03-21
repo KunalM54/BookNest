@@ -2,6 +2,7 @@ package com.booknest.backend.controller;
 
 import com.booknest.backend.model.Book;
 import com.booknest.backend.repository.BookRepository;
+import com.booknest.backend.repository.BorrowRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,9 @@ public class BookController {
 
     @Autowired
     private BookRepository bookRepository;
+
+    @Autowired
+    private BorrowRepository borrowRepository;
 
     private String normalizeImageData(String imageData) {
         if (imageData == null) {
@@ -56,36 +60,36 @@ public class BookController {
         System.out.println("=====================================");
 
         Map<String, Object> response = new HashMap<>();
-        
+
         if (book.getTitle() == null || book.getTitle().trim().isEmpty()) {
             response.put("success", false);
             response.put("message", "Title is required");
             return ResponseEntity.badRequest().body(response);
         }
-        
+
         if (book.getIsbn() == null || book.getIsbn().trim().isEmpty()) {
             response.put("success", false);
             response.put("message", "ISBN is required");
             return ResponseEntity.badRequest().body(response);
         }
-        
+
         if (!book.getIsbn().matches("\\d{12}")) {
             response.put("success", false);
             response.put("message", "ISBN must be exactly 12 numeric digits");
             return ResponseEntity.badRequest().body(response);
         }
-        
+
         if (bookRepository.existsByIsbn(book.getIsbn())) {
             response.put("success", false);
             response.put("message", "ISBN already exists");
             System.out.println("VALIDATION FAILED: ISBN already exists");
             return ResponseEntity.badRequest().body(response);
         }
-        
+
         if (book.getTotalCopies() == null || book.getTotalCopies() < 1) {
             book.setTotalCopies(1);
         }
-        
+
         // Always set availableCopies = totalCopies for new books
         book.setAvailableCopies(book.getTotalCopies());
 
@@ -94,7 +98,7 @@ public class BookController {
         }
 
         book.setImageData(normalizeImageData(book.getImageData()));
-        
+
         Book savedBook = bookRepository.save(book);
         response.put("success", true);
         response.put("message", "Book added successfully");
@@ -106,7 +110,7 @@ public class BookController {
     @PutMapping("/{id}")
     public ResponseEntity<Map<String, Object>> updateBook(@PathVariable Long id, @RequestBody Book bookDetails) {
         Map<String, Object> response = new HashMap<>();
-        
+
         return bookRepository.findById(id)
                 .map(book -> {
                     if (bookDetails.getIsbn() != null && !bookDetails.getIsbn().matches("\\d{12}")) {
@@ -114,7 +118,7 @@ public class BookController {
                         response.put("message", "ISBN must be exactly 12 numeric digits");
                         return ResponseEntity.badRequest().body(response);
                     }
-                    
+
                     if (bookDetails.getIsbn() != null && !bookDetails.getIsbn().equals(book.getIsbn())) {
                         if (bookRepository.existsByIsbn(bookDetails.getIsbn())) {
                             response.put("success", false);
@@ -122,7 +126,7 @@ public class BookController {
                             return ResponseEntity.badRequest().body(response);
                         }
                     }
-                    
+
                     book.setTitle(bookDetails.getTitle());
                     book.setIsbn(bookDetails.getIsbn());
                     book.setAuthor(bookDetails.getAuthor());
@@ -139,7 +143,7 @@ public class BookController {
                             && book.getAvailableCopies() > book.getTotalCopies()) {
                         book.setAvailableCopies(book.getTotalCopies());
                     }
-                    
+
                     Book updatedBook = bookRepository.save(book);
                     response.put("success", true);
                     response.put("message", "Book updated successfully");
@@ -157,13 +161,23 @@ public class BookController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, Object>> deleteBook(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
-        
+
         if (!bookRepository.existsById(id)) {
             response.put("success", false);
             response.put("message", "Book not found");
             return ResponseEntity.notFound().build();
         }
-        
+
+        // Check for active borrows (PENDING, APPROVED, OVERDUE)
+        long activeBorrows = borrowRepository.countActiveBorrowsForBook(id);
+        if (activeBorrows > 0) {
+            response.put("success", false);
+            response.put("message", String.format(
+                    "Cannot delete book with %d active borrow(s). Please handle borrows (return/approve/reject) first.",
+                    activeBorrows));
+            return ResponseEntity.badRequest().body(response);
+        }
+
         bookRepository.deleteById(id);
         response.put("success", true);
         response.put("message", "Book deleted successfully");

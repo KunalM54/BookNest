@@ -12,7 +12,7 @@ import { AuthService } from '../../../services/auth';
 })
 export class StudentLayoutComponent implements OnInit {
   showLogoutModal = false;
-  sidebarCollapsed = false;
+  sidebarCollapsed = true;
   studentName: string = '';
   studentId: string = '';
   studentInitials: string = '';

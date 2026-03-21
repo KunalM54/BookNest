@@ -33,6 +33,7 @@ public class BlockedUserFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
         String authHeader = request.getHeader("Authorization");
+        
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
@@ -42,6 +43,7 @@ public class BlockedUserFilter extends OncePerRequestFilter {
 
         try {
             String email = jwtUtil.extractUsername(token);
+            
             if (email == null || email.isBlank() || !jwtUtil.validateToken(token, email)) {
                 sendUnauthorized(response);
                 return;
