@@ -1,7 +1,5 @@
 package com.booknest.backend.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -32,20 +30,13 @@ public class Notice {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @JsonIgnore
-    @Column(name = "is_important")
-    private Boolean legacyImportant;
-
     public Notice() {}
 
     @PrePersist
     private void onCreate() {
-        NoticePriority resolvedPriority = getPriority();
         LocalDateTime now = LocalDateTime.now();
         if (createdAt == null) createdAt = now;
         if (updatedAt == null) updatedAt = createdAt;
-        priority = resolvedPriority;
-        legacyImportant = resolvedPriority == NoticePriority.HIGH;
     }
 
     public Long getId() { return id; }
@@ -57,14 +48,9 @@ public class Notice {
     public String getMessage() { return message; }
     public void setMessage(String message) { this.message = message; }
 
-    public NoticePriority getPriority() {
-        return priority == null ? resolvePriorityFromLegacy() : priority;
-    }
+    public NoticePriority getPriority() { return priority; }
 
-    public void setPriority(NoticePriority priority) {
-        this.priority = priority == null ? resolvePriorityFromLegacy() : priority;
-        this.legacyImportant = this.priority == NoticePriority.HIGH;
-    }
+    public void setPriority(NoticePriority priority) { this.priority = priority; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
@@ -72,31 +58,12 @@ public class Notice {
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 
-    public Boolean getLegacyImportant() { return legacyImportant; }
-    public void setLegacyImportant(Boolean legacyImportant) { this.legacyImportant = legacyImportant; }
-
-    @JsonProperty("isImportant")
-    public boolean isImportant() {
-        return getPriority() == NoticePriority.HIGH;
-    }
-
-    @JsonProperty("isImportant")
-    public void setImportant(boolean important) {
-        setPriority(important ? NoticePriority.HIGH : NoticePriority.NORMAL);
-    }
-
     public boolean needsSchemaBackfill() {
         return priority == null || updatedAt == null;
     }
 
     public void backfillSchemaFields() {
         if (createdAt == null) createdAt = LocalDateTime.now();
-        if (priority == null) priority = resolvePriorityFromLegacy();
         if (updatedAt == null) updatedAt = createdAt;
-        legacyImportant = priority == NoticePriority.HIGH;
-    }
-
-    private NoticePriority resolvePriorityFromLegacy() {
-        return Boolean.TRUE.equals(legacyImportant) ? NoticePriority.HIGH : NoticePriority.NORMAL;
     }
 }

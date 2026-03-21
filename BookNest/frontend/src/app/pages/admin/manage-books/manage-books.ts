@@ -319,9 +319,18 @@ export class ManageBooksComponent implements OnInit {
   }
 
   saveBook() {
+    console.log('=== SAVE BOOK CLICKED ===');
+    console.log('isEditMode:', this.isEditMode);
+    console.log('bookForm.id:', this.bookForm.id);
+    console.log('form.valid:', this.form.valid);
+    console.log('form.value:', this.form.value);
+
     if (this.form.invalid) {
+      console.log('FORM IS INVALID - Errors:', this.form.errors);
       Object.keys(this.form.controls).forEach(key => {
-        this.form.get(key)?.markAsTouched();
+        const ctrl = this.form.get(key);
+        console.log(`Field ${key}: value="${ctrl?.value}", errors=${JSON.stringify(ctrl?.errors)}, touched=${ctrl?.touched}`);
+        ctrl?.markAsTouched();
       });
       this.snackbarService.show('Please correct the errors below.');
       return;
@@ -405,5 +414,18 @@ export class ManageBooksComponent implements OnInit {
         }
       });
     }
+  }
+
+  getFormErrors(): string {
+    if (this.form.valid) return 'No errors';
+    const errors: string[] = [];
+    Object.keys(this.form.controls).forEach(key => {
+      const control = this.form.get(key);
+      if (control?.invalid) {
+        const errs = Object.keys(control.errors || {}).join(', ');
+        errors.push(`${key}: ${errs}`);
+      }
+    });
+    return errors.join(' | ');
   }
 }

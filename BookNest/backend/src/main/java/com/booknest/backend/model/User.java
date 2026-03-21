@@ -37,9 +37,6 @@ public class User {
     @Column(nullable = false)
     private boolean active = true;
 
-    @Column(name = "joined_date")
-    private LocalDate joinedDate;
-
     @Column(name = "otp", length = 6)
     private String otp;
 
@@ -78,9 +75,6 @@ public class User {
 
     public boolean isActive() { return active; }
     public void setActive(boolean active) { this.active = active; }
-
-    public LocalDate getJoinedDate() { return joinedDate; }
-    public void setJoinedDate(LocalDate joinedDate) { this.joinedDate = joinedDate; }
 
     public String getOtp() { return otp; }
     public void setOtp(String otp) { this.otp = otp; }

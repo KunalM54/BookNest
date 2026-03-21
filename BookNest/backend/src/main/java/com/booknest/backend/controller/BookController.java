@@ -114,7 +114,17 @@ public class BookController {
                         response.put("message", "ISBN must be exactly 12 numeric digits");
                         return ResponseEntity.badRequest().body(response);
                     }
+                    
+                    if (bookDetails.getIsbn() != null && !bookDetails.getIsbn().equals(book.getIsbn())) {
+                        if (bookRepository.existsByIsbn(bookDetails.getIsbn())) {
+                            response.put("success", false);
+                            response.put("message", "ISBN already exists for another book");
+                            return ResponseEntity.badRequest().body(response);
+                        }
+                    }
+                    
                     book.setTitle(bookDetails.getTitle());
+                    book.setIsbn(bookDetails.getIsbn());
                     book.setAuthor(bookDetails.getAuthor());
                     book.setCategory(bookDetails.getCategory());
                     book.setImageData(normalizeImageData(bookDetails.getImageData()));

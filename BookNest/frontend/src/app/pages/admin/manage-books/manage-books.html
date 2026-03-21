@@ -127,6 +127,10 @@
       </div>
 
       <div class="modal-body" [formGroup]="form">
+        <!-- Debug: Remove this after debugging -->
+        <div style="background: #fee; padding: 8px; margin-bottom: 10px; font-size: 12px;" *ngIf="form.invalid">
+          <strong>Form Errors:</strong> {{ getFormErrors() }}
+        </div>
         <div class="form-grid">
           <div class="form-group">
             <label for="title">Title *</label>
@@ -195,7 +199,7 @@
 
         <div class="modal-actions">
           <button type="button" class="btn-secondary" (click)="closeModal()">Cancel</button>
-          <button type="button" class="btn-primary" (click)="saveBook()" [disabled]="isLoading || form.invalid">
+          <button type="button" class="btn-primary" (click)="saveBook()" [disabled]="isLoading">
             {{ isEditMode ? 'Update' : 'Add' }} Book
           </button>
         </div>
