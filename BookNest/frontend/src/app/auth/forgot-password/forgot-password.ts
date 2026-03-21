@@ -55,8 +55,8 @@ export class ForgotPassword implements OnInit, OnDestroy {
     this.resetForm = this.fb.group({
       newPassword: ['', [
         Validators.required, 
-        Validators.minLength(8),
-        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/)
+        Validators.minLength(6),
+        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/)
       ]],
       confirmPassword: ['', [Validators.required]]
     }, {

@@ -245,8 +245,8 @@ public class UserService {
             return new AuthResponse("New password is required", false);
         }
 
-        if (newPassword.length() < 8) {
-            return new AuthResponse("Password must be at least 8 characters", false);
+        if (newPassword.length() < 6) {
+            return new AuthResponse("Password must be at least 6 characters", false);
         }
 
         Optional<User> userOpt = userRepository.findByEmail(normalizedEmail);
