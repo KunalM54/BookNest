@@ -10,12 +10,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.regex.Pattern;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class UserService {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+    private static final int OTP_LENGTH = 6;
+    private static final int OTP_EXPIRY_MINUTES = 10;
 
     @Autowired
     private UserRepository userRepository;
@@ -23,9 +33,12 @@ public class UserService {
     @Autowired
     private JwtUtil jwtUtil;
 
-    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    @Autowired
+    private EmailService emailService;
 
-    // Admin credentials (hardcoded for demo)
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final SecureRandom random = new SecureRandom();
+
     private static final String ADMIN_EMAIL = "admin@booknest.com";
     private static final String ADMIN_PASSWORD = "admin123";
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
@@ -77,17 +90,14 @@ public class UserService {
             return new AuthResponse("Passwords do not match", false);
         }
 
-        // Check if email already exists
         if (userRepository.existsByEmail(email)) {
             return new AuthResponse("Email already registered", false);
         }
 
-        // Check if student ID already exists
         if (userRepository.existsByStudentId(studentId)) {
             return new AuthResponse("Student ID already registered", false);
         }
 
-        // Create new user
         User user = new User();
         user.setFullName(fullName);
         user.setStudentId(studentId);
@@ -96,7 +106,6 @@ public class UserService {
         user.setRole(User.Role.STUDENT);
         user.setActive(true);
 
-        // Save user
         userRepository.save(user);
 
         return new AuthResponse("Registration successful", true);
@@ -118,14 +127,11 @@ public class UserService {
             return new AuthResponse("Password is required", false);
         }
 
-        // Check for admin login
         if (email.equals(ADMIN_EMAIL) && password.equals(ADMIN_PASSWORD)) {
             String token = jwtUtil.generateToken(ADMIN_EMAIL, "ADMIN");
             
-            // Get or create admin user in database to get ID
             User adminUser = userRepository.findByEmail(ADMIN_EMAIL).orElse(null);
             if (adminUser == null) {
-                // Create admin user in database
                 adminUser = new User();
                 adminUser.setFullName("Administrator");
                 adminUser.setStudentId("ADMIN001");
@@ -139,7 +145,6 @@ public class UserService {
             return new AuthResponse("Login successful", true, token, adminId, "Administrator", ADMIN_EMAIL, "ADMIN");
         }
 
-        // Check if user exists
         var userOpt = userRepository.findByEmail(email);
         if (userOpt.isEmpty()) {
             return new AuthResponse("Invalid email or password", false);
@@ -151,24 +156,141 @@ public class UserService {
             return new AuthResponse("Your account is blocked. Please contact the administrator.", false);
         }
 
-        // Verify password
         if (!passwordEncoder.matches(password, user.getPassword())) {
             return new AuthResponse("Invalid email or password", false);
         }
 
-        // Generate token
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
 
         return new AuthResponse("Login successful", true, token, user.getId(), user.getFullName(), user.getEmail(), user.getRole().name());
     }
 
-    // Helper method to encode password
+    @Transactional
+    public AuthResponse forgotPassword(String email) {
+        String normalizedEmail = normalizeEmail(email);
+
+        if (normalizedEmail.isEmpty()) {
+            return new AuthResponse("Email is required", false);
+        }
+
+        if (!EMAIL_PATTERN.matcher(normalizedEmail).matches()) {
+            return new AuthResponse("Please enter a valid email address", false);
+        }
+
+        Optional<User> userOpt = userRepository.findByEmail(normalizedEmail);
+        if (userOpt.isEmpty()) {
+            return new AuthResponse("Email not found", false);
+        }
+
+        User user = userOpt.get();
+
+        String otp = generateOtp();
+        LocalDateTime expiry = LocalDateTime.now().plusMinutes(OTP_EXPIRY_MINUTES);
+
+        user.setOtp(otp);
+        user.setOtpExpiry(expiry);
+        userRepository.save(user);
+
+        boolean emailSent = emailService.sendOtpEmail(normalizedEmail, otp);
+
+        if (!emailSent) {
+            logger.error("Failed to send OTP email to: {}", normalizedEmail);
+            return new AuthResponse("Failed to send OTP. Please try again later.", false);
+        }
+
+        logger.info("OTP sent to: {} (OTP: {}, Expires: {})", normalizedEmail, otp, expiry);
+        return new AuthResponse("OTP sent successfully. Please check your email.", true);
+    }
+
+    public AuthResponse verifyOtp(String email, String otp) {
+        String normalizedEmail = normalizeEmail(email);
+
+        if (normalizedEmail.isEmpty() || otp == null || otp.isEmpty()) {
+            return new AuthResponse("Email and OTP are required", false);
+        }
+
+        Optional<User> userOpt = userRepository.findByEmail(normalizedEmail);
+        if (userOpt.isEmpty()) {
+            return new AuthResponse("Email not found", false);
+        }
+
+        User user = userOpt.get();
+
+        if (user.getOtp() == null || user.getOtpExpiry() == null) {
+            return new AuthResponse("No OTP found. Please request a new OTP.", false);
+        }
+
+        if (LocalDateTime.now().isAfter(user.getOtpExpiry())) {
+            user.clearOtp();
+            userRepository.save(user);
+            return new AuthResponse("OTP has expired. Please request a new OTP.", false);
+        }
+
+        if (!user.getOtp().equals(otp.trim())) {
+            return new AuthResponse("Invalid OTP. Please try again.", false);
+        }
+
+        return new AuthResponse("OTP verified successfully", true);
+    }
+
+    @Transactional
+    public AuthResponse resetPassword(String email, String otp, String newPassword) {
+        String normalizedEmail = normalizeEmail(email);
+
+        if (normalizedEmail.isEmpty() || otp == null || otp.isEmpty()) {
+            return new AuthResponse("Email and OTP are required", false);
+        }
+
+        if (newPassword == null || newPassword.isEmpty()) {
+            return new AuthResponse("New password is required", false);
+        }
+
+        if (newPassword.length() < 8) {
+            return new AuthResponse("Password must be at least 8 characters", false);
+        }
+
+        Optional<User> userOpt = userRepository.findByEmail(normalizedEmail);
+        if (userOpt.isEmpty()) {
+            return new AuthResponse("Email not found", false);
+        }
+
+        User user = userOpt.get();
+
+        if (user.getOtp() == null || user.getOtpExpiry() == null) {
+            return new AuthResponse("No OTP found. Please request a new OTP.", false);
+        }
+
+        if (LocalDateTime.now().isAfter(user.getOtpExpiry())) {
+            user.clearOtp();
+            userRepository.save(user);
+            return new AuthResponse("OTP has expired. Please request a new OTP.", false);
+        }
+
+        if (!user.getOtp().equals(otp.trim())) {
+            return new AuthResponse("Invalid OTP. Please try again.", false);
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.clearOtp();
+        userRepository.save(user);
+
+        logger.info("Password reset successfully for user: {}", normalizedEmail);
+        return new AuthResponse("Password reset successfully", true);
+    }
+
+    private String generateOtp() {
+        StringBuilder otp = new StringBuilder();
+        for (int i = 0; i < OTP_LENGTH; i++) {
+            otp.append(random.nextInt(10));
+        }
+        return otp.toString();
+    }
+
     public static String encodePassword(String password) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         return encoder.encode(password);
     }
 
-    // Helper method to verify password
     public boolean verifyPassword(User user, String rawPassword) {
         if (user.getPassword() == null) {
             return false;
@@ -176,7 +298,6 @@ public class UserService {
         return passwordEncoder.matches(rawPassword, user.getPassword());
     }
 
-    // Get encoded admin password for verification
     public static String getAdminEncodedPassword(String rawPassword) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         return encoder.encode(rawPassword);
@@ -186,7 +307,6 @@ public class UserService {
         if (fullName == null) {
             return "";
         }
-
         return fullName.trim().replaceAll("\\s+", " ");
     }
 
@@ -194,7 +314,6 @@ public class UserService {
         if (studentId == null) {
             return "";
         }
-
         return studentId.trim().toUpperCase(Locale.ROOT);
     }
 
@@ -202,8 +321,6 @@ public class UserService {
         if (email == null) {
             return "";
         }
-
         return email.trim().toLowerCase(Locale.ROOT);
     }
 }
-

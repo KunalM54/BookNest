@@ -3,23 +3,13 @@ package com.booknest.backend.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
 
 @Entity
-@Table(
-        name = "notices",
-        indexes = {
-                @Index(name = "idx_notices_created_at", columnList = "created_at"),
-                @Index(name = "idx_notices_priority_created_at", columnList = "priority, created_at")
-        }
-)
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Table(name = "notices", indexes = {
+    @Index(name = "idx_notices_created_at", columnList = "created_at"),
+    @Index(name = "idx_notices_priority_created_at", columnList = "priority, created_at")
+})
 public class Notice {
 
     @Id
@@ -46,22 +36,26 @@ public class Notice {
     @Column(name = "is_important")
     private Boolean legacyImportant;
 
+    public Notice() {}
+
     @PrePersist
     private void onCreate() {
         NoticePriority resolvedPriority = getPriority();
         LocalDateTime now = LocalDateTime.now();
-
-        if (createdAt == null) {
-            createdAt = now;
-        }
-
-        if (updatedAt == null) {
-            updatedAt = createdAt;
-        }
-
+        if (createdAt == null) createdAt = now;
+        if (updatedAt == null) updatedAt = createdAt;
         priority = resolvedPriority;
         legacyImportant = resolvedPriority == NoticePriority.HIGH;
     }
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+
+    public String getMessage() { return message; }
+    public void setMessage(String message) { this.message = message; }
 
     public NoticePriority getPriority() {
         return priority == null ? resolvePriorityFromLegacy() : priority;
@@ -71,6 +65,15 @@ public class Notice {
         this.priority = priority == null ? resolvePriorityFromLegacy() : priority;
         this.legacyImportant = this.priority == NoticePriority.HIGH;
     }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    public Boolean getLegacyImportant() { return legacyImportant; }
+    public void setLegacyImportant(Boolean legacyImportant) { this.legacyImportant = legacyImportant; }
 
     @JsonProperty("isImportant")
     public boolean isImportant() {
@@ -87,18 +90,9 @@ public class Notice {
     }
 
     public void backfillSchemaFields() {
-        if (createdAt == null) {
-            createdAt = LocalDateTime.now();
-        }
-
-        if (priority == null) {
-            priority = resolvePriorityFromLegacy();
-        }
-
-        if (updatedAt == null) {
-            updatedAt = createdAt;
-        }
-
+        if (createdAt == null) createdAt = LocalDateTime.now();
+        if (priority == null) priority = resolvePriorityFromLegacy();
+        if (updatedAt == null) updatedAt = createdAt;
         legacyImportant = priority == NoticePriority.HIGH;
     }
 
@@ -106,4 +100,3 @@ public class Notice {
         return Boolean.TRUE.equals(legacyImportant) ? NoticePriority.HIGH : NoticePriority.NORMAL;
     }
 }
-
