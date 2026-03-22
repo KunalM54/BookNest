@@ -18,7 +18,7 @@
     <div 
       class="notice-card" 
       [class.important]="isHighPriority(notice)"
-      *ngFor="let notice of notices">
+      *ngFor="let notice of displayedNotices">
       
       <!-- Notice Header -->
       <div class="notice-header" (click)="toggleNotice(notice.id)">
@@ -45,6 +45,30 @@
       </div>
       
     </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination" *ngIf="notices.length > itemsPerPage && !isLoading">
+    <button (click)="goToPreviousPage()" [disabled]="currentPage === 1" class="page-btn">
+      <span class="material-icons">chevron_left</span>
+      Previous
+    </button>
+    <div class="page-numbers">
+      <ng-container *ngFor="let page of pageNumbers">
+        <span *ngIf="page < 0" class="page-ellipsis">…</span>
+        <button
+          *ngIf="page > 0"
+          (click)="goToPage(page)"
+          class="page-number"
+          [class.active]="page === currentPage">
+          {{ page }}
+        </button>
+      </ng-container>
+    </div>
+    <button (click)="goToNextPage()" [disabled]="currentPage === totalPages" class="page-btn">
+      Next
+      <span class="material-icons">chevron_right</span>
+    </button>
   </div>
 
   <!-- Empty State -->

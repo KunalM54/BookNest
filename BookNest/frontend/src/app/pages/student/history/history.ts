@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth';
 import { BorrowService } from '../../../services/borrow';
 import { GlobalSearchBarComponent } from '../../../components/global-search-bar/global-search-bar';
+import { scrollToTop } from '../../../utils/scroll-to-top';
 
 @Component({
   selector: 'app-history',
@@ -119,6 +120,7 @@ export class HistoryComponent implements OnInit {
     if (page < 1 || page > this.totalPages || page === this.currentPage) return;
     this.currentPage = page;
     this.updatePagination();
+    scrollToTop();
   }
 
   goToPreviousPage() { this.goToPage(this.currentPage - 1); }

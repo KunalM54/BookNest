@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { NoticeService } from '../../../services/notice';
 import { Notice, NoticePriority } from '../../../models/notice.model';
+import { scrollToTop } from '../../../utils/scroll-to-top';
 
 @Component({
   selector: 'app-notices',
@@ -15,6 +16,9 @@ export class NoticesStudent implements OnInit {
   notices: Notice[] = [];
   isLoading: boolean = false;
   expandedNoticeId: number | null = null;
+
+  currentPage = 1;
+  itemsPerPage = 6;
 
   constructor(private noticeService: NoticeService) {}
 
@@ -95,5 +99,45 @@ export class NoticesStudent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  get displayedNotices(): Notice[] {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    return this.notices.slice(start, start + this.itemsPerPage);
+  }
+
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.notices.length / this.itemsPerPage));
+  }
+
+  get pageNumbers(): number[] {
+    const total = this.totalPages;
+    const current = this.currentPage;
+    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+    const pages: number[] = [];
+    if (current <= 4) {
+      for (let i = 1; i <= 5; i++) pages.push(i);
+      pages.push(-1, total);
+    } else if (current >= total - 3) {
+      pages.push(1, -1);
+      for (let i = total - 4; i <= total; i++) pages.push(i);
+    } else {
+      pages.push(1, -1, current - 1, current, current + 1, -2, total);
+    }
+    return pages;
+  }
+
+  goToPage(page: number) {
+    if (page < 1 || page > this.totalPages || page === this.currentPage) return;
+    this.currentPage = page;
+    scrollToTop();
+  }
+
+  goToPreviousPage() {
+    this.goToPage(this.currentPage - 1);
+  }
+
+  goToNextPage() {
+    this.goToPage(this.currentPage + 1);
   }
 }

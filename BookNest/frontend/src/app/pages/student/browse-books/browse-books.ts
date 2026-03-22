@@ -7,6 +7,7 @@ import { SnackbarService } from '../../../services/snackbar';
 import { AuthService } from '../../../services/auth';
 import { Book, BookService } from '../../../services/book';
 import { GlobalSearchBarComponent } from '../../../components/global-search-bar/global-search-bar';
+import { scrollToTop } from '../../../utils/scroll-to-top';
 
 @Component({
   selector: 'app-browse-books',
@@ -172,7 +173,7 @@ export class BrowseBooksComponent implements OnInit, OnDestroy {
     }
     this.currentPage = page;
     this.updatePagination();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    scrollToTop();
   }
 
   goToPreviousPage() {

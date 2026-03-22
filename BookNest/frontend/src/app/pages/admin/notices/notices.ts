@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Notice, NoticePayload, NoticePriority } from '../../../models/notice.model';
+import { SnackbarService } from '../../../services/snackbar';
 import { NoticeService } from '../../../services/notice';
+import { Notice, NoticePayload, NoticePriority } from '../../../models/notice.model';
+import { scrollToTop } from '../../../utils/scroll-to-top';
 import { GlobalSearchBarComponent } from '../../../components/global-search-bar/global-search-bar';
 
 interface NoticeForm {
@@ -202,6 +204,7 @@ export class NoticesComponent implements OnInit {
 
     this.currentPage = page;
     this.updatePagination();
+    scrollToTop();
   }
 
   goToPreviousPage() {

@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, Validators, FormGroup } 
 import { Book, BookService } from '../../../services/book';
 import { SnackbarService } from '../../../services/snackbar';
 import { GlobalSearchBarComponent } from '../../../components/global-search-bar/global-search-bar';
+import { scrollToTop } from '../../../utils/scroll-to-top';
 
 interface BookForm {
   id: number | null;
@@ -190,6 +191,7 @@ export class ManageBooksComponent implements OnInit {
 
     this.currentPage = page;
     this.updatePagination();
+    scrollToTop();
   }
 
   goToPreviousPage() {

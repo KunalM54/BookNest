@@ -4,6 +4,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import type { BorrowRequest } from '../../../services/borrow';
 import { GlobalSearchBarComponent } from '../../../components/global-search-bar/global-search-bar';
+import { scrollToTop } from '../../../utils/scroll-to-top';
 
 @Component({
   selector: 'app-borrow-requests',
@@ -110,6 +111,7 @@ export class BorrowRequestsComponent implements OnInit {
     if (page < 1 || page > this.totalPages || page === this.currentPage) return;
     this.currentPage = page;
     this.updatePagination();
+    scrollToTop();
   }
 
   goToPreviousPage() { this.goToPage(this.currentPage - 1); }
