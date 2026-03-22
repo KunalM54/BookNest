@@ -105,7 +105,10 @@
         <button (click)="goToPreviousPage()" [disabled]="currentPage === 1" class="page-btn">
           <span class="material-icons">chevron_left</span>
         </button>
-        <button *ngFor="let page of pageNumbers" (click)="goToPage(page)" class="page-btn" [class.active]="page === currentPage">{{ page }}</button>
+        <ng-container *ngFor="let page of pageNumbers">
+          <span *ngIf="page < 0" class="page-ellipsis">…</span>
+          <button *ngIf="page > 0" (click)="goToPage(page)" class="page-btn" [class.active]="page === currentPage">{{ page }}</button>
+        </ng-container>
         <button (click)="goToNextPage()" [disabled]="currentPage === totalPages" class="page-btn">
           <span class="material-icons">chevron_right</span>
         </button>

@@ -306,18 +306,46 @@
 /* Book Cell */
 .book-cell {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.book-thumb-wrap {
+  width: 36px;
+  height: 48px;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.book-thumb {
+  width: 36px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.book-thumb-icon {
+  color: white;
+  font-size: 20px;
+  opacity: 0.9;
 }
 
 .book-title {
   font-weight: 500;
   color: #1E293B;
+  display: block;
 }
 
 .book-author {
   font-size: 0.8rem;
   color: #94A3B8;
+  display: block;
 }
 
 /* Date Cell */
@@ -578,4 +606,17 @@
     display: block;
     overflow-x: auto;
   }
+}
+
+/* Smart pagination ellipsis */
+.page-ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  color: #94A3B8;
+  font-size: 0.9rem;
+  user-select: none;
+  pointer-events: none;
 }

@@ -34,10 +34,12 @@
   <div class="history-list" *ngIf="filteredHistory.length > 0">
     <div class="history-card" *ngFor="let record of paginatedHistory">
       <div class="book-cover">
-        <span class="material-icons">menu_book</span>
+        <img *ngIf="record.bookImage && record.bookImage.trim()" [src]="record.bookImage" [alt]="record.title" class="cover-img" (error)="record.bookImage = undefined">
+        <span *ngIf="!record.bookImage || !record.bookImage.trim()" class="material-icons">menu_book</span>
       </div>
       <div class="book-info">
         <h3 class="book-title">{{ record.title }}</h3>
+        <p class="book-author" *ngIf="record.author">{{ record.author }}</p>
         <div class="book-dates">
           <span class="date-item">
             <span class="material-icons">calendar_today</span>
@@ -50,9 +52,9 @@
         </div>
       </div>
       <div class="book-status">
-        <span class="status-badge returned">
+        <span class="status-badge returned" [class.returned-late]="record.status === 'RETURNED_LATE'">
           <span class="material-icons">check_circle</span>
-          Returned
+          {{ record.status === 'RETURNED_LATE' ? 'Returned Late' : 'Returned' }}
         </span>
       </div>
     </div>
@@ -72,9 +74,10 @@
       Previous
     </button>
     <div class="page-numbers">
-      <button *ngFor="let page of pageNumbers" (click)="goToPage(page)" class="page-number" [class.active]="page === currentPage">
-        {{ page }}
-      </button>
+      <ng-container *ngFor="let page of pageNumbers">
+        <span *ngIf="page < 0" class="page-ellipsis">…</span>
+        <button *ngIf="page > 0" (click)="goToPage(page)" class="page-number" [class.active]="page === currentPage">{{ page }}</button>
+      </ng-container>
     </div>
     <button (click)="goToNextPage()" [disabled]="currentPage === totalPages" class="page-btn">
       Next

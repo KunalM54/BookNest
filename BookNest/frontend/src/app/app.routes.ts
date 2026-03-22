@@ -24,6 +24,7 @@ import { RequestsComponent } from './pages/student/requests/requests';
 import { ChangePasswordStudent } from './pages/student/change-password/change-password';
 import { MyLibraryComponent } from './pages/student/my-library/my-library';
 import { MyActivityComponent } from './pages/student/my-activity/my-activity';
+import { MyStatsComponent } from './pages/student/my-stats/my-stats';
 
 
 // ================= ADMIN PAGES =================
@@ -60,7 +61,8 @@ export const routes: Routes = [
       { path: 'change-password', component: ChangePasswordStudent },
       { path: 'notices', component: NoticesStudent },
       { path: 'requests', component: RequestsComponent },
-      { path: 'activity', component: MyActivityComponent }
+      { path: 'activity', component: MyActivityComponent },
+      { path: 'my-stats', component: MyStatsComponent }
     ]
   },
 

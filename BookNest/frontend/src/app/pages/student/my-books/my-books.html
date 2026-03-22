@@ -34,7 +34,8 @@
   <div class="books-list" *ngIf="filteredBooks.length > 0">
     <div class="book-card" *ngFor="let book of paginatedBooks">
       <div class="book-cover">
-        <span class="material-icons">menu_book</span>
+        <img *ngIf="book.bookImage && book.bookImage.trim()" [src]="book.bookImage" [alt]="book.title" class="cover-img" (error)="book.bookImage = undefined">
+        <span *ngIf="!book.bookImage || !book.bookImage.trim()" class="material-icons">menu_book</span>
       </div>
       <div class="book-info">
         <h3 class="book-title">{{ book.title }}</h3>
@@ -77,9 +78,10 @@
       Previous
     </button>
     <div class="page-numbers">
-      <button *ngFor="let page of pageNumbers" (click)="goToPage(page)" class="page-number" [class.active]="page === currentPage">
-        {{ page }}
-      </button>
+      <ng-container *ngFor="let page of pageNumbers">
+        <span *ngIf="page < 0" class="page-ellipsis">…</span>
+        <button *ngIf="page > 0" (click)="goToPage(page)" class="page-number" [class.active]="page === currentPage">{{ page }}</button>
+      </ng-container>
     </div>
     <button (click)="goToNextPage()" [disabled]="currentPage === totalPages" class="page-btn">
       Next

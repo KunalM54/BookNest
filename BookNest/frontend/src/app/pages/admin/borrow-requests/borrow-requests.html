@@ -2,7 +2,6 @@
 
   <!-- Page Header -->
   <div class="page-header">
-
     <div class="header-left">
       <h1 class="page-title">
         <span class="material-icons page-icon">assignment</span>
@@ -12,7 +11,6 @@
         Manage student book borrow requests
       </p>
     </div>
-
   </div>
 
   <!-- Stats Row -->
@@ -95,6 +93,8 @@
       </thead>
       <tbody>
         <tr *ngFor="let req of filteredRequestsForDisplay" class="table-row">
+
+          <!-- Student -->
           <td class="col-student">
             <div class="user-cell">
               <div class="user-avatar">{{ req.studentName.charAt(0) || 'U' }}</div>
@@ -104,39 +104,60 @@
               </div>
             </div>
           </td>
+
+          <!-- Book -->
           <td class="col-book">
             <div class="book-cell">
-              <span class="book-title">{{ req.bookTitle }}</span>
-              <span class="book-author">{{ req.bookAuthor || 'Unknown Author' }}</span>
+              <div class="book-thumb-wrap">
+                <img *ngIf="req.bookImage && req.bookImage.trim()" [src]="req.bookImage" [alt]="req.bookTitle" class="book-thumb" (error)="req.bookImage = undefined">
+                <span *ngIf="!req.bookImage || !req.bookImage.trim()" class="material-icons book-thumb-icon">menu_book</span>
+              </div>
+              <div>
+                <span class="book-title">{{ req.bookTitle }}</span>
+                <span class="book-author">{{ req.bookAuthor || 'Unknown Author' }}</span>
+              </div>
             </div>
           </td>
+
+          <!-- Dates -->
           <td class="col-date">{{ req.requestDate | date:'MMM dd, yyyy' }}</td>
           <td class="col-date">{{ req.borrowDate ? (req.borrowDate | date:'MMM dd, yyyy') : '—' }}</td>
           <td class="col-date" [class.overdue]="isOverdue(req.dueDate)">
             {{ req.dueDate ? (req.dueDate | date:'MMM dd, yyyy') : '—' }}
           </td>
+
+          <!-- Status pill -->
           <td class="col-status">
             <span class="status-pill" [ngClass]="getStatusClass(req)">
               {{ getStatusText(req) }}
             </span>
           </td>
+
+          <!-- Actions -->
           <td class="col-actions">
             <div class="action-group">
-              <button *ngIf="req.status === 'PENDING'" class="action-btn approve" (click)="approve(req.id)"
+
+              <!-- Approve / Reject: only for PENDING -->
+              <button *ngIf="req.displayStatus === 'PENDING'" class="action-btn approve" (click)="approve(req.id)"
                 title="Approve">
                 <span class="material-icons">check</span>
               </button>
-              <button *ngIf="req.status === 'PENDING'" class="action-btn reject" (click)="reject(req.id)"
+              <button *ngIf="req.displayStatus === 'PENDING'" class="action-btn reject" (click)="reject(req.id)"
                 title="Reject">
                 <span class="material-icons">close</span>
               </button>
-              <button *ngIf="req.displayStatus === 'ISSUED'" class="action-btn return" (click)="markReturned(req.id)"
-                title="Mark Returned">
+
+              <!-- FIX: Return button shows for both APPROVED (Issued) AND OVERDUE -->
+              <button *ngIf="req.displayStatus === 'APPROVED' || req.displayStatus === 'OVERDUE'"
+                class="action-btn return" (click)="markReturned(req.id)" title="Mark Returned">
                 <span class="material-icons">assignment_return</span>
               </button>
+
+              <!-- Delete: always visible -->
               <button class="action-btn delete" (click)="remove(req.id)" title="Remove">
                 <span class="material-icons">delete_outline</span>
               </button>
+
             </div>
           </td>
         </tr>
@@ -157,17 +178,17 @@
     <!-- Table Footer -->
     <div class="table-footer" *ngIf="filteredRequests.length > 0">
       <div class="footer-info">
-        Showing <strong>{{ filteredRequestsForDisplay.length }}</strong> of <strong>{{ filteredRequests.length
-          }}</strong> requests
+        Showing <strong>{{ filteredRequestsForDisplay.length }}</strong> of
+        <strong>{{ filteredRequests.length }}</strong> requests
       </div>
       <div class="pagination" *ngIf="totalPages > 1">
         <button (click)="goToPreviousPage()" [disabled]="currentPage === 1" class="page-btn">
           <span class="material-icons">chevron_left</span>
         </button>
-        <button *ngFor="let page of pageNumbers" (click)="goToPage(page)" class="page-btn"
-          [class.active]="page === currentPage">
-          {{ page }}
-        </button>
+        <ng-container *ngFor="let page of pageNumbers">
+          <span *ngIf="page < 0" class="page-ellipsis">…</span>
+          <button *ngIf="page > 0" (click)="goToPage(page)" class="page-btn" [class.active]="page === currentPage">{{ page }}</button>
+        </ng-container>
         <button (click)="goToNextPage()" [disabled]="currentPage === totalPages" class="page-btn">
           <span class="material-icons">chevron_right</span>
         </button>

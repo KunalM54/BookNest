@@ -699,3 +699,16 @@
     overflow-x: auto;
   }
 }
+
+/* Smart pagination ellipsis */
+.page-ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  color: #94A3B8;
+  font-size: 0.9rem;
+  user-select: none;
+  pointer-events: none;
+}

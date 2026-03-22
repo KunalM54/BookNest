@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../../../services/auth';
 
 @Component({
   selector: 'app-reports',
@@ -12,184 +11,136 @@ import { AuthService } from '../../../services/auth';
 })
 export class ReportsComponent implements OnInit {
 
-  activeTab: 'analytics' | 'reports' | 'activity' = 'analytics';
+  activeTab: 'overview' | 'books' | 'activity' = 'overview';
   showExportMenu = false;
+  isLoading = false;
 
-  // Analytics data
-  inventoryOverview: any = {};
-  categoryStats: any[] = [];
+  stats: any = {};
+  inventory: any = {};
   issuedTrend: any[] = [];
-
-  // Reports data
+  categoryStats: any[] = [];
   topBooks: any[] = [];
   activeStudents: any[] = [];
-  leastUsedBooks: any[] = [];
-  recentlyAddedBooks: any[] = [];
-
-  // Quick stats
-  quickStats: any = {};
-
-  // Activities
   activities: any[] = [];
 
   private apiUrl = 'http://localhost:8080/api';
+  constructor(private http: HttpClient) {}
 
-  constructor(
-    private http: HttpClient,
-    private authService: AuthService
-  ) {}
+  ngOnInit() { this.loadAll(); }
 
-  ngOnInit() {
-    if (!this.authService.getToken()) {
-      return;
-    }
-
-    this.loadQuickStats();
-    this.loadInventoryOverview();
-    this.loadCategoryStats();
-    this.loadIssuedTrend();
-    this.loadTopBooks();
-    this.loadActiveStudents();
-    this.loadLeastUsedBooks();
-    this.loadRecentlyAddedBooks();
-    this.loadActivities();
+  loadAll() {
+    this.isLoading = true;
+    this.loadStats(); this.loadInventory(); this.loadTrend();
+    this.loadCategories(); this.loadTopBooks();
+    this.loadActiveStudents(); this.loadActivities();
+    setTimeout(() => this.isLoading = false, 800);
   }
 
-  loadQuickStats() {
-    this.http.get<any>(`${this.apiUrl}/reports/stats`).subscribe({
-      next: (data) => {
-        this.quickStats = data || {};
-      },
-      error: (err) => {
-        console.error('Error loading quick stats:', err);
-        this.quickStats = {};
-      }
-    });
+  loadStats() {
+    this.http.get<any>(`${this.apiUrl}/reports/stats`).subscribe({ next: d => this.stats = d || {}, error: () => {} });
   }
-
-  loadInventoryOverview() {
-    this.http.get<any>(`${this.apiUrl}/reports/inventory`).subscribe({
-      next: (data) => {
-        this.inventoryOverview = data || {};
-      },
-      error: (err) => {
-        console.error('Error loading inventory:', err);
-        this.inventoryOverview = {};
-      }
-    });
+  loadInventory() {
+    this.http.get<any>(`${this.apiUrl}/reports/inventory`).subscribe({ next: d => this.inventory = d || {}, error: () => {} });
   }
-
-  loadCategoryStats() {
-    this.http.get<any[]>(`${this.apiUrl}/reports/categories-detailed`).subscribe({
-      next: (data) => {
-        this.categoryStats = data || [];
-      },
-      error: (err) => {
-        console.error('Error loading category stats:', err);
-        this.categoryStats = [];
-      }
-    });
+  loadTrend() {
+    this.http.get<any[]>(`${this.apiUrl}/reports/trend`).subscribe({ next: d => this.issuedTrend = d || [], error: () => {} });
   }
-
-  loadIssuedTrend() {
-    this.http.get<any[]>(`${this.apiUrl}/reports/trend`).subscribe({
-      next: (data) => {
-        this.issuedTrend = data || [];
-      },
-      error: (err) => {
-        console.error('Error loading trend:', err);
-        this.issuedTrend = [];
-      }
-    });
+  loadCategories() {
+    this.http.get<any[]>(`${this.apiUrl}/reports/categories-detailed`).subscribe({ next: d => this.categoryStats = d || [], error: () => {} });
   }
-
   loadTopBooks() {
-    this.http.get<any[]>(`${this.apiUrl}/reports/top-books`).subscribe({
-      next: (data) => {
-        this.topBooks = data || [];
-      },
-      error: (err) => {
-        console.error('Error loading top books:', err);
-        this.topBooks = [];
-      }
-    });
+    this.http.get<any[]>(`${this.apiUrl}/reports/top-books`).subscribe({ next: d => this.topBooks = (d || []).slice(0,10), error: () => {} });
   }
-
   loadActiveStudents() {
-    this.http.get<any[]>(`${this.apiUrl}/reports/active-students`).subscribe({
-      next: (data) => {
-        this.activeStudents = data || [];
-      },
-      error: (err) => {
-        console.error('Error loading active students:', err);
-        this.activeStudents = [];
-      }
-    });
+    this.http.get<any[]>(`${this.apiUrl}/reports/active-students`).subscribe({ next: d => this.activeStudents = (d || []).slice(0,10), error: () => {} });
   }
-
-  loadLeastUsedBooks() {
-    this.http.get<any[]>(`${this.apiUrl}/reports/least-used`).subscribe({
-      next: (data) => {
-        this.leastUsedBooks = data || [];
-      },
-      error: (err) => {
-        console.error('Error loading least used books:', err);
-        this.leastUsedBooks = [];
-      }
-    });
-  }
-
-  loadRecentlyAddedBooks() {
-    this.http.get<any[]>(`${this.apiUrl}/reports/recent-books`).subscribe({
-      next: (data) => {
-        this.recentlyAddedBooks = data || [];
-      },
-      error: (err) => {
-        console.error('Error loading recent books:', err);
-        this.recentlyAddedBooks = [];
-      }
-    });
-  }
-
   loadActivities() {
-    this.http.get<any[]>(`${this.apiUrl}/reports/activities`).subscribe({
-      next: (data) => {
-        this.activities = data || [];
-      },
-      error: (err) => {
-        console.error('Error loading activities:', err);
-        this.activities = [];
-      }
-    });
+    this.http.get<any[]>(`${this.apiUrl}/reports/activities`).subscribe({ next: d => this.activities = (d || []).slice(0,20), error: () => {} });
   }
 
-  getBarColor(value: number) {
-    if (value <= 30) {
-      return '#93c5fd';
-    }
-    if (value <= 60) {
-      return '#3b82f6';
-    }
-    return '#1d4ed8';
+  getTrendMax(): number { return Math.max(...this.issuedTrend.map(d => d.count || 0), 1); }
+  getTrendBarPct(count: number): number { return (count / this.getTrendMax()) * 100; }
+  getCategoryMax(): number { return Math.max(...this.categoryStats.map(c => c.count || 0), 1); }
+  getCategoryBarPct(count: number): number { return (count / this.getCategoryMax()) * 100; }
+  getCategoryColor(i: number): string {
+    return ['#2563EB','#7C3AED','#059669','#D97706','#DC2626','#0891B2'][i % 6];
   }
+  getTopBookMax(): number { return Math.max(...this.topBooks.map(b => b.count || 0), 1); }
+  getTopBookBarPct(count: number): number { return (count / this.getTopBookMax()) * 100; }
+  toggleExportMenu() { this.showExportMenu = !this.showExportMenu; }
 
-  getMaxTrendValue(): number {
-    if (!this.issuedTrend.length) return 10;
-    return Math.max(...this.issuedTrend.map((d: any) => d.count || 0), 1);
-  }
-
-  getTrendBarHeight(count: number): number {
-    const max = this.getMaxTrendValue();
-    return (count / max) * 100;
-  }
-
-  toggleExportMenu() {
-    this.showExportMenu = !this.showExportMenu;
-  }
-
-  exportReport(type: string) {
+  exportCSV() {
     this.showExportMenu = false;
-    console.log(`Exporting ${type} report...`);
-    alert(`${type} report downloaded successfully!`);
+    const rows: any[][] = [
+      ['BOOKNEST LIBRARY REPORT'], [`Generated: ${new Date().toLocaleDateString()}`], [],
+      ['SUMMARY'], ['Total Books', this.stats.totalBooks ?? 0],
+      ['Books Issued', this.stats.booksIssued ?? 0],
+      ['Active Students', this.stats.activeStudents ?? 0],
+      ['Overdue Books', this.stats.overdueBooks ?? 0], [],
+      ['TOP BORROWED BOOKS'], ['Rank','Title','Times Borrowed'],
+      ...this.topBooks.map((b,i) => [i+1, b.title, b.count]), [],
+      ['MOST ACTIVE STUDENTS'], ['Rank','Name','Books Borrowed'],
+      ...this.activeStudents.map((s,i) => [i+1, s.name, s.count]), [],
+      ['ISSUANCE TREND (Last 7 Days)'], ['Day','Count'],
+      ...this.issuedTrend.map(d => [d.day, d.count]), [],
+      ['CATEGORY DISTRIBUTION'], ['Category','Books','Percentage'],
+      ...this.categoryStats.map(c => [c.name, c.count, `${c.percentage}%`])
+    ];
+    const csv = rows.map(r => r.map(c => `"${c}"`).join(',')).join('\n');
+    this.downloadFile(csv, 'booknest-report.csv', 'text/csv');
+  }
+
+  exportPDF() {
+    this.showExportMenu = false;
+    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>BookNest Report</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Arial,sans-serif;color:#1e293b;padding:40px}
+.header{display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #2563EB;padding-bottom:20px;margin-bottom:32px}
+.logo{font-size:26px;font-weight:800;color:#2563EB}.logo span{color:#7c3aed}.date{font-size:13px;color:#64748b}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:32px}
+.sb{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;text-align:center}
+.sb .v{font-size:28px;font-weight:800;color:#2563EB}.sb .l{font-size:12px;color:#64748b;margin-top:4px}
+h2{font-size:15px;font-weight:700;border-left:4px solid #2563EB;padding-left:10px;margin-bottom:14px}
+table{width:100%;border-collapse:collapse;margin-bottom:32px;font-size:13px}
+th{background:#f1f5f9;padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase}
+td{padding:10px 14px;border-bottom:1px solid #f1f5f9;color:#334155}
+.r{font-weight:700;color:#2563EB}.c{font-weight:700;color:#059669}</style></head><body>
+<div class="header"><div class="logo">Book<span>Nest</span></div><div class="date">Generated: ${new Date().toLocaleString()}</div></div>
+<div class="stats">
+<div class="sb"><div class="v">${this.stats.totalBooks??0}</div><div class="l">Total Books</div></div>
+<div class="sb"><div class="v">${this.stats.booksIssued??0}</div><div class="l">Books Issued</div></div>
+<div class="sb"><div class="v">${this.stats.activeStudents??0}</div><div class="l">Active Students</div></div>
+<div class="sb"><div class="v">${this.stats.overdueBooks??0}</div><div class="l">Overdue Books</div></div>
+</div>
+<h2>Top Borrowed Books</h2>
+<table><thead><tr><th>#</th><th>Book Title</th><th>Times Borrowed</th></tr></thead><tbody>
+${this.topBooks.map((b,i)=>`<tr><td class="r">${i+1}</td><td>${b.title}</td><td class="c">${b.count}</td></tr>`).join('')}
+${!this.topBooks.length?'<tr><td colspan="3" style="text-align:center;color:#94a3b8;padding:24px">No data</td></tr>':''}
+</tbody></table>
+<h2>Most Active Students</h2>
+<table><thead><tr><th>#</th><th>Student Name</th><th>Books Borrowed</th></tr></thead><tbody>
+${this.activeStudents.map((s,i)=>`<tr><td class="r">${i+1}</td><td>${s.name}</td><td class="c">${s.count}</td></tr>`).join('')}
+${!this.activeStudents.length?'<tr><td colspan="3" style="text-align:center;color:#94a3b8;padding:24px">No data</td></tr>':''}
+</tbody></table>
+<h2>Category Distribution</h2>
+<table><thead><tr><th>Category</th><th>Books</th><th>Percentage</th></tr></thead><tbody>
+${this.categoryStats.map(c=>`<tr><td>${c.name}</td><td class="c">${c.count}</td><td>${c.percentage}%</td></tr>`).join('')}
+</tbody></table>
+<h2>Issuance Trend — Last 7 Days</h2>
+<table><thead><tr><th>Day</th><th>Date</th><th>Books Issued</th></tr></thead><tbody>
+${this.issuedTrend.map(d=>`<tr><td>${d.day}</td><td>${d.date||''}</td><td class="c">${d.count}</td></tr>`).join('')}
+</tbody></table>
+</body></html>`;
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const win = window.open(url, '_blank');
+    if (win) { win.onload = () => { win.print(); URL.revokeObjectURL(url); }; }
+  }
+
+  private downloadFile(content: string, filename: string, type: string) {
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename; a.click();
+    URL.revokeObjectURL(url);
   }
 }

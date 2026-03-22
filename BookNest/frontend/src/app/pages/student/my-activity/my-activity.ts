@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth';
 import { BorrowService, BorrowRequest } from '../../../services/borrow';
-import { BookService } from '../../../services/book';
 import { SnackbarService } from '../../../services/snackbar';
 import { GlobalSearchBarComponent } from '../../../components/global-search-bar/global-search-bar';
 
@@ -37,7 +36,6 @@ export class MyActivityComponent implements OnInit {
   constructor(
     private borrowService: BorrowService,
     private authService: AuthService,
-    private bookService: BookService,
     private snackbar: SnackbarService
   ) { }
 
@@ -92,29 +90,18 @@ export class MyActivityComponent implements OnInit {
   loadBorrowedBooks(userId: number): Promise<void> {
     return new Promise((resolve) => {
       this.borrowService.getMyBooks(userId).subscribe({
-        next: async (data: any[]) => {
-          const books = data || [];
-          for (const book of books) {
-            let imageData: string | null = null;
-            try {
-              const bookDetails = await this.bookService.getBookById(book.bookId).toPromise();
-              imageData = bookDetails?.imageData || null;
-            } catch {
-              imageData = null;
-            }
-            
-            this.borrowedBooks.push({
-              id: book.id,
-              bookId: book.bookId,
-              bookTitle: book.bookTitle || book.title || 'Unknown',
-              bookAuthor: book.bookAuthor || book.author || 'Unknown',
-              imageData: imageData,
-              borrowDate: book.requestDate || book.borrowDate || '-',
-              dueDate: book.dueDate || null,
-              status: (book.status || 'ISSUED').toUpperCase(),
-              isOverdue: book.dueDate && new Date(book.dueDate) < new Date()
-            });
-          }
+        next: (data: any[]) => {
+          this.borrowedBooks = (data || []).map(book => ({
+            id: book.id,
+            bookId: book.bookId,
+            bookTitle: book.bookTitle || book.title || 'Unknown',
+            bookAuthor: book.bookAuthor || book.author || 'Unknown',
+            imageData: book.bookImage || null,
+            borrowDate: book.requestDate || book.borrowDate || '-',
+            dueDate: book.dueDate || null,
+            status: (book.status || 'APPROVED').toUpperCase(),
+            isOverdue: book.status === 'OVERDUE' || (book.dueDate && new Date(book.dueDate) < new Date())
+          }));
           resolve();
         },
         error: () => resolve()
@@ -125,28 +112,20 @@ export class MyActivityComponent implements OnInit {
   loadHistory(userId: number): Promise<void> {
     return new Promise((resolve) => {
       this.borrowService.getHistory(userId).subscribe({
-        next: async (data: any[]) => {
-          const records = (data || []).filter((record: any) => record.status === 'RETURNED');
-          for (const record of records) {
-            let imageData: string | null = null;
-            try {
-              const bookDetails = await this.bookService.getBookById(record.bookId).toPromise();
-              imageData = bookDetails?.imageData || null;
-            } catch {
-              imageData = null;
-            }
-            
-            this.history.push({
+        next: (data: any[]) => {
+          const returnedStatuses = ['RETURNED', 'RETURNED_ON_TIME', 'RETURNED_LATE'];
+          this.history = (data || [])
+            .filter((record: any) => returnedStatuses.includes(record.status))
+            .map(record => ({
               id: record.id,
               bookId: record.bookId,
               bookTitle: record.bookTitle || record.title || 'Unknown',
               bookAuthor: record.bookAuthor || record.author || 'Unknown',
-              imageData: imageData,
+              imageData: record.bookImage || null,
               borrowDate: record.requestDate || record.borrowDate || null,
               returnDate: record.returnDate || null,
-              status: 'RETURNED'
-            });
-          }
+              status: record.status || 'RETURNED'
+            }));
           resolve();
         },
         error: () => resolve()
@@ -212,7 +191,20 @@ export class MyActivityComponent implements OnInit {
   goToNextPage() { this.goToPage(this.currentPage + 1); }
 
   get pageNumbers(): number[] {
-    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+    const total = this.totalPages;
+    const current = this.currentPage;
+    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+    const pages: number[] = [];
+    if (current <= 4) {
+      for (let i = 1; i <= 5; i++) pages.push(i);
+      pages.push(-1, total);
+    } else if (current >= total - 3) {
+      pages.push(1, -1);
+      for (let i = total - 4; i <= total; i++) pages.push(i);
+    } else {
+      pages.push(1, -1, current - 1, current, current + 1, -2, total);
+    }
+    return pages;
   }
 
   cancelRequest(id: number, bookTitle: string) {

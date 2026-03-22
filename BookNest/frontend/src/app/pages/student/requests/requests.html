@@ -39,7 +39,8 @@
         <tbody>
           <tr *ngFor="let req of paginatedRequests">
             <td class="book-cell">
-              <span class="material-icons book-icon">menu_book</span>
+              <img *ngIf="req.bookImage && req.bookImage.trim()" [src]="req.bookImage" [alt]="req.bookTitle" class="book-thumb" (error)="req.bookImage = undefined">
+              <span *ngIf="!req.bookImage || !req.bookImage.trim()" class="material-icons book-icon">menu_book</span>
               <span>{{req.bookTitle}}</span>
             </td>
             <td>{{req.requestDate}}</td>
@@ -67,10 +68,13 @@
       <button (click)="goToPreviousPage()" [disabled]="currentPage === 1" class="page-btn">
         Previous
       </button>
-      <button *ngFor="let page of pageNumbers" (click)="goToPage(page)" 
-        class="page-btn" [class.active]="page === currentPage">
-        {{ page }}
-      </button>
+      <ng-container *ngFor="let page of pageNumbers">
+        <span *ngIf="page < 0" class="page-ellipsis">…</span>
+        <button *ngIf="page > 0" (click)="goToPage(page)"
+          class="page-btn" [class.active]="page === currentPage">
+          {{ page }}
+        </button>
+      </ng-container>
       <button (click)="goToNextPage()" [disabled]="currentPage === totalPages" class="page-btn">
         Next
       </button>

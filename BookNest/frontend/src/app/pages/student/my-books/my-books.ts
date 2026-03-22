@@ -53,11 +53,12 @@ export class MyBooksComponent implements OnInit {
           this.borrowedBooks = books.map((book: any) => ({
             id: book.id,
             title: book.bookTitle || book.title,
-            author: book.author || book.bookAuthor || 'Unknown',
-            borrowDate: book.requestDate,
+            author: book.bookAuthor || book.author || 'Unknown',
+            bookImage: book.bookImage || null,
+            borrowDate: book.requestDate || book.borrowDate,
             dueDate: book.dueDate,
             status: book.status,
-            isOverdue: book.dueDate && new Date(book.dueDate) < new Date()
+            isOverdue: book.status === 'OVERDUE' || (book.dueDate && new Date(book.dueDate) < new Date())
           }));
         }
         this.applyFilters();
@@ -100,9 +101,9 @@ export class MyBooksComponent implements OnInit {
     return data.sort((a, b) => {
       switch (this.sortBy) {
         case 'newest':
-          return new Date(b.borrowedDate).getTime() - new Date(a.borrowedDate).getTime();
+          return new Date(b.borrowDate || 0).getTime() - new Date(a.borrowDate || 0).getTime();
         case 'oldest':
-          return new Date(a.borrowedDate).getTime() - new Date(b.borrowedDate).getTime();
+          return new Date(a.borrowDate || 0).getTime() - new Date(b.borrowDate || 0).getTime();
         case 'titleAZ':
           return (a.title || '').localeCompare(b.title || '');
         default:
@@ -130,7 +131,20 @@ export class MyBooksComponent implements OnInit {
   goToNextPage() { this.goToPage(this.currentPage + 1); }
 
   get pageNumbers(): number[] {
-    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+    const total = this.totalPages;
+    const current = this.currentPage;
+    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+    const pages: number[] = [];
+    if (current <= 4) {
+      for (let i = 1; i <= 5; i++) pages.push(i);
+      pages.push(-1, total);
+    } else if (current >= total - 3) {
+      pages.push(1, -1);
+      for (let i = total - 4; i <= total; i++) pages.push(i);
+    } else {
+      pages.push(1, -1, current - 1, current, current + 1, -2, total);
+    }
+    return pages;
   }
 
   get paginationStart(): number {

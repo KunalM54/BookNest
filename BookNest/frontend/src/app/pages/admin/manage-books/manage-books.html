@@ -112,7 +112,10 @@
         <button (click)="goToPreviousPage()" [disabled]="currentPage === 1" class="page-btn">
           <span class="material-icons">chevron_left</span>
         </button>
-        <button *ngFor="let page of pageNumbers" (click)="goToPage(page)" class="page-btn" [class.active]="page === currentPage">{{ page }}</button>
+        <ng-container *ngFor="let page of pageNumbers">
+          <span *ngIf="page < 0" class="page-ellipsis">…</span>
+          <button *ngIf="page > 0" (click)="goToPage(page)" class="page-btn" [class.active]="page === currentPage">{{ page }}</button>
+        </ng-container>
         <button (click)="goToNextPage()" [disabled]="currentPage === totalPages" class="page-btn">
           <span class="material-icons">chevron_right</span>
         </button>
@@ -140,12 +143,12 @@
 
             <div class="form-group">
               <label for="isbn">ISBN *</label>
-              <input type="text" id="isbn" formControlName="isbn" [readonly]="isEditMode" maxlength="12" pattern="[0-9]*"
+              <input type="text" id="isbn" formControlName="isbn" [readonly]="isEditMode" maxlength="13" pattern="[0-9]*"
                 (input)="cleanIsbnInput($event)" class="form-control"
                 [class.form-invalid]="form.get('isbn')!.invalid && form.get('isbn')!.touched">
               <div class="form-error" *ngIf="form.get('isbn')!.invalid && form.get('isbn')!.touched">
                 <span *ngIf="form.get('isbn')?.errors?.['required']">ISBN is required.</span>
-                <span *ngIf="form.get('isbn')?.errors?.['pattern']">ISBN must be exactly 12 digits.</span>
+                <span *ngIf="form.get('isbn')?.errors?.['pattern']">ISBN must be exactly 13 digits.</span>
               </div>
             </div>
 

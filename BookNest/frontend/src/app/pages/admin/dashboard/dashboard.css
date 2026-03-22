@@ -278,7 +278,38 @@
 }
 
 .book-cell {
-  max-width: 200px;
+  max-width: 220px;
+}
+
+.book-cell-inner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.book-thumb-wrap {
+  width: 32px;
+  height: 42px;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.book-thumb {
+  width: 32px;
+  height: 42px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.book-thumb-icon {
+  color: white;
+  font-size: 18px;
+  opacity: 0.9;
 }
 
 .book-title {
@@ -319,6 +350,11 @@
 .status-rejected {
   background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
   color: #DC2626;
+}
+
+.status-overdue {
+  background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+  color: #B91C1C;
 }
 
 /* ===== ACTION BUTTONS ===== */

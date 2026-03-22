@@ -1,0 +1,166 @@
+<div class="page-container">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">
+        <span class="material-icons page-icon">insights</span>
+        My Stats
+      </h1>
+      <p class="page-subtitle">Your personal library activity summary</p>
+    </div>
+    <button class="btn-export" (click)="exportCSV()">
+      <span class="material-icons">download</span>
+      Export CSV
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Loading your stats...</p>
+  </div>
+
+  <div *ngIf="!isLoading">
+
+    <!-- Summary Cards -->
+    <div class="stats-grid">
+      <div class="stat-card blue">
+        <div class="stat-icon"><span class="material-icons">auto_stories</span></div>
+        <div class="stat-body">
+          <span class="stat-val">{{ totalBorrowed }}</span>
+          <span class="stat-lbl">Total Borrowed</span>
+        </div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-icon"><span class="material-icons">menu_book</span></div>
+        <div class="stat-body">
+          <span class="stat-val">{{ currentlyBorrowing }}</span>
+          <span class="stat-lbl">Currently Reading</span>
+        </div>
+      </div>
+      <div class="stat-card purple">
+        <div class="stat-icon"><span class="material-icons">check_circle</span></div>
+        <div class="stat-body">
+          <span class="stat-val">{{ totalReturned }}</span>
+          <span class="stat-lbl">Books Returned</span>
+        </div>
+      </div>
+      <div class="stat-card" [class.red]="overdueCount > 0" [class.grey]="overdueCount === 0">
+        <div class="stat-icon"><span class="material-icons">warning</span></div>
+        <div class="stat-body">
+          <span class="stat-val">{{ overdueCount }}</span>
+          <span class="stat-lbl">Overdue</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- On-time rate + top books -->
+    <div class="mid-row">
+
+      <!-- On-time rate card -->
+      <div class="rate-card">
+        <h3>Return Performance</h3>
+        <div class="rate-ring-wrap">
+          <svg viewBox="0 0 120 120" class="rate-ring">
+            <circle cx="60" cy="60" r="50" fill="none" stroke="#E2E8F0" stroke-width="10"/>
+            <circle cx="60" cy="60" r="50" fill="none"
+              [attr.stroke]="onTimeRate >= 80 ? '#059669' : onTimeRate >= 50 ? '#D97706' : '#DC2626'"
+              stroke-width="10" stroke-linecap="round"
+              [attr.stroke-dasharray]="314"
+              [attr.stroke-dashoffset]="314 - (314 * onTimeRate / 100)"
+              transform="rotate(-90 60 60)"/>
+          </svg>
+          <div class="rate-label">
+            <span class="rate-pct">{{ onTimeRate }}%</span>
+            <span class="rate-sub">on time</span>
+          </div>
+        </div>
+        <div class="rate-legend">
+          <div class="leg-row">
+            <span class="leg-dot green"></span>
+            <span>On Time</span>
+            <span class="leg-val">{{ onTimeReturns }}</span>
+          </div>
+          <div class="leg-row">
+            <span class="leg-dot orange"></span>
+            <span>Late</span>
+            <span class="leg-val">{{ lateReturns }}</span>
+          </div>
+        </div>
+        <p class="rate-note" *ngIf="totalReturned === 0">Return some books to see your rate!</p>
+      </div>
+
+      <!-- Most borrowed books -->
+      <div class="top-card">
+        <h3><span class="material-icons">trending_up</span> Books You've Borrowed Most</h3>
+        <div class="top-list" *ngIf="mostBorrowedBooks.length > 0">
+          <div class="top-row" *ngFor="let b of mostBorrowedBooks; let i = index">
+            <div class="top-cover">
+              <img *ngIf="b.bookImage && b.bookImage.trim()" [src]="b.bookImage" [alt]="b.title" (error)="b.bookImage = undefined">
+              <span *ngIf="!b.bookImage || !b.bookImage.trim()" class="cover-initial">{{ b.title.charAt(0) }}</span>
+            </div>
+            <div class="top-info">
+              <span class="top-title">{{ b.title }}</span>
+              <span class="top-author">{{ b.author }}</span>
+            </div>
+            <span class="top-badge">{{ b.count }}x</span>
+          </div>
+        </div>
+        <div class="empty-state" *ngIf="mostBorrowedBooks.length === 0">
+          <span class="material-icons">menu_book</span>
+          <p>Borrow some books to see your favourites!</p>
+          <a routerLink="/student/browse" class="link-btn">Browse Library</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Full history table -->
+    <div class="history-card">
+      <div class="card-head">
+        <h3><span class="material-icons">history</span> My Borrow History</h3>
+        <span class="badge-count">{{ borrowHistory.length }} records</span>
+      </div>
+
+      <div class="table-wrap" *ngIf="borrowHistory.length > 0">
+        <table class="hist-table">
+          <thead>
+            <tr>
+              <th>Book</th>
+              <th>Borrow Date</th>
+              <th>Return Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let r of borrowHistory">
+              <td class="book-cell">
+                <div class="book-thumb-wrap">
+                  <img *ngIf="r.bookImage && r.bookImage.trim()" [src]="r.bookImage" [alt]="r.title" class="book-thumb" (error)="r.bookImage = undefined">
+                  <span *ngIf="!r.bookImage || !r.bookImage.trim()" class="material-icons thumb-icon">menu_book</span>
+                </div>
+                <div>
+                  <span class="book-title">{{ r.title }}</span>
+                  <span class="book-author">{{ r.author }}</span>
+                </div>
+              </td>
+              <td class="date-cell">{{ r.borrowDate || '—' }}</td>
+              <td class="date-cell">{{ r.returnDate || '—' }}</td>
+              <td>
+                <span class="status-pill" [ngClass]="getStatusClass(r.status)">{{ getStatusLabel(r.status) }}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="empty-state" *ngIf="borrowHistory.length === 0">
+        <span class="material-icons">auto_stories</span>
+        <p>No borrow history yet. Start reading!</p>
+        <a routerLink="/student/browse" class="link-btn">Browse Library</a>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -48,16 +48,16 @@ public class BorrowService {
     @Transactional
     public Map<String, Object> createRequest(Long studentId, Long bookId) {
         Map<String, Object> response = new HashMap<>();
-        
+
         Optional<User> studentOpt = userRepository.findById(studentId);
         Optional<Book> bookOpt = bookRepository.findById(bookId);
-        
+
         if (!studentOpt.isPresent()) {
             response.put("success", false);
             response.put("message", "Student not found");
             return response;
         }
-        
+
         if (!bookOpt.isPresent()) {
             response.put("success", false);
             response.put("message", "Book not found");
@@ -84,27 +84,27 @@ public class BorrowService {
             response.put("message", "A request for this book is already pending");
             return response;
         }
-        
+
         if (!student.isActive()) {
             response.put("success", false);
             response.put("message", "Student account is blocked");
             return response;
         }
-        
+
         if (book.getAvailableCopies() <= 0) {
             response.put("success", false);
             response.put("message", "No available copies");
             return response;
         }
-        
+
         Borrow borrow = new Borrow();
         borrow.setStudent(student);
         borrow.setBook(book);
         borrow.setRequestDate(LocalDate.now());
         borrow.setStatus(Borrow.BorrowStatus.PENDING);
-        
+
         borrowRepository.save(borrow);
-        
+
         response.put("success", true);
         response.put("message", "Borrow request created successfully");
         response.put("borrow", borrow);
@@ -115,17 +115,17 @@ public class BorrowService {
     @Transactional
     public Map<String, Object> approveRequest(Long id) {
         Map<String, Object> response = new HashMap<>();
-        
+
         Optional<Borrow> borrowOpt = borrowRepository.findById(id);
-        
+
         if (!borrowOpt.isPresent()) {
             response.put("success", false);
             response.put("message", "Borrow request not found");
             return response;
         }
-        
+
         Borrow borrow = borrowOpt.get();
-        
+
         if (borrow.getStatus() != Borrow.BorrowStatus.PENDING) {
             response.put("success", false);
             response.put("message", "Request is not pending");
@@ -140,25 +140,25 @@ public class BorrowService {
             response.put("message", "Student already has this book borrowed and not returned");
             return response;
         }
-        
+
         Book book = borrow.getBook();
         if (book.getAvailableCopies() <= 0) {
             response.put("success", false);
             response.put("message", "No available copies");
             return response;
         }
-        
+
         // Update book available copies
         book.setAvailableCopies(book.getAvailableCopies() - 1);
         bookRepository.save(book);
-        
+
         // Update borrow status
         borrow.setStatus(Borrow.BorrowStatus.APPROVED);
-borrow.setDueDate(LocalDate.now().plusDays(15)); // 15 days due date
+        borrow.setDueDate(LocalDate.now().plusDays(15)); // 15 days due date
         borrow.setActionDate(LocalDate.now());
-        
+
         borrowRepository.save(borrow);
-        
+
         response.put("success", true);
         response.put("message", "Borrow request approved");
         response.put("borrow", borrow);
@@ -169,20 +169,20 @@ borrow.setDueDate(LocalDate.now().plusDays(15)); // 15 days due date
     @Transactional
     public Map<String, Object> rejectRequest(Long id) {
         Map<String, Object> response = new HashMap<>();
-        
+
         Optional<Borrow> borrowOpt = borrowRepository.findById(id);
-        
+
         if (!borrowOpt.isPresent()) {
             response.put("success", false);
             response.put("message", "Borrow request not found");
             return response;
         }
-        
+
         Borrow borrow = borrowOpt.get();
         borrow.setStatus(Borrow.BorrowStatus.REJECTED);
         borrow.setActionDate(LocalDate.now());
         borrowRepository.save(borrow);
-        
+
         response.put("success", true);
         response.put("message", "Borrow request rejected");
         response.put("borrow", borrow);
@@ -190,40 +190,41 @@ borrow.setDueDate(LocalDate.now().plusDays(15)); // 15 days due date
     }
 
     // Return book
+    // FIX: Allow returning books with status APPROVED or OVERDUE
     @Transactional
     public Map<String, Object> returnBook(Long id) {
         Map<String, Object> response = new HashMap<>();
-        
+
         Optional<Borrow> borrowOpt = borrowRepository.findById(id);
-        
+
         if (!borrowOpt.isPresent()) {
             response.put("success", false);
             response.put("message", "Borrow request not found");
             return response;
         }
-        
+
         Borrow borrow = borrowOpt.get();
-        
-        if (borrow.getStatus() != Borrow.BorrowStatus.APPROVED) {
+
+        // FIX: Also allow OVERDUE books to be returned
+        if (borrow.getStatus() != Borrow.BorrowStatus.APPROVED
+                && borrow.getStatus() != Borrow.BorrowStatus.OVERDUE) {
             response.put("success", false);
             response.put("message", "Cannot return - request not approved");
             return response;
         }
-        
+
         // Update book available copies
         Book book = borrow.getBook();
         book.setAvailableCopies(book.getAvailableCopies() + 1);
         bookRepository.save(book);
-        
-        // Update borrow status
-borrow.setStatus(Borrow.BorrowStatus.RETURNED);
-borrow.setReturnDate(LocalDate.now());
-borrow.setActionDate(LocalDate.now());
 
-borrowRepository.save(borrow);
-        
+        // Update borrow status
+        borrow.setStatus(Borrow.BorrowStatus.RETURNED);
+        borrow.setReturnDate(LocalDate.now());
+        borrow.setActionDate(LocalDate.now());
+
         borrowRepository.save(borrow);
-        
+
         response.put("success", true);
         response.put("message", "Book returned successfully");
         response.put("borrow", borrow);
@@ -234,15 +235,15 @@ borrowRepository.save(borrow);
     @Transactional
     public Map<String, Object> deleteRequest(Long id) {
         Map<String, Object> response = new HashMap<>();
-        
+
         if (!borrowRepository.existsById(id)) {
             response.put("success", false);
             response.put("message", "Borrow request not found");
             return response;
         }
-        
+
         borrowRepository.deleteById(id);
-        
+
         response.put("success", true);
         response.put("message", "Borrow request removed");
         return response;
@@ -251,19 +252,19 @@ borrowRepository.save(borrow);
     // Get dashboard statistics
     public Map<String, Object> getStats() {
         Map<String, Object> stats = new HashMap<>();
-        
+
         Long totalBooks = bookRepository.count();
         Long totalStudents = userRepository.findAll().stream()
                 .filter(u -> u.getRole() == User.Role.STUDENT && u.isActive())
                 .count();
         Long booksIssued = borrowRepository.countApprovedBorrows();
         Long overdueBooks = borrowRepository.countOverdueBorrows();
-        
+
         stats.put("totalBooks", totalBooks);
         stats.put("activeMembers", totalStudents);
         stats.put("booksIssued", booksIssued);
         stats.put("overdueBooks", overdueBooks);
-        
+
         return stats;
     }
 
@@ -291,4 +292,3 @@ borrowRepository.save(borrow);
         return borrowRepository.findRequestsHistoryByStudentId(studentId);
     }
 }
-

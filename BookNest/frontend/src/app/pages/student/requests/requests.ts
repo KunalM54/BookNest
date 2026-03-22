@@ -42,7 +42,10 @@ export class RequestsComponent implements OnInit {
       next: (data: BorrowRequest[]) => {
         this.requests = (data || []).map((req: BorrowRequest) => ({
           id: req.id,
+          bookId: req.bookId,
           bookTitle: req.bookTitle || 'Unknown',
+          bookAuthor: req.bookAuthor || 'Unknown',
+          bookImage: req.bookImage || null,
           requestDate: req.requestDate || '-',
           status: (req.status || 'PENDING').toUpperCase(),
           actionDate: req.actionDate || '-'
@@ -115,7 +118,20 @@ export class RequestsComponent implements OnInit {
   goToNextPage() { this.goToPage(this.currentPage + 1); }
 
   get pageNumbers(): number[] {
-    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+    const total = this.totalPages;
+    const current = this.currentPage;
+    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+    const pages: number[] = [];
+    if (current <= 4) {
+      for (let i = 1; i <= 5; i++) pages.push(i);
+      pages.push(-1, total);
+    } else if (current >= total - 3) {
+      pages.push(1, -1);
+      for (let i = total - 4; i <= total; i++) pages.push(i);
+    } else {
+      pages.push(1, -1, current - 1, current, current + 1, -2, total);
+    }
+    return pages;
   }
 
   get paginationStart(): number {

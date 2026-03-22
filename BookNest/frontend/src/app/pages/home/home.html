@@ -2,42 +2,175 @@
   <app-navbar></app-navbar>
 
   <main>
-    <!-- Hero Section -->
+
+    <!-- ══ HERO ══ -->
     <section class="hero">
       <div class="hero-content">
+        <span class="hero-badge">
+          <span class="material-icons">auto_stories</span>
+          Your Digital Library
+        </span>
         <h1>Unlock a World of <span class="highlight">Knowledge</span></h1>
-        <p>Borrow books, track your reading journey, and manage your library account online.</p>
+        <p>Borrow books, track your reading journey, and manage your library account — all from anywhere, any time.</p>
         <div class="hero-actions">
-          <button routerLink="/register" class="cta-button">Join the Library</button>
-          <button routerLink="/login" class="secondary-button">Browse Collection</button>
+          <button routerLink="/register" class="cta-button">
+            <span class="material-icons">person_add</span>
+            Get Started Free
+          </button>
+          <button routerLink="/login" class="secondary-button">
+            <span class="material-icons">login</span>
+            Sign In
+          </button>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <span class="stat-num">500+</span>
+            <span class="stat-lbl">Books Available</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="hero-stat">
+            <span class="stat-num">200+</span>
+            <span class="stat-lbl">Active Members</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="hero-stat">
+            <span class="stat-num">1000+</span>
+            <span class="stat-lbl">Borrows Completed</span>
+          </div>
         </div>
       </div>
       <div class="hero-image">
-<img src="assets/hero-library2.svg" alt="Library Hero Image" class="hero-svg" />
+        <img src="assets/hero-library2.svg" alt="Library" class="hero-svg" />
       </div>
     </section>
 
-    <!-- Features Section -->
-    <section class="features">
-      <h2>How BookNest Works</h2>
-      <div class="feature-grid">
-        <div class="feature-card">
-          <div class="icon-bg"><span class="material-icons">person_add</span></div>
-          <h3>1. Register</h3>
-          <p>Create your free digital library card.</p>
-        </div>
-        <div class="feature-card">
-          <div class="icon-bg"><span class="material-icons">search</span></div>
-          <h3>2. Discover</h3>
-          <p>Browse thousands of available books.</p>
-        </div>
-        <div class="feature-card">
-          <div class="icon-bg"><span class="material-icons">bookmark_add</span></div>
-          <h3>3. Borrow</h3>
-          <p>Request online and pick up at the counter.</p>
+    <!-- ══ HOW IT WORKS ══ -->
+    <section class="how-it-works">
+      <div class="section-inner">
+        <div class="section-label">Simple Process</div>
+        <h2>How BookNest Works</h2>
+        <p class="section-sub">Get started in three simple steps and start reading today</p>
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-num">01</div>
+            <div class="step-icon"><span class="material-icons">person_add</span></div>
+            <h3>Register</h3>
+            <p>Create your free digital library card in under a minute. All you need is your student ID and email.</p>
+          </div>
+          <div class="step-arrow"><span class="material-icons">arrow_forward</span></div>
+          <div class="step-card">
+            <div class="step-num">02</div>
+            <div class="step-icon"><span class="material-icons">search</span></div>
+            <h3>Discover</h3>
+            <p>Browse our collection by category, title, or author. Filter by availability to find books ready to borrow.</p>
+          </div>
+          <div class="step-arrow"><span class="material-icons">arrow_forward</span></div>
+          <div class="step-card">
+            <div class="step-num">03</div>
+            <div class="step-icon"><span class="material-icons">bookmark_add</span></div>
+            <h3>Borrow</h3>
+            <p>Request online and pick up at the library counter. Return on time to keep your account in good standing.</p>
+          </div>
         </div>
       </div>
     </section>
+
+    <!-- ══ FEATURES ══ -->
+    <section class="features">
+      <div class="section-inner">
+        <div class="section-label">Features</div>
+        <h2>Everything You Need</h2>
+        <p class="section-sub">A complete library management platform built for students and staff</p>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon blue"><span class="material-icons">library_books</span></div>
+            <h3>Large Collection</h3>
+            <p>Access hundreds of titles across Technology, Science, Literature, History, and more — all in one place.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon purple"><span class="material-icons">track_changes</span></div>
+            <h3>Track Your Books</h3>
+            <p>See what you have borrowed, when it's due, and your full return history with late/on-time tracking.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon green"><span class="material-icons">notifications_active</span></div>
+            <h3>Due Date Alerts</h3>
+            <p>Never miss a return date. Overdue books are flagged clearly so you can return them before penalties apply.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon orange"><span class="material-icons">admin_panel_settings</span></div>
+            <h3>Admin Dashboard</h3>
+            <p>Library staff get a full management portal — approve requests, manage inventory, track overdue books and generate reports.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon teal"><span class="material-icons">devices</span></div>
+            <h3>Works Anywhere</h3>
+            <p>Fully responsive on desktop, tablet, and mobile. Manage your library account from any device, any time.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon red"><span class="material-icons">campaign</span></div>
+            <h3>Library Notices</h3>
+            <p>Stay informed with announcements, holidays, new arrivals, and important library news — delivered in-app.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ CATEGORIES ══ -->
+    <section class="categories">
+      <div class="section-inner">
+        <div class="section-label">Collection</div>
+        <h2>Browse by Category</h2>
+        <p class="section-sub">We cover a wide range of subjects to support your academic and personal growth</p>
+        <div class="cat-grid">
+          <div class="cat-card">
+            <span class="material-icons">computer</span>
+            <span>Technology</span>
+          </div>
+          <div class="cat-card">
+            <span class="material-icons">school</span>
+            <span>Academic</span>
+          </div>
+          <div class="cat-card">
+            <span class="material-icons">science</span>
+            <span>Science</span>
+          </div>
+          <div class="cat-card">
+            <span class="material-icons">menu_book</span>
+            <span>Literature</span>
+          </div>
+          <div class="cat-card">
+            <span class="material-icons">account_balance</span>
+            <span>History</span>
+          </div>
+          <div class="cat-card more-card" routerLink="/login">
+            <span class="material-icons">add_circle_outline</span>
+            <span>Browse All</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ CTA BANNER ══ -->
+    <section class="cta-section">
+      <div class="cta-inner">
+        <div class="cta-text">
+          <h2>Ready to start reading?</h2>
+          <p>Join thousands of students already using BookNest to discover, borrow, and track their reading.</p>
+        </div>
+        <div class="cta-btns">
+          <button routerLink="/register" class="cta-button">
+            <span class="material-icons">person_add</span>
+            Create Free Account
+          </button>
+          <button routerLink="/login" class="secondary-button outline">
+            <span class="material-icons">login</span>
+            Already a member? Login
+          </button>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <app-footer></app-footer>

@@ -47,12 +47,17 @@ export class HistoryComponent implements OnInit {
 
     this.borrowService.getHistory(userId).subscribe({
       next: (data) => {
-        this.history = (data || []).filter(record => record.status === 'RETURNED').map((record: any) => ({
+        // Include RETURNED, RETURNED_ON_TIME, RETURNED_LATE statuses from backend
+        const returnedStatuses = ['RETURNED', 'RETURNED_ON_TIME', 'RETURNED_LATE'];
+        this.history = (data || []).filter(record => returnedStatuses.includes(record.status)).map((record: any) => ({
           id: record.id,
+          bookId: record.bookId,
           title: record.bookTitle || record.title || 'Unknown',
+          author: record.bookAuthor || record.author || 'Unknown',
+          bookImage: record.bookImage || null,
           borrowDate: record.requestDate || record.borrowDate || null,
           returnDate: record.returnDate || null,
-          status: 'RETURNED'
+          status: record.status || 'RETURNED'
         }));
         this.applyFilters();
         this.isLoading = false;
@@ -120,7 +125,20 @@ export class HistoryComponent implements OnInit {
   goToNextPage() { this.goToPage(this.currentPage + 1); }
 
   get pageNumbers(): number[] {
-    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+    const total = this.totalPages;
+    const current = this.currentPage;
+    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+    const pages: number[] = [];
+    if (current <= 4) {
+      for (let i = 1; i <= 5; i++) pages.push(i);
+      pages.push(-1, total);
+    } else if (current >= total - 3) {
+      pages.push(1, -1);
+      for (let i = total - 4; i <= total; i++) pages.push(i);
+    } else {
+      pages.push(1, -1, current - 1, current, current + 1, -2, total);
+    }
+    return pages;
   }
 
   get paginationStart(): number {

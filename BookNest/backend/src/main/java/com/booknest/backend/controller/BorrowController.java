@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -123,7 +122,7 @@ public class BorrowController {
         return ResponseEntity.ok(dtos);
     }
 
-    // Get student my books (approved borrows)
+    // Get student my books (approved + overdue borrows)
     @GetMapping("/my-books")
     public ResponseEntity<List<BorrowDTO>> getMyBooks(@RequestParam Long userId) {
         List<Borrow> borrows = borrowService.getMyBooks(userId);
@@ -164,6 +163,8 @@ public class BorrowController {
     }
 
     // Helper method to convert Borrow entity to DTO
+    // FIX: Uses getDisplayStatus() so frontend receives correct status (OVERDUE,
+    // RETURNED_LATE, etc.)
     private BorrowDTO convertToDTO(Borrow borrow) {
         BorrowDTO dto = new BorrowDTO();
         dto.setId(borrow.getId());
@@ -180,8 +181,7 @@ public class BorrowController {
         dto.setDueDate(borrow.getDueDate());
         dto.setReturnDate(borrow.getReturnDate());
         dto.setActionDate(borrow.getActionDate());
-        dto.setStatus(borrow.getStatus() != null ? borrow.getStatus().name() : Borrow.BorrowStatus.PENDING.name());
+        dto.setStatus(borrow.getDisplayStatus());
         return dto;
     }
 }
-

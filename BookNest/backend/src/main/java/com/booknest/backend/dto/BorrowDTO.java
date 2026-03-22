@@ -19,7 +19,8 @@ public class BorrowDTO {
     private LocalDate actionDate;
     private String status;
 
-    public BorrowDTO() {}
+    public BorrowDTO() {
+    }
 
     public BorrowDTO(Long id, Long studentId, String studentName, String studentIdNumber,
             String studentEmail, Long bookId, String bookTitle, String bookAuthor,
@@ -42,48 +43,123 @@ public class BorrowDTO {
         this.status = status;
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public Long getStudentId() { return studentId; }
-    public void setStudentId(Long studentId) { this.studentId = studentId; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getStudentName() { return studentName; }
-    public void setStudentName(String studentName) { this.studentName = studentName; }
+    public Long getStudentId() {
+        return studentId;
+    }
 
-    public String getStudentIdNumber() { return studentIdNumber; }
-    public void setStudentIdNumber(String studentIdNumber) { this.studentIdNumber = studentIdNumber; }
+    public void setStudentId(Long studentId) {
+        this.studentId = studentId;
+    }
 
-    public String getStudentEmail() { return studentEmail; }
-    public void setStudentEmail(String studentEmail) { this.studentEmail = studentEmail; }
+    public String getStudentName() {
+        return studentName;
+    }
 
-    public Long getBookId() { return bookId; }
-    public void setBookId(Long bookId) { this.bookId = bookId; }
+    public void setStudentName(String studentName) {
+        this.studentName = studentName;
+    }
 
-    public String getBookTitle() { return bookTitle; }
-    public void setBookTitle(String bookTitle) { this.bookTitle = bookTitle; }
+    public String getStudentIdNumber() {
+        return studentIdNumber;
+    }
 
-    public String getBookAuthor() { return bookAuthor; }
-    public void setBookAuthor(String bookAuthor) { this.bookAuthor = bookAuthor; }
+    public void setStudentIdNumber(String studentIdNumber) {
+        this.studentIdNumber = studentIdNumber;
+    }
 
-    public String getBookIsbn() { return bookIsbn; }
-    public void setBookIsbn(String bookIsbn) { this.bookIsbn = bookIsbn; }
+    public String getStudentEmail() {
+        return studentEmail;
+    }
 
-    public String getBookImage() { return bookImage; }
-    public void setBookImage(String bookImage) { this.bookImage = bookImage; }
+    public void setStudentEmail(String studentEmail) {
+        this.studentEmail = studentEmail;
+    }
 
-    public LocalDate getRequestDate() { return requestDate; }
-    public void setRequestDate(LocalDate requestDate) { this.requestDate = requestDate; }
+    public Long getBookId() {
+        return bookId;
+    }
 
-    public LocalDate getDueDate() { return dueDate; }
-    public void setDueDate(LocalDate dueDate) { this.dueDate = dueDate; }
+    public void setBookId(Long bookId) {
+        this.bookId = bookId;
+    }
 
-    public LocalDate getReturnDate() { return returnDate; }
-    public void setReturnDate(LocalDate returnDate) { this.returnDate = returnDate; }
+    public String getBookTitle() {
+        return bookTitle;
+    }
 
-    public LocalDate getActionDate() { return actionDate; }
-    public void setActionDate(LocalDate actionDate) { this.actionDate = actionDate; }
+    public void setBookTitle(String bookTitle) {
+        this.bookTitle = bookTitle;
+    }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public String getBookAuthor() {
+        return bookAuthor;
+    }
+
+    public void setBookAuthor(String bookAuthor) {
+        this.bookAuthor = bookAuthor;
+    }
+
+    public String getBookIsbn() {
+        return bookIsbn;
+    }
+
+    public void setBookIsbn(String bookIsbn) {
+        this.bookIsbn = bookIsbn;
+    }
+
+    public String getBookImage() {
+        return bookImage;
+    }
+
+    public void setBookImage(String bookImage) {
+        this.bookImage = bookImage;
+    }
+
+    public LocalDate getRequestDate() {
+        return requestDate;
+    }
+
+    public void setRequestDate(LocalDate requestDate) {
+        this.requestDate = requestDate;
+    }
+
+    public LocalDate getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public LocalDate getReturnDate() {
+        return returnDate;
+    }
+
+    public void setReturnDate(LocalDate returnDate) {
+        this.returnDate = returnDate;
+    }
+
+    public LocalDate getActionDate() {
+        return actionDate;
+    }
+
+    public void setActionDate(LocalDate actionDate) {
+        this.actionDate = actionDate;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }

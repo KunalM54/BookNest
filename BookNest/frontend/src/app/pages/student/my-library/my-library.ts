@@ -53,8 +53,9 @@ export class MyLibraryComponent implements OnInit {
           author: book.bookAuthor || book.author || 'Unknown',
           borrowDate: book.requestDate,
           dueDate: book.dueDate,
-          imageData: this.formatImageData(book.bookImage),
-          isOverdue: book.dueDate && new Date(book.dueDate) < new Date()
+          imageData: book.bookImage || null,
+          status: book.status,
+          isOverdue: book.status === 'OVERDUE' || (book.dueDate && new Date(book.dueDate) < new Date())
         }));
         this.loading = false;
       },
@@ -74,6 +75,7 @@ export class MyLibraryComponent implements OnInit {
         this.requests = (data || []).map((req: any) => ({
           id: req.id,
           bookTitle: req.bookTitle || 'Unknown',
+          bookImage: req.bookImage || null,
           requestDate: req.requestDate || '-',
           status: (req.status || 'PENDING').toUpperCase(),
           actionDate: req.actionDate || '-'
@@ -93,13 +95,17 @@ export class MyLibraryComponent implements OnInit {
     this.loadingHistory = true;
     this.borrowService.getHistory(userId).subscribe({
       next: (data) => {
+        const returnedStatuses = ['RETURNED', 'RETURNED_ON_TIME', 'RETURNED_LATE'];
         this.history = (data || [])
-          .filter((record: any) => record.status === 'RETURNED')
+          .filter((record: any) => returnedStatuses.includes(record.status))
           .map((record: any) => ({
             id: record.id,
             title: record.bookTitle || record.title || 'Unknown',
+            author: record.bookAuthor || record.author || 'Unknown',
+            imageData: record.bookImage || null,
             borrowDate: record.requestDate || record.borrowDate || null,
-            returnDate: record.returnDate || null
+            returnDate: record.returnDate || null,
+            status: record.status || 'RETURNED'
           }));
         this.loadingHistory = false;
       },
@@ -107,34 +113,6 @@ export class MyLibraryComponent implements OnInit {
         this.loadingHistory = false;
       }
     });
-  }
-
-  formatImageData(imageData: string | null | undefined): string | null {
-    if (!imageData) return null;
-    
-    const trimmed = imageData.trim();
-    if (!trimmed) return null;
-    
-    // If it already has data: prefix, return as-is
-    if (trimmed.startsWith('data:')) {
-      return trimmed;
-    }
-    
-    // Try to detect image type
-    try {
-      const decoded = atob(trimmed.substring(0, 16));
-      if (decoded.startsWith('\x89PNG')) {
-        return `data:image/png;base64,${trimmed}`;
-      }
-      if (decoded.startsWith('\xFF\xD8')) {
-        return `data:image/jpeg;base64,${trimmed}`;
-      }
-    } catch (e) {
-      // Fall through
-    }
-    
-    // Default to JPEG
-    return `data:image/jpeg;base64,${trimmed}`;
   }
 
   get pendingCount(): number {

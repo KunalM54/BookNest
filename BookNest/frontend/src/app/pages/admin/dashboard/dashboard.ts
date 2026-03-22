@@ -12,10 +12,13 @@ interface BorrowRequest {
   bookId: number;
   bookTitle: string;
   bookIsbn: string;
+  bookImage?: string;
   requestDate: string;
   dueDate: string | null;
   returnDate: string | null;
+  actionDate?: string | null;
   status: string;
+  displayStatus?: string;
 }
 
 interface DashboardStats {
@@ -67,6 +70,7 @@ export class DashboardComponent implements OnInit {
     this.http.get<BorrowRequest[]>(`${this.apiUrl}/recent?limit=20`).subscribe({
       next: (data: BorrowRequest[]) => {
         this.requests = [...data]
+          .map(item => ({ ...item, displayStatus: item.status }))
           .sort((a, b) => this.compareRequests(b, a))
           .slice(0, 5);
       },
@@ -80,6 +84,7 @@ export class DashboardComponent implements OnInit {
     this.http.put<any>(`${this.apiUrl}/approve/${id}`, {}).subscribe({
       next: (response: any) => {
         if (response.success) {
+          this.loadStats();
           this.loadRecentRequests();
         }
       },
@@ -93,6 +98,7 @@ export class DashboardComponent implements OnInit {
     this.http.put<any>(`${this.apiUrl}/reject/${id}`, {}).subscribe({
       next: (response: any) => {
         if (response.success) {
+          this.loadStats();
           this.loadRecentRequests();
         }
       },
@@ -106,6 +112,7 @@ export class DashboardComponent implements OnInit {
     this.http.delete<any>(`${this.apiUrl}/remove/${id}`).subscribe({
       next: (response: any) => {
         if (response.success) {
+          this.loadStats();
           this.loadRecentRequests();
         }
       },
@@ -158,6 +165,6 @@ export class DashboardComponent implements OnInit {
   }
 
   get pendingRequests() {
-    return this.requests.filter(r => r.status === 'PENDING').length;
+    return this.requests.filter(r => (r.displayStatus || r.status) === 'PENDING').length;
   }
 }

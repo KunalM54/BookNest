@@ -87,15 +87,24 @@
                 </div>
               </td>
               <td class="book-cell">
-                <span class="book-title">{{ req.bookTitle }}</span>
+                <div class="book-cell-inner">
+                  <div class="book-thumb-wrap">
+                    <img *ngIf="req.bookImage && req.bookImage.trim()" [src]="req.bookImage" [alt]="req.bookTitle" class="book-thumb" (error)="req.bookImage = undefined">
+                    <span *ngIf="!req.bookImage || !req.bookImage.trim()" class="material-icons book-thumb-icon">menu_book</span>
+                  </div>
+                  <span class="book-title">{{ req.bookTitle }}</span>
+                </div>
               </td>
               <td class="date-cell">{{ req.requestDate }}</td>
               <td>
-                <span class="status-badge" 
-                      [class.status-pending]="req.status === 'PENDING'" 
-                      [class.status-approved]="req.status === 'APPROVED'" 
-                      [class.status-rejected]="req.status === 'REJECTED'">
-                  {{ req.status === 'PENDING' ? 'Pending' : req.status === 'APPROVED' ? 'Approved' : 'Rejected' }}
+                <span class="status-badge"
+                      [class.status-pending]="(req.displayStatus || req.status) === 'PENDING'"
+                      [class.status-approved]="(req.displayStatus || req.status) === 'APPROVED'"
+                      [class.status-overdue]="(req.displayStatus || req.status) === 'OVERDUE'"
+                      [class.status-rejected]="(req.displayStatus || req.status) === 'REJECTED'">
+                  {{ (req.displayStatus || req.status) === 'PENDING' ? 'Pending' :
+                     (req.displayStatus || req.status) === 'APPROVED' ? 'Approved' :
+                     (req.displayStatus || req.status) === 'OVERDUE' ? 'Overdue' : 'Rejected' }}
                 </span>
               </td>
               <td>

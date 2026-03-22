@@ -73,9 +73,9 @@ public class BookController {
             return ResponseEntity.badRequest().body(response);
         }
 
-        if (!book.getIsbn().matches("\\d{12}")) {
+        if (!book.getIsbn().matches("\\d{13}")) {
             response.put("success", false);
-            response.put("message", "ISBN must be exactly 12 numeric digits");
+            response.put("message", "ISBN must be exactly 13 numeric digits");
             return ResponseEntity.badRequest().body(response);
         }
 
@@ -113,9 +113,9 @@ public class BookController {
 
         return bookRepository.findById(id)
                 .map(book -> {
-                    if (bookDetails.getIsbn() != null && !bookDetails.getIsbn().matches("\\d{12}")) {
+                    if (bookDetails.getIsbn() != null && !bookDetails.getIsbn().matches("\\d{13}")) {
                         response.put("success", false);
-                        response.put("message", "ISBN must be exactly 12 numeric digits");
+                        response.put("message", "ISBN must be exactly 13 numeric digits");
                         return ResponseEntity.badRequest().body(response);
                     }
 
@@ -131,11 +131,27 @@ public class BookController {
                     book.setIsbn(bookDetails.getIsbn());
                     book.setAuthor(bookDetails.getAuthor());
                     book.setCategory(bookDetails.getCategory());
-                    book.setImageData(normalizeImageData(bookDetails.getImageData()));
-                    if (bookDetails.getTotalCopies() != null) {
-                        book.setTotalCopies(bookDetails.getTotalCopies());
+
+                    // Only update image if a new one is provided; preserve existing image otherwise
+                    String newImageData = normalizeImageData(bookDetails.getImageData());
+                    if (newImageData != null) {
+                        book.setImageData(newImageData);
                     }
-                    if (bookDetails.getAvailableCopies() != null) {
+
+                    if (bookDetails.getTotalCopies() != null) {
+                        int oldTotal = book.getTotalCopies() != null ? book.getTotalCopies() : 0;
+                        int oldAvailable = book.getAvailableCopies() != null ? book.getAvailableCopies() : 0;
+                        int newTotal = bookDetails.getTotalCopies();
+                        int totalDiff = newTotal - oldTotal;
+                        int newAvailable = Math.max(0, oldAvailable + totalDiff);
+                        book.setTotalCopies(newTotal);
+                        // If caller explicitly sends availableCopies, use that; otherwise auto-adjust
+                        if (bookDetails.getAvailableCopies() != null) {
+                            book.setAvailableCopies(Math.min(bookDetails.getAvailableCopies(), newTotal));
+                        } else {
+                            book.setAvailableCopies(Math.min(newAvailable, newTotal));
+                        }
+                    } else if (bookDetails.getAvailableCopies() != null) {
                         book.setAvailableCopies(bookDetails.getAvailableCopies());
                     }
 

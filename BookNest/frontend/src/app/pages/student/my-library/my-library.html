@@ -90,7 +90,8 @@
       <div class="requests-list" *ngIf="!loadingRequests && requests.length">
         <div class="request-item" *ngFor="let req of requests">
           <div class="request-icon">
-            <span class="material-icons">book</span>
+            <img *ngIf="req.bookImage && req.bookImage.trim()" [src]="req.bookImage" [alt]="req.bookTitle" class="cover-img-mini" (error)="req.bookImage = undefined">
+            <span *ngIf="!req.bookImage || !req.bookImage.trim()" class="material-icons">book</span>
           </div>
           <div class="request-details">
             <h3>{{ req.bookTitle }}</h3>
@@ -127,10 +128,12 @@
       <div class="history-list" *ngIf="!loadingHistory && history.length">
         <div class="history-item" *ngFor="let record of history">
           <div class="history-icon">
-            <span class="material-icons">check_circle</span>
+            <img *ngIf="record.imageData && record.imageData.trim()" [src]="record.imageData" [alt]="record.title" class="cover-img-mini" (error)="record.imageData = undefined">
+            <span *ngIf="!record.imageData || !record.imageData.trim()" class="material-icons">check_circle</span>
           </div>
           <div class="history-details">
             <h3>{{ record.title }}</h3>
+            <p class="author" *ngIf="record.author">by {{ record.author }}</p>
             <p class="history-dates">
               <span>Borrowed: {{ record.borrowDate | date:'dd MMM yyyy' }}</span>
               <span class="separator">→</span>
@@ -138,7 +141,9 @@
             </p>
           </div>
           <div class="history-status">
-            <span class="status-pill returned">Returned</span>
+            <span class="status-pill returned" [class.returned-late]="record.status === 'RETURNED_LATE'">
+              {{ record.status === 'RETURNED_LATE' ? 'Returned Late' : 'Returned' }}
+            </span>
           </div>
         </div>
       </div>

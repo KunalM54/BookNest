@@ -20,7 +20,7 @@ export class BorrowRequestsComponent implements OnInit {
   activeTab: string = 'all';
   searchTerm = '';
   sortBy = 'newest';
-  
+
   currentPage = 1;
   pageSize = 10;
   totalPages = 1;
@@ -50,25 +50,26 @@ export class BorrowRequestsComponent implements OnInit {
 
   applyFilters() {
     let data = [...this.requests];
-    
+
     // Filter by tab
     if (this.activeTab !== 'all') {
       data = data.filter(req => {
         const status = req.displayStatus?.toUpperCase();
         switch (this.activeTab) {
           case 'pending': return status === 'PENDING';
-          case 'issued': return status === 'ISSUED';
-          case 'returned': return status === 'RETURNED';
+          // FIX: Issued tab shows both APPROVED and OVERDUE books
+          case 'issued': return status === 'APPROVED' || status === 'OVERDUE';
+          case 'returned': return status === 'RETURNED' || status === 'RETURNED_ON_TIME' || status === 'RETURNED_LATE';
           case 'rejected': return status === 'REJECTED';
           default: return true;
         }
       });
     }
-    
+
     // Filter by search
     if (this.searchTerm) {
       const term = this.searchTerm.toLowerCase();
-      data = data.filter(req => 
+      data = data.filter(req =>
         (req.bookTitle || '').toLowerCase().includes(term) ||
         (req.studentName || '').toLowerCase().includes(term)
       );
@@ -76,7 +77,7 @@ export class BorrowRequestsComponent implements OnInit {
 
     // Sort
     data = this.sortRequests(data);
-    
+
     this.filteredRequests = data;
     this.updatePagination();
   }
@@ -100,7 +101,7 @@ export class BorrowRequestsComponent implements OnInit {
     const total = this.filteredRequests.length;
     this.totalPages = Math.max(1, Math.ceil(total / this.pageSize));
     if (this.currentPage > this.totalPages) this.currentPage = this.totalPages;
-    
+
     const startIndex = (this.currentPage - 1) * this.pageSize;
     this.paginatedRequests = this.filteredRequests.slice(startIndex, startIndex + this.pageSize);
   }
@@ -115,7 +116,20 @@ export class BorrowRequestsComponent implements OnInit {
   goToNextPage() { this.goToPage(this.currentPage + 1); }
 
   get pageNumbers(): number[] {
-    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+    const total = this.totalPages;
+    const current = this.currentPage;
+    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+    const pages: number[] = [];
+    if (current <= 4) {
+      for (let i = 1; i <= 5; i++) pages.push(i);
+      pages.push(-1, total);
+    } else if (current >= total - 3) {
+      pages.push(1, -1);
+      for (let i = total - 4; i <= total; i++) pages.push(i);
+    } else {
+      pages.push(1, -1, current - 1, current, current + 1, -2, total);
+    }
+    return pages;
   }
 
   get paginationStart(): number {
@@ -130,37 +144,60 @@ export class BorrowRequestsComponent implements OnInit {
     return this.paginatedRequests;
   }
 
+  // Pending count
   get pendingCount(): number {
-    return this.requests.filter(r => r.status === 'PENDING').length;
+    return this.requests.filter(r => r.displayStatus === 'PENDING').length;
   }
 
+  // FIX: Issued count includes both APPROVED and OVERDUE (overdue books are still issued)
   get issuedCount(): number {
-    return this.requests.filter(r => r.displayStatus === 'ISSUED').length;
+    return this.requests.filter(r =>
+      r.displayStatus === 'APPROVED' || r.displayStatus === 'OVERDUE'
+    ).length;
   }
 
+  // Returned count covers both on-time and late returns
   get returnedCount(): number {
-    return this.requests.filter(r => r.displayStatus === 'RETURNED').length;
+    return this.requests.filter(r =>
+      r.displayStatus === 'RETURNED' ||
+      r.displayStatus === 'RETURNED_ON_TIME' ||
+      r.displayStatus === 'RETURNED_LATE'
+    ).length;
   }
 
+  // FIX: Overdue count reads displayStatus === 'OVERDUE' directly (set by backend)
   get overdueCount(): number {
-    return this.requests.filter(r => {
-      if (r.displayStatus !== 'ISSUED' || !r.dueDate) return false;
-      return new Date(r.dueDate) < new Date();
-    }).length;
+    return this.requests.filter(r => r.displayStatus === 'OVERDUE').length;
   }
 
+  // FIX: Status class uses displayStatus directly — no more manual date comparison
   getStatusClass(req: BorrowRequest): string {
-    if (req.dueDate && req.displayStatus === 'ISSUED' && new Date(req.dueDate) < new Date()) {
-      return 'overdue';
+    const status = (req.displayStatus || req.status || 'PENDING').toUpperCase();
+    switch (status) {
+      case 'APPROVED': return 'issued';
+      case 'OVERDUE': return 'overdue';
+      case 'PENDING': return 'pending';
+      case 'REJECTED': return 'rejected';
+      case 'RETURNED':
+      case 'RETURNED_ON_TIME': return 'returned';
+      case 'RETURNED_LATE': return 'returned-late';
+      default: return 'pending';
     }
-    return (req.displayStatus || req.status || 'PENDING').toLowerCase();
   }
 
+  // FIX: Status label uses displayStatus directly
   getStatusText(req: BorrowRequest): string {
-    if (req.dueDate && req.displayStatus === 'ISSUED' && new Date(req.dueDate) < new Date()) {
-      return 'Overdue';
+    const status = (req.displayStatus || req.status || 'PENDING').toUpperCase();
+    switch (status) {
+      case 'APPROVED': return 'Issued';
+      case 'OVERDUE': return 'Overdue';
+      case 'PENDING': return 'Pending';
+      case 'REJECTED': return 'Rejected';
+      case 'RETURNED_ON_TIME': return 'Returned On Time';
+      case 'RETURNED_LATE': return 'Returned Late';
+      case 'RETURNED': return 'Returned';
+      default: return status;
     }
-    return req.displayStatus || req.status || 'Pending';
   }
 
   isOverdue(dueDate: string | null): boolean {
@@ -169,14 +206,15 @@ export class BorrowRequestsComponent implements OnInit {
   }
 
   getTabCount(tab: string): number {
-    let data = this.requests;
+    const data = this.requests;
     if (tab === 'all') return data.length;
     return data.filter(req => {
       const status = req.displayStatus?.toUpperCase();
       switch (tab) {
         case 'pending': return status === 'PENDING';
-        case 'issued': return status === 'ISSUED';
-        case 'returned': return status === 'RETURNED';
+        // FIX: Tab count for issued includes OVERDUE
+        case 'issued': return status === 'APPROVED' || status === 'OVERDUE';
+        case 'returned': return status === 'RETURNED' || status === 'RETURNED_ON_TIME' || status === 'RETURNED_LATE';
         case 'rejected': return status === 'REJECTED';
         default: return true;
       }
@@ -188,8 +226,9 @@ export class BorrowRequestsComponent implements OnInit {
       next: (data: BorrowRequest[]) => {
         this.requests = (data || []).map((item) => ({
           ...item,
-          borrowDate: item.requestDate,
-          displayStatus: item.status === 'APPROVED' ? 'ISSUED' : item.status === 'RETURNED' ? 'RETURNED' : (item.status || 'PENDING').toUpperCase()
+          borrowDate: item.actionDate || item.requestDate,
+          // FIX: Backend now sends correct displayStatus — just use it directly
+          displayStatus: item.status || 'PENDING'
         })).sort((a, b) => {
           const aStatus = a.displayStatus;
           const bStatus = b.displayStatus;
@@ -210,55 +249,36 @@ export class BorrowRequestsComponent implements OnInit {
   approve(id: number) {
     this.http.put<any>(`${this.apiUrl}/approve/${id}`, {}).subscribe({
       next: (response: any) => {
-        if (response.success) {
-          this.loadRequests();
-        }
+        if (response.success) { this.loadRequests(); }
       },
-      error: (error: any) => {
-        console.error('Error approving request:', error);
-      }
+      error: (error: any) => { console.error('Error approving request:', error); }
     });
   }
 
   reject(id: number) {
     this.http.put<any>(`${this.apiUrl}/reject/${id}`, {}).subscribe({
       next: (response: any) => {
-        if (response.success) {
-          this.loadRequests();
-        }
+        if (response.success) { this.loadRequests(); }
       },
-      error: (error: any) => {
-        console.error('Error rejecting request:', error);
-      }
+      error: (error: any) => { console.error('Error rejecting request:', error); }
     });
   }
 
   markReturned(id: number) {
     this.http.put<any>(`${this.apiUrl}/return/${id}`, {}).subscribe({
       next: (response: any) => {
-        if (response.success) {
-          this.loadRequests();
-        }
+        if (response.success) { this.loadRequests(); }
       },
-      error: (error: any) => {
-        console.error('Error marking as returned:', error);
-      }
+      error: (error: any) => { console.error('Error marking as returned:', error); }
     });
   }
 
   remove(id: number) {
     this.http.delete<any>(`${this.apiUrl}/remove/${id}`).subscribe({
       next: (response: any) => {
-        if (response.success) {
-          this.loadRequests();
-        }
+        if (response.success) { this.loadRequests(); }
       },
-      error: (error: any) => {
-        console.error('Error removing request:', error);
-      }
+      error: (error: any) => { console.error('Error removing request:', error); }
     });
   }
 }
-
-
-

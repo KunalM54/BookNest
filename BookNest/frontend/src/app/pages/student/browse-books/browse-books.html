@@ -94,13 +94,16 @@
       Previous
     </button>
     <div class="page-numbers">
-      <button 
-        *ngFor="let page of pageNumbers" 
-        (click)="goToPage(page)" 
-        class="page-number" 
-        [class.active]="page === currentPage">
-        {{ page }}
-      </button>
+      <ng-container *ngFor="let page of pageNumbers">
+        <span *ngIf="page < 0" class="page-ellipsis">…</span>
+        <button
+          *ngIf="page > 0"
+          (click)="goToPage(page)"
+          class="page-number"
+          [class.active]="page === currentPage">
+          {{ page }}
+        </button>
+      </ng-container>
     </div>
     <button (click)="goToNextPage()" [disabled]="currentPage === totalPages" class="page-btn">
       Next

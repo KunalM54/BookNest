@@ -94,7 +94,7 @@ export class ManageBooksComponent implements OnInit {
   createForm() {
     this.form = this.fb.group({
       title: ['', Validators.required],
-      isbn: ['', [Validators.required, Validators.pattern(/^\d{12}$/)]],
+      isbn: ['', [Validators.required, Validators.pattern(/^\d{13}$/)]],
       author: ['', Validators.required],
       category: ['', Validators.required],
       totalCopies: [1, [Validators.required, Validators.min(1)]],
@@ -201,7 +201,20 @@ export class ManageBooksComponent implements OnInit {
   }
 
   get pageNumbers(): number[] {
-    return Array.from({ length: this.totalPages }, (_, index) => index + 1);
+    const total = this.totalPages;
+    const current = this.currentPage;
+    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+    const pages: number[] = [];
+    if (current <= 4) {
+      for (let i = 1; i <= 5; i++) pages.push(i);
+      pages.push(-1, total);
+    } else if (current >= total - 3) {
+      pages.push(1, -1);
+      for (let i = total - 4; i <= total; i++) pages.push(i);
+    } else {
+      pages.push(1, -1, current - 1, current, current + 1, -2, total);
+    }
+    return pages;
   }
 
   get paginationStart(): number {
@@ -354,8 +367,8 @@ export class ManageBooksComponent implements OnInit {
   cleanIsbnInput(event: Event): void {
     const input = event.target as HTMLInputElement;
     let value = input.value.replace(/\D/g, '');
-    if (value.length > 12) {
-      value = value.slice(0, 12);
+    if (value.length > 13) {
+      value = value.slice(0, 13);
     }
     input.value = value;
     this.form.get('isbn')?.setValue(value, { emitEvent: true });
@@ -377,12 +390,15 @@ export class ManageBooksComponent implements OnInit {
     const formValue = this.form.value;
     let imageData: string | null = null;
 
-    if (this.imageInputMode === 'file' && this.imagePreview && !this.imagePreview.startsWith('http')) {
-      imageData = this.imagePreview;
-    } else if (this.imageInputMode === 'url' && formValue.imageUrl) {
+    if (this.imageInputMode === 'url' && formValue.imageUrl) {
+      // URL mode: use the typed URL
       imageData = formValue.imageUrl;
-    } else if (this.imagePreview && this.imagePreview.startsWith('http')) {
+    } else if (this.imagePreview) {
+      // File mode OR existing image: use whatever is in the preview
       imageData = this.imagePreview;
+    } else if (this.isEditMode && this.bookForm.imageData) {
+      // Edit mode fallback: keep original image if preview was cleared by accident
+      imageData = this.bookForm.imageData;
     }
 
     const payload = {
@@ -396,7 +412,15 @@ export class ManageBooksComponent implements OnInit {
     } as Book;
 
     if (this.isEditMode && this.bookForm.id) {
-      this.bookService.updateBook(this.bookForm.id, payload).subscribe({
+      // Calculate availableCopies for update: keep existing available + adjust for total change
+      const existingBook = this.editingBook as Book & { availableCopies?: number };
+      const oldTotal = existingBook?.totalCopies ?? payload.totalCopies;
+      const oldAvailable = existingBook?.availableCopies ?? payload.totalCopies;
+      const totalDiff = payload.totalCopies - oldTotal;
+      const newAvailable = Math.max(0, oldAvailable + totalDiff);
+      const updatePayload = { ...payload, availableCopies: newAvailable };
+
+      this.bookService.updateBook(this.bookForm.id, updatePayload).subscribe({
         next: (response) => {
           if (response.success) {
             this.snackbarService.show('Book updated successfully!');

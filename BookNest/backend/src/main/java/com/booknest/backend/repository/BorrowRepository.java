@@ -27,7 +27,9 @@ public interface BorrowRepository extends JpaRepository<Borrow, Long> {
     @Query("SELECT COUNT(b) FROM Borrow b WHERE b.status = com.booknest.backend.model.Borrow.BorrowStatus.RETURNED")
     Long countReturnedBorrows();
 
-    @Query("SELECT COUNT(b) FROM Borrow b WHERE b.status = com.booknest.backend.model.Borrow.BorrowStatus.OVERDUE")
+    // FIX: Count overdue by checking APPROVED records where due_date has passed (no
+    // scheduler needed)
+    @Query("SELECT COUNT(b) FROM Borrow b WHERE b.status = com.booknest.backend.model.Borrow.BorrowStatus.APPROVED AND b.dueDate < CURRENT_DATE")
     Long countOverdueBorrows();
 
     @Query("SELECT COUNT(b) FROM Borrow b WHERE b.student = :student")
@@ -41,7 +43,8 @@ public interface BorrowRepository extends JpaRepository<Borrow, Long> {
 
     List<Borrow> findByStudent(User student);
 
-    @Query("SELECT b FROM Borrow b WHERE b.student.id = :studentId AND b.status = 'APPROVED' ORDER BY b.requestDate DESC")
+    // FIX: Include OVERDUE status so student's overdue books appear in My Books
+    @Query("SELECT b FROM Borrow b WHERE b.student.id = :studentId AND b.status IN ('APPROVED', 'OVERDUE') ORDER BY b.requestDate DESC")
     List<Borrow> findMyBooksByStudentId(Long studentId);
 
     @Query("SELECT b FROM Borrow b WHERE b.student.id = :studentId ORDER BY b.requestDate DESC")
