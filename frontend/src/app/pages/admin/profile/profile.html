@@ -30,11 +30,11 @@
 
   <!-- Tab Content -->
   <div class="tab-content" *ngIf="!isLoading">
-    
+
     <!-- Profile Tab -->
     <div *ngIf="activeTab === 'profile'" class="tab-panel">
       <div class="profile-layout">
-        
+
         <!-- Profile Card -->
         <div class="profile-card">
           <div class="avatar-section">
@@ -48,19 +48,13 @@
               Main Library
             </p>
           </div>
-          
+
           <div class="profile-info">
             <div class="info-item">
               <span class="info-icon">
                 <span class="material-icons">email</span>
               </span>
               <span class="info-text">{{ email }}</span>
-            </div>
-            <div class="info-item">
-              <span class="info-icon">
-                <span class="material-icons">calendar_today</span>
-              </span>
-              <span class="info-text">Joined {{ joinedDate }}</span>
             </div>
           </div>
         </div>
@@ -93,14 +87,8 @@
               <label>Phone Number</label>
               <div class="phone-input-group">
                 <span class="phone-prefix">+91</span>
-                <input
-                  type="text"
-                  [(ngModel)]="phone"
-                  name="phone"
-                  class="form-input phone-input"
-                  inputmode="numeric"
-                  maxlength="10"
-                  (input)="onPhoneInput($event.target.value)">
+                <input type="text" [(ngModel)]="phone" name="phone" class="form-input phone-input" inputmode="numeric"
+                  maxlength="10" (input)="onPhoneInput($event.target.value)">
               </div>
             </div>
 
@@ -131,16 +119,12 @@
         </div>
 
         <form class="password-form" (ngSubmit)="changePassword(); $event.preventDefault()">
-          
+
           <div class="form-group">
             <label>Current Password</label>
             <div class="password-input">
-              <input 
-                [type]="showCurrent ? 'text' : 'password'" 
-                [(ngModel)]="passwordForm.currentPassword"
-                name="currentPassword" 
-                placeholder="Enter current password" 
-                required>
+              <input [type]="showCurrent ? 'text' : 'password'" [(ngModel)]="passwordForm.currentPassword"
+                name="currentPassword" placeholder="Enter current password" required>
               <button type="button" class="toggle-password" (click)="toggleCurrent()">
                 <span class="material-icons">{{ showCurrent ? 'visibility_off' : 'visibility' }}</span>
               </button>
@@ -150,12 +134,8 @@
           <div class="form-group">
             <label>New Password</label>
             <div class="password-input">
-              <input 
-                [type]="showNew ? 'text' : 'password'" 
-                [(ngModel)]="passwordForm.newPassword"
-                name="newPassword" 
-                placeholder="Enter new password" 
-                required>
+              <input [type]="showNew ? 'text' : 'password'" [(ngModel)]="passwordForm.newPassword" name="newPassword"
+                placeholder="Enter new password" required>
               <button type="button" class="toggle-password" (click)="toggleNew()">
                 <span class="material-icons">{{ showNew ? 'visibility_off' : 'visibility' }}</span>
               </button>
@@ -166,12 +146,8 @@
           <div class="form-group">
             <label>Confirm New Password</label>
             <div class="password-input">
-              <input 
-                [type]="showConfirm ? 'text' : 'password'" 
-                [(ngModel)]="passwordForm.confirmPassword"
-                name="confirmPassword" 
-                placeholder="Confirm new password" 
-                required>
+              <input [type]="showConfirm ? 'text' : 'password'" [(ngModel)]="passwordForm.confirmPassword"
+                name="confirmPassword" placeholder="Confirm new password" required>
               <button type="button" class="toggle-password" (click)="toggleConfirm()">
                 <span class="material-icons">{{ showConfirm ? 'visibility_off' : 'visibility' }}</span>
               </button>

@@ -211,15 +211,10 @@ public class UserController {
                     // For admin with hardcoded credentials, check against the hardcoded password
                     boolean isValidPassword = false;
                     if (user.getRole() == User.Role.ADMIN) {
-                        // Admin - check against hardcoded password or stored password
-                        isValidPassword = user.getPassword() != null && 
-                            user.getPassword().equals(com.booknest.backend.service.UserService.getAdminEncodedPassword(currentPassword));
-                        if (!isValidPassword) {
-                            // Also check the raw password for backwards compatibility
-                            isValidPassword = "admin123".equals(currentPassword);
-                        }
+                        // Admin - use password encoder to verify (BCrypt generates different hash each time)
+                        isValidPassword = userService.verifyPassword(user, currentPassword);
                     } else {
-                        // Student - use password encoder (need to inject it)
+                        // Student - use password encoder
                         isValidPassword = userService.verifyPassword(user, currentPassword);
                     }
                     

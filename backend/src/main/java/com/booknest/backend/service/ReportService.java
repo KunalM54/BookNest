@@ -249,12 +249,34 @@ public class ReportService {
 
     // Get books issued trend for last 7 days
     public List<Map<String, Object>> getIssuedTrend() {
-        LocalDate startDate = LocalDate.now().minusDays(6);
+        LocalDate today = LocalDate.now();
+        LocalDate startDate = today.minusDays(6); // 7 days inclusive of today
         List<Object[]> results = borrowRepository.findIssuedTrend(startDate);
-        
+
         Map<LocalDate, Long> dateMap = new HashMap<>();
         for (Object[] result : results) {
-            dateMap.put((LocalDate) result[0], (Long) result[1]);
+            if (result[0] == null) continue;
+            LocalDate date;
+            Object dateObj = result[0];
+            try {
+                if (dateObj instanceof LocalDate) {
+                    date = (LocalDate) dateObj;
+                } else if (dateObj instanceof java.sql.Date) {
+                    date = ((java.sql.Date) dateObj).toLocalDate();
+                } else if (dateObj instanceof java.util.Date) {
+                    date = ((java.util.Date) dateObj).toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
+                } else {
+                    // Handle strings like "2026-03-17" or "2026-03-17 00:00:00"
+                    String dateStr = dateObj.toString();
+                    if (dateStr.length() > 10) dateStr = dateStr.substring(0, 10);
+                    date = LocalDate.parse(dateStr);
+                }
+            } catch (Exception e) {
+                continue; // skip unparseable rows
+            }
+
+            Long count = result[1] instanceof Long ? (Long) result[1] : ((Number) result[1]).longValue();
+            dateMap.put(date, count);
         }
         
         List<Map<String, Object>> trend = new ArrayList<>();

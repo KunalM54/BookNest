@@ -71,6 +71,6 @@ public interface BorrowRepository extends JpaRepository<Borrow, Long> {
     @Query("SELECT b.book.title, COUNT(b) as cnt FROM Borrow b GROUP BY b.book.id, b.book.title ORDER BY cnt ASC")
     List<Object[]> findLeastUsedBooks();
 
-    @Query("SELECT FUNCTION('DATE', b.requestDate), COUNT(b) FROM Borrow b WHERE b.status = 'APPROVED' AND b.requestDate >= :startDate GROUP BY FUNCTION('DATE', b.requestDate) ORDER BY FUNCTION('DATE', b.requestDate)")
+    @Query(value = "SELECT CAST(b.request_date AS DATE), COUNT(*) FROM borrows b WHERE b.status IN ('APPROVED', 'RETURNED', 'OVERDUE') AND b.request_date >= :startDate GROUP BY CAST(b.request_date AS DATE) ORDER BY CAST(b.request_date AS DATE)", nativeQuery = true)
     List<Object[]> findIssuedTrend(LocalDate startDate);
 }

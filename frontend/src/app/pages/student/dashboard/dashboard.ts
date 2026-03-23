@@ -52,14 +52,21 @@ export class DashboardComponent implements OnInit {
 
         this.currentBooks = books;
 
+        // Count overdue books (status is OVERDUE or due date has passed)
         const overdueCount = (myBooks || []).filter((book: BorrowRequest) => {
-          return book.status === 'OVERDUE' || (!!book.dueDate && new Date(book.dueDate) < new Date());
+          const displayStatus = book.displayStatus || book.status;
+          const isOverdueStatus = displayStatus === 'OVERDUE';
+          const isPastDue = !!book.dueDate && new Date(book.dueDate) < new Date();
+          return isOverdueStatus || (isPastDue && (displayStatus === 'APPROVED' || displayStatus === 'OVERDUE'));
         }).length;
 
+        // Pending requests count
         const pendingCount = (myRequests || []).length;
 
+        // Total books read (RETURNED_ON_TIME or RETURNED_LATE)
         const totalRead = (myHistory || []).filter((record: BorrowRequest) => {
-          return record.status === 'RETURNED';
+          const status = record.displayStatus || record.status;
+          return status === 'RETURNED_ON_TIME' || status === 'RETURNED_LATE';
         }).length;
 
         this.stats = [
@@ -78,7 +85,7 @@ export class DashboardComponent implements OnInit {
   }
 
   get dueSoonCount() {
-    return this.currentBooks.filter(book => book.status === 'Overdue').length;
+    return this.currentBooks.filter(book => book.status === 'Overdue' || book.status === 'OVERDUE').length;
   }
 
   getBookStatus(displayStatus: string) {
