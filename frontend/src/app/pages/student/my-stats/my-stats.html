@@ -63,13 +63,11 @@
         <h3>Return Performance</h3>
         <div class="rate-ring-wrap">
           <svg viewBox="0 0 120 120" class="rate-ring">
-            <circle cx="60" cy="60" r="50" fill="none" stroke="#E2E8F0" stroke-width="10"/>
+            <circle cx="60" cy="60" r="50" fill="none" stroke="#E2E8F0" stroke-width="10" />
             <circle cx="60" cy="60" r="50" fill="none"
-              [attr.stroke]="onTimeRate >= 80 ? '#059669' : onTimeRate >= 50 ? '#D97706' : '#DC2626'"
-              stroke-width="10" stroke-linecap="round"
-              [attr.stroke-dasharray]="314"
-              [attr.stroke-dashoffset]="314 - (314 * onTimeRate / 100)"
-              transform="rotate(-90 60 60)"/>
+              [attr.stroke]="onTimeRate >= 80 ? '#059669' : onTimeRate >= 50 ? '#D97706' : '#DC2626'" stroke-width="10"
+              stroke-linecap="round" [attr.stroke-dasharray]="314"
+              [attr.stroke-dashoffset]="314 - (314 * onTimeRate / 100)" transform="rotate(-90 60 60)" />
           </svg>
           <div class="rate-label">
             <span class="rate-pct">{{ onTimeRate }}%</span>
@@ -97,7 +95,8 @@
         <div class="top-list" *ngIf="mostBorrowedBooks.length > 0">
           <div class="top-row" *ngFor="let b of mostBorrowedBooks; let i = index">
             <div class="top-cover">
-              <img *ngIf="b.bookImage && b.bookImage.trim()" [src]="b.bookImage" [alt]="b.title" (error)="b.bookImage = undefined">
+              <img *ngIf="b.bookImage && b.bookImage.trim()" [src]="b.bookImage" [alt]="b.title"
+                (error)="b.bookImage = undefined">
               <span *ngIf="!b.bookImage || !b.bookImage.trim()" class="cover-initial">{{ b.title.charAt(0) }}</span>
             </div>
             <div class="top-info">
@@ -113,54 +112,6 @@
           <a routerLink="/student/browse" class="link-btn">Browse Library</a>
         </div>
       </div>
-
     </div>
-
-    <!-- Full history table -->
-    <div class="history-card">
-      <div class="card-head">
-        <h3><span class="material-icons">history</span> My Borrow History</h3>
-        <span class="badge-count">{{ borrowHistory.length }} records</span>
-      </div>
-
-      <div class="table-wrap" *ngIf="borrowHistory.length > 0">
-        <table class="hist-table">
-          <thead>
-            <tr>
-              <th>Book</th>
-              <th>Borrow Date</th>
-              <th>Return Date</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let r of borrowHistory">
-              <td class="book-cell">
-                <div class="book-thumb-wrap">
-                  <img *ngIf="r.bookImage && r.bookImage.trim()" [src]="r.bookImage" [alt]="r.title" class="book-thumb" (error)="r.bookImage = undefined">
-                  <span *ngIf="!r.bookImage || !r.bookImage.trim()" class="material-icons thumb-icon">menu_book</span>
-                </div>
-                <div>
-                  <span class="book-title">{{ r.title }}</span>
-                  <span class="book-author">{{ r.author }}</span>
-                </div>
-              </td>
-              <td class="date-cell">{{ r.borrowDate || '—' }}</td>
-              <td class="date-cell">{{ r.returnDate || '—' }}</td>
-              <td>
-                <span class="status-pill" [ngClass]="getStatusClass(r.status)">{{ getStatusLabel(r.status) }}</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="empty-state" *ngIf="borrowHistory.length === 0">
-        <span class="material-icons">auto_stories</span>
-        <p>No borrow history yet. Start reading!</p>
-        <a routerLink="/student/browse" class="link-btn">Browse Library</a>
-      </div>
-    </div>
-
   </div>
 </div>

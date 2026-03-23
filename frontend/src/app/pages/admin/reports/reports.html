@@ -73,9 +73,6 @@
     <button class="tab-btn" [class.active]="activeTab === 'books'" (click)="activeTab = 'books'">
       <span class="material-icons">auto_stories</span> Top Books
     </button>
-    <button class="tab-btn" [class.active]="activeTab === 'activity'" (click)="activeTab = 'activity'">
-      <span class="material-icons">history</span> Activity
-    </button>
   </div>
 
   <!-- ══════ OVERVIEW TAB ══════ -->
@@ -209,34 +206,6 @@
         </div>
       </div>
 
-    </div>
-  </div>
-
-  <!-- ══════ ACTIVITY TAB ══════ -->
-  <div *ngIf="activeTab === 'activity'" class="tab-panel">
-    <div class="activity-wrap">
-      <div class="card-head">
-        <h3><span class="material-icons">history</span> Recent Activity</h3>
-        <span class="badge-count">{{ activities.length }} records</span>
-      </div>
-      <div class="activity-feed" *ngIf="activities.length > 0">
-        <div class="activity-row" *ngFor="let a of activities">
-          <div class="act-icon" [style.background]="(a.color || '#6b7280') + '20'" [style.color]="a.color || '#6b7280'">
-            <span class="material-icons">{{ a.icon || 'info' }}</span>
-          </div>
-          <div class="act-body">
-            <p class="act-text">
-              <strong>{{ a.user }}</strong>
-              <span class="act-verb"> {{ a.action }} </span>
-              <strong *ngIf="a.book">{{ a.book }}</strong>
-            </p>
-            <span class="act-time">{{ a.time }}</span>
-          </div>
-        </div>
-      </div>
-      <div class="empty-table" *ngIf="activities.length === 0">
-        <span class="material-icons">history</span><p>No recent activity</p>
-      </div>
     </div>
   </div>
 
