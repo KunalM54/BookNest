@@ -50,7 +50,7 @@ public class UserService {
 
     public AuthResponse register(RegisterRequest request) {
         String fullName = normalizeFullName(request.getFullName());
-        String studentId = normalizeStudentId(request.getSID());
+        String studentId = normalizeStudentId(request.getStudentId());
         String email = normalizeEmail(request.getEmail());
         String password = request.getPassword() == null ? "" : request.getPassword();
         String confirmPassword = request.getConfirmPassword() == null ? "" : request.getConfirmPassword();
@@ -142,7 +142,7 @@ public class UserService {
                 adminUser = userRepository.save(adminUser);
             }
             Long adminId = adminUser.getId();
-            return new AuthResponse("Login successful", true, token, adminId, "Administrator", ADMIN_EMAIL, "ADMIN");
+            return new AuthResponse("Login successful", true, token, adminId, "Administrator", ADMIN_EMAIL, "ADMIN", "ADMIN001");
         }
 
         var userOpt = userRepository.findByEmail(email);
@@ -162,7 +162,7 @@ public class UserService {
 
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
 
-        return new AuthResponse("Login successful", true, token, user.getId(), user.getFullName(), user.getEmail(), user.getRole().name());
+        return new AuthResponse("Login successful", true, token, user.getId(), user.getFullName(), user.getEmail(), user.getRole().name(), user.getStudentId());
     }
 
     @Transactional

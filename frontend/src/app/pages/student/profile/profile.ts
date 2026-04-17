@@ -19,7 +19,8 @@ export class ProfileComponent implements OnInit {
   activeTab: 'profile' | 'password' = 'profile';
 
   // Profile fields
-  studentId: number = 0;
+  userId: number = 0;
+  studentId: string = '';
   firstName: string = '';
   lastName: string = '';
   email: string = '';
@@ -85,7 +86,8 @@ export class ProfileComponent implements OnInit {
     this.isLoading = true;
     this.http.get<any>(`${this.apiUrl}/users/me`).subscribe({
       next: (data) => {
-        this.studentId = data.studentId || data.id;
+        this.userId = data.id;
+        this.studentId = data.studentId || '';
         const nameParts = data.fullName.split(' ');
         this.firstName = nameParts[0] || '';
         this.lastName = nameParts.slice(1).join(' ') || '';
@@ -104,9 +106,9 @@ export class ProfileComponent implements OnInit {
           fullName: data.fullName,
           email: this.email,
           role: data.role,
-          userId: data.id,
-          studentId: data.studentId || '',
-          sid: data.studentId || ''
+          userId: this.userId,
+          studentId: this.studentId,
+          sid: this.studentId
         });
       },
       error: (err) => {
@@ -140,7 +142,13 @@ export class ProfileComponent implements OnInit {
       department: this.department
     };
 
-    this.http.put<any>(`${this.apiUrl}/users/${this.studentId}`, updates).subscribe({
+    if (!this.userId) {
+      this.isLoading = false;
+      this.errorMessage = 'Failed to load profile. Please login again.';
+      return;
+    }
+
+    this.http.put<any>(`${this.apiUrl}/users/${this.userId}`, updates).subscribe({
       next: (response) => {
         const elapsed = Date.now() - loadingStart;
         const delay = Math.max(0, 2000 - elapsed);
@@ -161,7 +169,9 @@ export class ProfileComponent implements OnInit {
                 fullName,
                 email: normalizedEmail,
                 role: 'STUDENT',
-                userId: this.studentId
+                userId: this.userId,
+                studentId: this.studentId,
+                sid: this.studentId
               });
             }
             this.snackbar.show('Profile updated!');
