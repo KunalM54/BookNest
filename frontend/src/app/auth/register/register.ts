@@ -111,7 +111,7 @@ export class Register {
     const formValue = this.registerForm.getRawValue();
     const payload = {
       fullName: (formValue.fullName || '').trim().replace(/\s+/g, ' '),
-      sID: (formValue.sID || '').trim().toUpperCase(),
+      studentId: (formValue.sID || '').trim().toUpperCase(),
       email: (formValue.email || '').trim().toLowerCase(),
       password: formValue.password || '',
       confirmPassword: formValue.confirmPassword || ''

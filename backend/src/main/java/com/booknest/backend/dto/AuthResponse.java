@@ -8,6 +8,7 @@ public class AuthResponse {
     private String fullName;
     private String email;
     private String role;
+    private String studentId;
 
     public AuthResponse() {}
 
@@ -16,7 +17,7 @@ public class AuthResponse {
         this.success = success;
     }
 
-    public AuthResponse(String message, boolean success, String token, Long userId, String fullName, String email, String role) {
+    public AuthResponse(String message, boolean success, String token, Long userId, String fullName, String email, String role, String studentId) {
         this.message = message;
         this.success = success;
         this.token = token;
@@ -24,6 +25,7 @@ public class AuthResponse {
         this.fullName = fullName;
         this.email = email;
         this.role = role;
+        this.studentId = studentId;
     }
 
     public String getMessage() { return message; }
@@ -46,4 +48,7 @@ public class AuthResponse {
 
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
+
+    public String getStudentId() { return studentId; }
+    public void setStudentId(String studentId) { this.studentId = studentId; }
 }

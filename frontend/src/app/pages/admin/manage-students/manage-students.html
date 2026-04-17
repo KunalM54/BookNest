@@ -63,9 +63,9 @@
           </td>
           <td class="col-actions">
             <div class="action-group">
-              <button class="action-btn view" (click)="viewStudent(student)" title="View">
+              <!-- <button class="action-btn view" (click)="viewStudent(student)" title="View">
                 <span class="material-icons">visibility</span>
-              </button>
+              </button> -->
               <button class="action-btn" [class.block]="student.active" [class.activate]="!student.active" 
                 (click)="student.active ? blockStudent(student) : activateStudent(student)" 
                 [title]="student.active ? 'Block' : 'Activate'">
