@@ -1,5 +1,5 @@
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth';
@@ -14,7 +14,7 @@ import { scrollToTop } from '../../../utils/scroll-to-top';
   templateUrl: './requests.html',
   styleUrls: ['./requests.css']
 })
-export class RequestsComponent implements OnInit {
+export class RequestsComponent implements OnInit, OnDestroy {
 
   requests: any[] = [];
   filteredRequests: any[] = [];
@@ -26,6 +26,7 @@ export class RequestsComponent implements OnInit {
   currentPage = 1;
   pageSize = 10;
   totalPages = 1;
+  private refreshTimer: ReturnType<typeof setInterval> | null = null;
 
   constructor(
     private borrowService: BorrowService,
@@ -34,6 +35,16 @@ export class RequestsComponent implements OnInit {
 
   ngOnInit() {
     this.loadRequests();
+    this.refreshTimer = setInterval(() => {
+      this.loadRequests();
+    }, 1000);
+  }
+
+  ngOnDestroy() {
+    if (this.refreshTimer) {
+      clearInterval(this.refreshTimer);
+      this.refreshTimer = null;
+    }
   }
 
   loadRequests() {

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import type { BorrowRequest } from '../../../services/borrow';
 import { GlobalSearchBarComponent } from '../../../components/global-search-bar/global-search-bar';
@@ -13,7 +13,7 @@ import { scrollToTop } from '../../../utils/scroll-to-top';
   templateUrl: './borrow-requests.html',
   styleUrls: ['./borrow-requests.css']
 })
-export class BorrowRequestsComponent implements OnInit {
+export class BorrowRequestsComponent implements OnInit, OnDestroy {
 
   requests: BorrowRequest[] = [];
   filteredRequests: BorrowRequest[] = [];
@@ -27,11 +27,22 @@ export class BorrowRequestsComponent implements OnInit {
   totalPages = 1;
 
   private apiUrl = 'http://localhost:8080/api/borrow';
+  private refreshTimer: ReturnType<typeof setInterval> | null = null;
 
   constructor(private http: HttpClient) { }
 
   ngOnInit() {
     this.loadRequests();
+    this.refreshTimer = setInterval(() => {
+      this.loadRequests();
+    }, 1000);
+  }
+
+  ngOnDestroy() {
+    if (this.refreshTimer) {
+      clearInterval(this.refreshTimer);
+      this.refreshTimer = null;
+    }
   }
 
   setTab(tab: string) {
